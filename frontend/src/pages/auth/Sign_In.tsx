@@ -4,7 +4,7 @@ import AuthLayout from "./AuthLayout";
 export default function SignInPage() {
   return (
     <AuthLayout>
-      <SignIn path="/sign-in" />
+      <SignIn />
     </AuthLayout>
   );
 }

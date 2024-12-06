@@ -4,7 +4,7 @@ const ErrorHandler = (
   err: any,
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ) => {
   const errStatus = err.status || 500;
   const errMsg = err.message || "Something went wrong";

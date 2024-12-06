@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rimraf dist && npx tsc",
     "start": "ts-node src/server.ts",
-    "dev": "concurrently \"npx tsc -w\"   \"nodemon src/index.ts\""
+    "dev": "concurrently \"npx tsc -w\"   \"nodemon src/index.ts\"",
+    "format": "prettier --write \"**/*.{js,ts,css,html}\""
   },
   "keywords": [
     "node_js",
@@ -15,6 +16,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.0.73",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",

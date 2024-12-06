@@ -19,15 +19,17 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     methods: "GET,POST,PUT,DELETE",
-  })
+  }),
 );
 
 // Routes
 import svixRouter from "./routes/svix.route";
-import userRouter from "./routes/user.route";
+import folderRouter from "./routes/folder.route";
+import fileRouter from "./routes/file.route";
 
 app.use("/api", svixRouter);
-app.use("/api", userRouter);
+app.use("/api/folders", folderRouter);
+app.use("/api/files", fileRouter);
 
 export { app };
 export default server;

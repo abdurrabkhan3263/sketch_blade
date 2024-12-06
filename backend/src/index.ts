@@ -12,7 +12,7 @@ connectDB()
 
     server.listen(PORT, () => {
       console.log(
-        `Server running on port ${PORT} 🚀 || http://localhost:${PORT}`
+        `Server running on port ${PORT} 🚀 || http://localhost:${PORT}`,
       );
     });
   })

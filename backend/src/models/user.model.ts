@@ -1,15 +1,23 @@
-import { model, Schema } from "mongoose";
-import bcrypt from "bcrypt";
-import { Password } from "../types";
+import { model, Schema, Document } from "mongoose";
 
-const userSchema = new Schema(
+interface IUser extends Document {
+  first_name: string;
+  last_name: string;
+  email: string;
+  image_url: string;
+  socket_id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new Schema<IUser>(
   {
-    firstName: {
+    first_name: {
       type: String,
       required: true,
       trim: true,
     },
-    lastName: {
+    last_name: {
       type: String,
       trim: true,
     },
@@ -20,12 +28,7 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: true,
-      select: false,
-    },
-    image: {
+    image_url: {
       type: String,
       trim: true,
     },
@@ -33,17 +36,7 @@ const userSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  this.password = bcrypt.hashSync(this.password, 10);
-});
-
-userSchema.methods.isPasswordCorrect = async function (password: Password) {
-  return bcrypt.compareSync(password, this.password);
-};
 
 export const User = model("User", userSchema);
