@@ -1,16 +1,87 @@
 import { Request, Response } from "express";
-import { Webhook } from "svix";
+import { User } from "../models/user.model";
+import { CreateUserRequest, Id } from "../types";
+import { Webhook, WebhookRequiredHeaders } from "svix";
+import { WebhookEvent } from "@clerk/clerk-sdk-node";
 
-// Add Clerk webhook event types
-type ClerkWebhookEvent = {
-  data: {
-    id: string;
-    first_name?: string;
-    last_name?: string;
-    email_addresses?: Array<{ email_address: string }>;
-  };
-  type: string;
-  object: "event";
+export type ClerkEvent = WebhookEvent;
+
+const createUser = async ({
+  id,
+  email,
+  first_name,
+  last_name,
+  image_url = "",
+}: CreateUserRequest): Promise<void> => {
+  if (!email || !first_name) {
+    throw new Error("Email and first name are required");
+  }
+
+  try {
+    const newUser = await User.create({
+      _id: id,
+      email,
+      first_name,
+      last_name,
+      image_url: image_url || "",
+    });
+
+    if (!newUser) throw new Error("Failed to create user");
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    throw new Error(`Create user failed: ${errorMessage}`);
+  }
+};
+
+const updateUser = async (id: Id, data: CreateUserRequest) => {
+  try {
+    const userExists = await User.exists({ _id: id });
+
+    if (!userExists) {
+      throw new Error("User not found");
+    }
+
+    const updatedUser = await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          image_url: data.image_url,
+        },
+      }
+    );
+
+    if (!updatedUser) {
+      throw new Error("Failed to update user");
+    }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    throw new Error(`Create user failed: ${errorMessage}`);
+  }
+};
+
+const deleteUser = async (id: Id) => {
+  try {
+    const userExists = await User.exists({ _id: id });
+
+    if (!userExists) {
+      throw new Error("User not found");
+    }
+
+    const deletedUser = await User.deleteOne({ _id: id });
+
+    if (!deletedUser) {
+      throw new Error("Failed to delete user");
+    }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    throw new Error(`Create user failed: ${errorMessage}`);
+  }
 };
 
 export const svixController = async (
@@ -45,22 +116,51 @@ export const svixController = async (
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as ClerkWebhookEvent;
+    } as WebhookRequiredHeaders) as ClerkEvent;
 
     // Handle Clerk specific events
     switch (evt.type) {
       case "user.created":
-        console.log(evt);
-        console.log(`User created: ${evt.data.id}`);
+      case "user.updated": {
+        const {
+          id,
+          first_name,
+          last_name,
+          image_url = "",
+          email_addresses = [],
+        } = evt.data;
+
+        const userData = {
+          id: evt.type === "user.created" ? id : id,
+          email: email_addresses[0]?.email_address,
+          first_name,
+          last_name,
+          image_url,
+        } as CreateUserRequest;
+
+        try {
+          await (evt.type === "user.created"
+            ? createUser(userData)
+            : updateUser(id, userData));
+        } catch (error) {
+          console.error(`Failed to ${evt.type} user:`, error);
+          throw error;
+        }
         break;
-      case "user.updated":
-        console.log(`User updated: ${evt.data.id}`);
+      }
+
+      case "user.deleted": {
+        try {
+          await deleteUser(evt.data.id as Id);
+        } catch (error) {
+          console.error("Failed to delete user:", error);
+          throw error;
+        }
         break;
-      case "user.deleted":
-        console.log(`User deleted: ${evt.data.id}`);
-        break;
+      }
+
       default:
-        console.log(
+        console.warn(
           `Unhandled event type: ${evt.type} for user: ${evt.data.id}`
         );
     }

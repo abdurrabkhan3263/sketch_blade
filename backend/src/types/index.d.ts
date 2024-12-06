@@ -1,31 +1,22 @@
-export declare type Password = string;
-export declare type Email = string;
-export declare type FirstName = string;
-export declare type LastName = string;
-export declare type Image = string;
-export declare type SocketId = string;
-export declare type Id = string;
-export declare type CreatedAt = string;
-export declare type UpdatedAt = string;
-
 export declare type User = {
   _id: Id;
-  firstName: FirstName;
-  lastName: LastName;
+  first_name: FirstName;
+  last_name: LastName;
   email: Email;
   password: Password;
-  image: Image;
-  socketId: SocketId;
+  image_url: Image;
+  socket_id: SocketId;
   createdAt: CreatedAt;
   updatedAt: UpdatedAt;
 };
 
 export declare type CreateUserRequest = {
-  firstName: FirstName;
-  lastName?: LastName;
+  id: Id;
+  first_name: FirstName;
+  last_name?: LastName;
   email: Email;
   password: Password;
-  image?: Image;
+  image_url?: Image;
 };
 
 export declare type ApiResponse = {
@@ -40,3 +31,14 @@ export declare type Error = {
   message: string;
   error: string[];
 };
+
+export declare type Password = string;
+export declare type Email = string;
+export declare type FirstName = string;
+export declare type LastName = string;
+export declare type Image = string;
+export declare type SocketId = string;
+export declare type Id = string;
+export declare type CreatedAt = string;
+export declare type UpdatedAt = string;
+export declare type id = string;

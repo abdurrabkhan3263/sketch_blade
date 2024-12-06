@@ -24,10 +24,8 @@ app.use(
 
 // Routes
 import svixRouter from "./routes/svix.route";
-import userRouter from "./routes/user.route";
 
 app.use("/api", svixRouter);
-app.use("/api", userRouter);
 
 export { app };
 export default server;
