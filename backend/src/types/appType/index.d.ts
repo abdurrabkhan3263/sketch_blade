@@ -65,7 +65,8 @@ export declare type File = {
 export declare type CreateFileRequest = {
   file_name: string;
   folder_id?: Id;
-  collaborator_ids: Id[];
+  collaborators?: { [key: string]: CollaboratorAction }[];
+  description?: string;
 };
 
 export declare type UpdateFileRequest = {
@@ -82,3 +83,8 @@ export declare type Id = string;
 export declare type CreatedAt = string;
 export declare type UpdatedAt = string;
 export declare type id = string;
+export declare enum CollaboratorAction {
+  Edit = "edit",
+  View = "view",
+  Comment = "comment",
+}

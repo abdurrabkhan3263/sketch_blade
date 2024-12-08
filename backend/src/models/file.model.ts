@@ -9,6 +9,7 @@ export interface IFile extends Document {
   room_id: string;
   description: string;
   locked: boolean;
+  collaborators_actions: { [key: string]: "view" | "edit" | "comment" }[];
   created_at: Date;
 }
 
@@ -32,6 +33,15 @@ const fileSchema = new Schema<IFile>(
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    collaborators_actions: [
+      {
+        key: {
+          type: String,
+          enum: ["edit", "view", "comment"],
+          default: "view",
+        },
       },
     ],
     active_collaborators: [

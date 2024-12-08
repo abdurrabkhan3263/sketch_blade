@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.model";
-import { CreateUserRequest, Id } from "../types";
+import { CreateUserRequest, Id } from "../types/appType";
 import { Webhook, WebhookRequiredHeaders } from "svix";
 import { WebhookEvent } from "@clerk/clerk-sdk-node";
 

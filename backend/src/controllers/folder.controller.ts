@@ -3,7 +3,7 @@ import AsyncHandler from "../utils/AsyncHandler";
 import FolderModel from "../models/folder.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { isValidObjectId } from "mongoose";
-import { CreateFolderRequest } from "../types";
+import { CreateFolderRequest } from "../types/appType";
 
 export const createFolder = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {

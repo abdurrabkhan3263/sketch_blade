@@ -1,4 +1,4 @@
-import { Error as ErrorType } from "../types/index";
+import { Error as ErrorType } from "../types/appType";
 
 export default class ErrorHandler extends Error {
   statusCode: number;
