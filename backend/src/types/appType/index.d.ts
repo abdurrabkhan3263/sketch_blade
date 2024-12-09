@@ -83,7 +83,7 @@ export declare type Id = string;
 export declare type CreatedAt = string;
 export declare type UpdatedAt = string;
 export declare type id = string;
-export declare type Collaborators = { [key: string]: CollaboratorAction[] };
+export declare type Collaborators = { [key: string]: CollaboratorAction };
 export declare enum CollaboratorAction {
   Edit = "edit",
   View = "view",

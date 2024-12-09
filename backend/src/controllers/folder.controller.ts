@@ -8,16 +8,16 @@ import { CreateFolderRequest } from "../types/appType";
 export const createFolder = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { folder_name = "" }: CreateFolderRequest = req.body;
-    const { id: creator_id } = req.user;
+    const userId = req.userId;
 
-    if (!isValidObjectId(creator_id)) {
+    if (!isValidObjectId(userId)) {
       throw new ErrorHandler({
         statusCode: 400,
         message: "Please provide folder name and creator id",
       });
     }
 
-    const folder = await FolderModel.create({ folder_name, creator_id });
+    const folder = await FolderModel.create({ folder_name, userId });
 
     if (!folder) {
       throw new ErrorHandler({
@@ -34,7 +34,7 @@ export const updateFolder = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { folder_name } = req.body;
-    const { id: userId } = req.user;
+    const userId = req.userId;
 
     if (!isValidObjectId(userId)) {
       throw new ErrorHandler({
@@ -76,7 +76,7 @@ export const updateFolder = AsyncHandler(
 export const deleteFolder = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { id: userId } = req.user;
+    const userId = req.userId;
 
     if (!isValidObjectId(userId)) {
       throw new ErrorHandler({

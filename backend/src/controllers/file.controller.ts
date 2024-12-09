@@ -14,7 +14,7 @@ export const createFile = AsyncHandler(
       collaborators,
       description,
     }: CreateFileRequest = req.body;
-    const { id } = req.user;
+    const id = req.userId;
 
     if (!isValidObjectId(id)) {
       throw new ErrorHandler({
@@ -69,7 +69,7 @@ export const updateFile = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { file_name, description } = req.body;
-    const { id: userId } = req.user;
+    const userId = req.userId;
 
     if (!isValidObjectId(id)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
@@ -86,7 +86,7 @@ export const updateFile = AsyncHandler(
 
     if (
       file.creator_id.toString() !== userId ||
-      file.collaborators_actions.some((user) => user[userId] !== "edit")
+      !file.collaborators_actions[userId].includes("edit")
     ) {
       throw new ErrorHandler({
         statusCode: 403,
@@ -117,17 +117,17 @@ export const updateFile = AsyncHandler(
 export const deleteFile = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { id: UserId } = req.user;
+    const userId = req.userId;
 
     if (!isValidObjectId(id)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
     }
 
-    if (!isValidObjectId(UserId)) {
+    if (!isValidObjectId(userId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid user id" });
     }
 
-    const file = await FileModel.findOne({ _id: id, creator_id: UserId });
+    const file = await FileModel.findOne({ _id: id, creator_id: userId });
 
     if (!file) {
       throw new ErrorHandler({
@@ -154,17 +154,17 @@ export const deleteFile = AsyncHandler(
 export const toggleLock = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { id: UserId } = req.user;
+    const userId = req.userId;
 
     if (!isValidObjectId(id)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
     }
 
-    if (!isValidObjectId(UserId)) {
+    if (!isValidObjectId(userId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid user id" });
     }
 
-    const file = await FileModel.findOne({ _id: id, creator_id: UserId });
+    const file = await FileModel.findOne({ _id: id, creator_id: userId });
 
     if (!file) {
       throw new ErrorHandler({
@@ -198,17 +198,17 @@ export const toggleLock = AsyncHandler(
 
 export const addCollaborator = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.user;
+    const userId = req.userId;
     const {
       id: fileId,
       collaborators,
-    }: { fileId: string; collaborators: Collaborators } = req.body;
+    }: { id: string; collaborators: Collaborators } = req.body;
 
     if (!isValidObjectId(fileId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
     }
 
-    if (!isValidObjectId(id)) {
+    if (!isValidObjectId(userId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid user id" });
     }
 
@@ -219,7 +219,7 @@ export const addCollaborator = AsyncHandler(
       });
     }
 
-    const file = await FileModel.findOne({ _id: fileId, creator_id: id });
+    const file = await FileModel.findOne({ _id: fileId, creator_id: userId });
 
     if (!file) {
       throw new ErrorHandler({
@@ -233,14 +233,18 @@ export const addCollaborator = AsyncHandler(
 
     const updatedFile = await FileModel.updateOne(
       { _id: fileId },
-      {
-        $push: {
-          collaborators: {
-              $each: collaboratorIds,
+      [
+        {
+          $set: {
+            collaborators: {
+              $concatArrays: ["$collaborators", collaboratorIds],
+            },
+            collaborators_actions: {
+              $mergeObjects: ["$collaborators_actions", collaborators],
+            },
           },
-          collaborators_actions: collaborators,
         },
-      },
+      ],
       { new: true },
     );
 
@@ -266,7 +270,7 @@ export const removeCollaborator = AsyncHandler(
     const [fileId, collaboratorId, id] = [
       req.params.id,
       req.body.id,
-      req.user.id,
+      req.userId,
     ];
 
     if (!isValidObjectId(fileId)) {
@@ -299,7 +303,9 @@ export const removeCollaborator = AsyncHandler(
       {
         $pull: {
           collaborators: collaboratorId,
-          collaborators_actions: collaboratorId,
+        },
+        $unset: {
+          [`collaborators_actions.${collaboratorId}`]: "",
         },
       },
       { new: true },
@@ -324,11 +330,7 @@ export const removeCollaborator = AsyncHandler(
 
 export const changeCollaboratorPermission = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const [fileId, collaborator, id] = [
-      req.params.id,
-      req.body.id,
-      req.user.id,
-    ];
+    const [fileId, collaborator, id] = [req.params.id, req.body.id, req.userId];
 
     if (!isValidObjectId(fileId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
@@ -357,8 +359,12 @@ export const changeCollaboratorPermission = AsyncHandler(
 
     const updatedFile = await FileModel.findByIdAndUpdate(
       fileId,
-      { $set: { "collaborators_actions.$[elem].key": collaborator.key } },
-      { new: true, arrayFilters: [{ "elem.id": collaborator.id }] },
+      {
+        $set: {
+          [`collaborators_actions.${collaborator.id}`]: collaborator.key,
+        },
+      },
+      { new: true },
     );
 
     if (!updatedFile) {
@@ -386,7 +392,7 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {});
 
 export const getCollaborators = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const [fileId, userId] = [req.params.id, req.user.id];
+    const [fileId, userId] = [req.params.id, req.userId];
 
     if (!isValidObjectId(fileId)) {
       throw new ErrorHandler({
@@ -438,5 +444,20 @@ export const getCollaborators = AsyncHandler(
         },
       },
     ]);
+
+    if (!findFileCollaborators) {
+      throw new ErrorHandler({
+        statusCode: 404,
+        message: "Collaborators not found",
+      });
+    }
+
+    res.status(200).json(
+      ApiResponse.success({
+        success: true,
+        data: findFileCollaborators,
+        message: "Collaborators found successfully",
+      }),
+    );
   },
 );

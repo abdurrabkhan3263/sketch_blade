@@ -1,4 +1,5 @@
 import { Schema, model, Document } from "mongoose";
+import { CollaboratorAction } from "../types/appType";
 
 export interface IFile extends Document {
   file_name: string;
@@ -9,7 +10,7 @@ export interface IFile extends Document {
   room_id: string;
   description: string;
   locked: boolean;
-  collaborators_actions: { [key: string]: "view" | "edit" | "comment" }[];
+  collaborators_actions: { [key: string]: CollaboratorAction };
   created_at: Date;
 }
 
@@ -35,8 +36,15 @@ const fileSchema = new Schema<IFile>(
         ref: "User",
       },
     ],
+    // collaborators_actions: {
+    //   key: [{ type: "view" }, { type: "edit" }, { type: "comment" }],
+    // },
     collaborators_actions: {
-      key: [{ type: "view" }, { type: "edit" }, { type: "comment" }],
+      type: Map,
+      of: {
+        type: String,
+        enum: ["view", "edit", "comment"],
+      },
     },
     active_collaborators: [
       {

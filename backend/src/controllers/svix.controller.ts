@@ -26,6 +26,8 @@ const createUser = async ({
       image_url: image_url || "",
     });
 
+    console.log("New user created:", newUser);
+
     if (!newUser) throw new Error("Failed to create user");
   } catch (error) {
     const errorMessage =
@@ -122,6 +124,7 @@ export const svixController = async (
     switch (evt.type) {
       case "user.created":
       case "user.updated": {
+        console.log("Hello world");
         const {
           id,
           first_name,
@@ -137,6 +140,8 @@ export const svixController = async (
           last_name,
           image_url,
         } as CreateUserRequest;
+
+        console.log("User data:", userData);
 
         try {
           await (evt.type === "user.created"
