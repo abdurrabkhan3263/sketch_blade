@@ -35,15 +35,9 @@ const fileSchema = new Schema<IFile>(
         ref: "User",
       },
     ],
-    collaborators_actions: [
-      {
-        key: {
-          type: String,
-          enum: ["edit", "view", "comment"],
-          default: "view",
-        },
-      },
-    ],
+    collaborators_actions: {
+      key: [{ type: "view" }, { type: "edit" }, { type: "comment" }],
+    },
     active_collaborators: [
       {
         type: Schema.Types.ObjectId,

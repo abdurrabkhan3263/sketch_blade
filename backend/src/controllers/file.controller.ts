@@ -3,7 +3,7 @@ import AsyncHandler from "../utils/AsyncHandler";
 import FileModel from "../models/file.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { isValidObjectId } from "mongoose";
-import { CreateFileRequest } from "../types/appType";
+import { Collaborators, CreateFileRequest } from "../types/appType";
 import ApiResponse from "../utils/ApiResponse";
 
 export const createFile = AsyncHandler(
@@ -198,11 +198,11 @@ export const toggleLock = AsyncHandler(
 
 export const addCollaborator = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const [fileId, collaborators, id] = [
-      req.params.id,
-      req.body.id,
-      req.user.id,
-    ];
+    const { id } = req.user;
+    const {
+      id: fileId,
+      collaborators,
+    }: { fileId: string; collaborators: Collaborators } = req.body;
 
     if (!isValidObjectId(fileId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
@@ -212,7 +212,7 @@ export const addCollaborator = AsyncHandler(
       throw new ErrorHandler({ statusCode: 400, message: "Invalid user id" });
     }
 
-    if (!Array.isArray(collaborators) || collaborators.length === 0) {
+    if (!collaborators) {
       throw new ErrorHandler({
         statusCode: 400,
         message: "Collaborators is required",
@@ -229,13 +229,15 @@ export const addCollaborator = AsyncHandler(
       });
     }
 
-    const collaboratorId = collaborators.map((collaborator) => collaborator.id);
+    const collaboratorIds = Object.keys(collaborators);
 
     const updatedFile = await FileModel.updateOne(
       { _id: fileId },
       {
         $push: {
-          collaborators: collaboratorId,
+          collaborators: {
+              $each: collaboratorIds,
+          },
           collaborators_actions: collaborators,
         },
       },
