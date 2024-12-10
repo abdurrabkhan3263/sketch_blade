@@ -14,6 +14,7 @@ export default function AuthProtection({ children }: AuthLayoutProps) {
     if (isLoaded && !session) {
       navigate("/sign-in");
     }
+    console.log(session)
   }, [isLoaded, session, navigate]);
 
   if (!isLoaded) {

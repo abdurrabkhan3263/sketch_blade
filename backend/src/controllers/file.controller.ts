@@ -16,14 +16,14 @@ export const createFile = AsyncHandler(
     }: CreateFileRequest = req.body;
     const id = req.userId;
 
-    if (!isValidObjectId(id)) {
+    if (!id) {
       throw new ErrorHandler({
         statusCode: 400,
         message: "Invalid creator id",
       });
     }
 
-    if (folder_id && !isValidObjectId(folder_id)) {
+    if (!isValidObjectId(folder_id)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid folder id" });
     }
 

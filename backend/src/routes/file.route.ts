@@ -11,9 +11,11 @@ import {
   changeCollaboratorPermission,
   getFile,
 } from "../controllers/file.controller";
+import userMiddleware from "../middlewares/user.middleware";
 
 const router = Router();
 
+router.use(userMiddleware);
 router.route("/").post(createFile).get(getFiles);
 router.route("/:id").put(updateFile).delete(deleteFile).get(getFile);
 router.route("/:id/toggle-lock").put(toggleLock);

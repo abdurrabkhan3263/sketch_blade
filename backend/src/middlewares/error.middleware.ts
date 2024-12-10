@@ -1,22 +1,19 @@
-import express from "express";
+import { Request, Response, NextFunction } from "express";
+import ErrorHandler from "../utils/ErrorHandler";
 
-const ErrorHandler = (
-  err: any,
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
+const errorMiddleware = (
+  err: ErrorHandler,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-  const errStatus = err.status || 500;
-  const errMsg = err.message || "Something went wrong";
-
-  console.log(err.stack);
-
-  res.status(errStatus).json({
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(statusCode).json({
     success: false,
-    status: errStatus,
-    message: errMsg,
-    stack: process.env.NODE_ENV === "development" ? err.stack : {},
+    message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 };
 
-export default ErrorHandler;
+export default errorMiddleware;

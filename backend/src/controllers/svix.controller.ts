@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { CreateUserRequest, Id } from "../types/appType";
 import { Webhook, WebhookRequiredHeaders } from "svix";
-import { WebhookEvent } from "@clerk/clerk-sdk-node";
-import mongoose from "mongoose";
+import { WebhookEvent,clerkClient } from "@clerk/clerk-sdk-node";
 
 export type ClerkEvent = WebhookEvent;
 
@@ -13,24 +12,23 @@ const createUser = async ({
   first_name,
   last_name,
   image_url = "",
-}: CreateUserRequest): Promise<void> => {
+}: CreateUserRequest) => {
   if (!email || !first_name) {
     throw new Error("Email and first name are required");
   }
 
   try {
     const newUser = await User.create({
-      _id: id,
-      userId: id,
       email,
       first_name,
       last_name,
       image_url: image_url || "",
+      userId: id,
     });
 
-    console.log("New user created:", newUser);
-
     if (!newUser) throw new Error("Failed to create user");
+
+    return newUser
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
@@ -40,24 +38,30 @@ const createUser = async ({
 
 const updateUser = async (id: Id, data: CreateUserRequest) => {
   try {
-    const userExists = await User.exists({ _id: id });
+    const userExists = await User.exists({ userId: id });
 
     if (!userExists) {
       throw new Error("User not found");
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, {
-      $set: {
-        email: data.email,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        image_url: data.image_url,
+    const updatedUser = await User.findOneAndUpdate(
+      { userId: id },
+      {
+        $set: {
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          image_url: data.image_url,
+        },
       },
-    });
+        {new :true}
+    );
 
     if (!updatedUser) {
       throw new Error("Failed to update user");
     }
+
+    return updatedUser;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
@@ -67,15 +71,13 @@ const updateUser = async (id: Id, data: CreateUserRequest) => {
 
 const deleteUser = async (id: Id) => {
   try {
-    const userExists = await User.exists({ _id: id });
-
-    console.log("User exists:", userExists);
+    const userExists = await User.exists({ userId: id });
 
     if (!userExists) {
       throw new Error("User not found");
     }
 
-    const deletedUser = await User.findByIdAndDelete(id);
+    const deletedUser = await User.findOneAndDelete({ userId: id });
 
     if (!deletedUser) {
       throw new Error("Failed to delete user");
@@ -121,13 +123,10 @@ export const svixController = async (
       "svix-signature": svix_signature,
     } as WebhookRequiredHeaders) as ClerkEvent;
 
-    console.log("EVENT TYPE IS:::", evt.type);
-
     // Handle Clerk specific events
     switch (evt.type) {
       case "user.created":
       case "user.updated": {
-        console.log("Hello world");
         const {
           id,
           first_name,
@@ -144,12 +143,20 @@ export const svixController = async (
           image_url,
         } as CreateUserRequest;
 
-        console.log("User data:", userData);
-
         try {
-          await (evt.type === "user.created"
-            ? createUser(userData)
-            : updateUser(id, userData));
+          let user;
+
+          if (evt.type === "user.created") {
+            user = await createUser(userData);
+          } else {
+            user = await updateUser(id, userData);
+          }
+
+          await clerkClient.users.updateUser(id,{
+            publicMetadata:{
+              user_id:user._id
+            }
+          })
         } catch (error) {
           console.error(`Failed to ${evt.type} user:`, error);
           throw error;

@@ -3,6 +3,8 @@ import { createServer } from "node:http";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import userMiddleware from "./middlewares/user.middleware";
+import { clerkMiddleware } from "@clerk/express";
 
 dotenv.config();
 
@@ -11,6 +13,7 @@ const server = createServer(app);
 
 // Middleware
 
+app.use(clerkMiddleware());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -18,7 +21,8 @@ app.use(express.static("public"));
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: "GET,POST,PUT,DELETE",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
   }),
 );
 
@@ -26,14 +30,14 @@ app.use(
 import svixRouter from "./routes/svix.route";
 import folderRouter from "./routes/folder.route";
 import fileRouter from "./routes/file.route";
+import ErrorMiddleware from "./middlewares/error.middleware";
+import ErrorHandler from "./utils/ErrorHandler";
 
-app.get("/", (req, res) => {
-  console.log("Hello World");
-  res.status(200).json({ message: "Hello World" });
-});
 app.use("/api", svixRouter);
-app.use("/api/folders", folderRouter);
-app.use("/api/files", fileRouter);
+app.use("/api/folder", folderRouter);
+app.use("/api/file", fileRouter);
 
-export { app };
+// Error Middleware
+app.use(ErrorMiddleware);
+
 export default server;

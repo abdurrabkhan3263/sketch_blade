@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import AsyncHandler from "../utils/AsyncHandler";
 import FolderModel from "../models/folder.model";
 import ErrorHandler from "../utils/ErrorHandler";
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import { CreateFolderRequest } from "../types/appType";
 
 export const createFolder = AsyncHandler(
@@ -10,14 +10,17 @@ export const createFolder = AsyncHandler(
     const { folder_name = "" }: CreateFolderRequest = req.body;
     const userId = req.userId;
 
-    if (!isValidObjectId(userId)) {
+    if (!userId) {
       throw new ErrorHandler({
         statusCode: 400,
-        message: "Please provide folder name and creator id",
+        message: "Invalid creator id",
       });
     }
 
-    const folder = await FolderModel.create({ folder_name, userId });
+    console.log("Creator id :", userId);
+    const creator_id = new Types.ObjectId(userId);
+
+    const folder = await FolderModel.create({ folder_name, creator_id });
 
     if (!folder) {
       throw new ErrorHandler({
@@ -36,7 +39,7 @@ export const updateFolder = AsyncHandler(
     const { folder_name } = req.body;
     const userId = req.userId;
 
-    if (!isValidObjectId(userId)) {
+    if (!userId) {
       throw new ErrorHandler({
         statusCode: 400,
         message: "Invalid creator id",
@@ -78,7 +81,7 @@ export const deleteFolder = AsyncHandler(
     const { id } = req.params;
     const userId = req.userId;
 
-    if (!isValidObjectId(userId)) {
+    if (!userId) {
       throw new ErrorHandler({
         statusCode: 400,
         message: "Invalid creator id",

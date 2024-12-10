@@ -1,10 +1,5 @@
 import server from "./server";
-import { app } from "./server";
-import errorMiddleware from "./middlewares/error.middleware";
 import connectDB from "./db/mongoClient";
-
-// Middleware for handling errors
-app.use(errorMiddleware as any);
 
 connectDB()
   .then(() => {
