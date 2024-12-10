@@ -27,6 +27,10 @@ import svixRouter from "./routes/svix.route";
 import folderRouter from "./routes/folder.route";
 import fileRouter from "./routes/file.route";
 
+app.get("/", (req, res) => {
+  console.log("Hello World");
+  res.status(200).json({ message: "Hello World" });
+});
 app.use("/api", svixRouter);
 app.use("/api/folders", folderRouter);
 app.use("/api/files", fileRouter);

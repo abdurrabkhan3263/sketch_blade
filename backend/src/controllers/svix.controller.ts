@@ -3,6 +3,7 @@ import { User } from "../models/user.model";
 import { CreateUserRequest, Id } from "../types/appType";
 import { Webhook, WebhookRequiredHeaders } from "svix";
 import { WebhookEvent } from "@clerk/clerk-sdk-node";
+import mongoose from "mongoose";
 
 export type ClerkEvent = WebhookEvent;
 
@@ -20,6 +21,7 @@ const createUser = async ({
   try {
     const newUser = await User.create({
       _id: id,
+      userId: id,
       email,
       first_name,
       last_name,
@@ -44,17 +46,14 @@ const updateUser = async (id: Id, data: CreateUserRequest) => {
       throw new Error("User not found");
     }
 
-    const updatedUser = await User.updateOne(
-      { _id: id },
-      {
-        $set: {
-          email: data.email,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          image_url: data.image_url,
-        },
+    const updatedUser = await User.findByIdAndUpdate(id, {
+      $set: {
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        image_url: data.image_url,
       },
-    );
+    });
 
     if (!updatedUser) {
       throw new Error("Failed to update user");
@@ -70,11 +69,13 @@ const deleteUser = async (id: Id) => {
   try {
     const userExists = await User.exists({ _id: id });
 
+    console.log("User exists:", userExists);
+
     if (!userExists) {
       throw new Error("User not found");
     }
 
-    const deletedUser = await User.deleteOne({ _id: id });
+    const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) {
       throw new Error("Failed to delete user");
@@ -119,6 +120,8 @@ export const svixController = async (
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     } as WebhookRequiredHeaders) as ClerkEvent;
+
+    console.log("EVENT TYPE IS:::", evt.type);
 
     // Handle Clerk specific events
     switch (evt.type) {
