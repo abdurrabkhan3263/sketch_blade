@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { CreateUserRequest, Id } from "../types/appType";
 import { Webhook, WebhookRequiredHeaders } from "svix";
-import { WebhookEvent,clerkClient } from "@clerk/clerk-sdk-node";
+import { WebhookEvent, clerkClient } from "@clerk/clerk-sdk-node";
 
 export type ClerkEvent = WebhookEvent;
 
@@ -28,7 +28,7 @@ const createUser = async ({
 
     if (!newUser) throw new Error("Failed to create user");
 
-    return newUser
+    return newUser;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
@@ -54,7 +54,7 @@ const updateUser = async (id: Id, data: CreateUserRequest) => {
           image_url: data.image_url,
         },
       },
-        {new :true}
+      { new: true },
     );
 
     if (!updatedUser) {
@@ -152,11 +152,11 @@ export const svixController = async (
             user = await updateUser(id, userData);
           }
 
-          await clerkClient.users.updateUser(id,{
-            publicMetadata:{
-              user_id:user._id
-            }
-          })
+          await clerkClient.users.updateUser(id, {
+            publicMetadata: {
+              user_id: user._id,
+            },
+          });
         } catch (error) {
           console.error(`Failed to ${evt.type} user:`, error);
           throw error;

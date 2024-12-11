@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import AsyncHandler from "../utils/AsyncHandler";
 import FileModel from "../models/file.model";
 import ErrorHandler from "../utils/ErrorHandler";
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import { Collaborators, CreateFileRequest } from "../types/appType";
 import ApiResponse from "../utils/ApiResponse";
 
@@ -23,7 +23,7 @@ export const createFile = AsyncHandler(
       });
     }
 
-    if (!isValidObjectId(folder_id)) {
+    if (folder_id && !isValidObjectId(folder_id)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid folder id" });
     }
 
@@ -40,11 +40,11 @@ export const createFile = AsyncHandler(
 
     const file = await FileModel.create({
       file_name,
-      folder_id: folder_id || null,
+      folder_id,
       creator_id: id,
       collaborators: collaborator_ids,
       collaborators_actions: collaborators,
-      description: description || "",
+      description,
     });
 
     if (!file) {
@@ -198,11 +198,9 @@ export const toggleLock = AsyncHandler(
 
 export const addCollaborator = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
+    const fileId = req.params.id;
     const userId = req.userId;
-    const {
-      id: fileId,
-      collaborators,
-    }: { id: string; collaborators: Collaborators } = req.body;
+    const { collaborators }: { collaborators: Collaborators } = req.body;
 
     if (!isValidObjectId(fileId)) {
       throw new ErrorHandler({ statusCode: 400, message: "Invalid file id" });
@@ -219,7 +217,10 @@ export const addCollaborator = AsyncHandler(
       });
     }
 
-    const file = await FileModel.findOne({ _id: fileId, creator_id: userId });
+    const file = await FileModel.findOne({
+      _id: fileId,
+      creator_id: userId,
+    }).lean();
 
     if (!file) {
       throw new ErrorHandler({
@@ -229,7 +230,9 @@ export const addCollaborator = AsyncHandler(
       });
     }
 
-    const collaboratorIds = Object.keys(collaborators);
+    const collaboratorIds = Object.keys(collaborators).map(
+      (id) => new Types.ObjectId(id),
+    );
 
     const updatedFile = await FileModel.updateOne(
       { _id: fileId },
@@ -237,7 +240,7 @@ export const addCollaborator = AsyncHandler(
         {
           $set: {
             collaborators: {
-              $concatArrays: ["$collaborators", collaboratorIds],
+              $setUnion: ["$collaborators", collaboratorIds],
             },
             collaborators_actions: {
               $mergeObjects: ["$collaborators_actions", collaborators],

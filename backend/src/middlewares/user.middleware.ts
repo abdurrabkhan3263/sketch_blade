@@ -8,17 +8,21 @@ const userMiddleware = AsyncHandler(
   async (req: Request, _: Response, next: NextFunction) => {
     try {
       const authHeader = req.headers.authorization;
-      const token = authHeader && authHeader.split(" ")[1];
+      const token = authHeader && authHeader.replace("Bearer ", "");
 
       if (!token)
-        throw new ErrorHandler({ statusCode: 401, message: "Unauthorized" });
+        throw new ErrorHandler({
+          statusCode: 401,
+          message: "Invalid user token",
+        });
+
       const userRes = await clerkClient.users.getUser(token);
 
-      if (!userRes) {
+      if (!userRes || !userRes.publicMetadata?.user_id) {
         throw new ErrorHandler({ statusCode: 401, message: "Unauthorized" });
       }
 
-      req.userId = userRes.id;
+      req.userId = userRes.publicMetadata.user_id as string;
     } catch {
       throw new ErrorHandler({ statusCode: 401, message: "Unauthorized" });
     }

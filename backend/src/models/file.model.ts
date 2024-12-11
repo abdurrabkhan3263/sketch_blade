@@ -23,7 +23,6 @@ const fileSchema = new Schema<IFile>(
     folder_id: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
-      required: true,
     },
     creator_id: {
       type: Schema.Types.ObjectId,
@@ -36,9 +35,6 @@ const fileSchema = new Schema<IFile>(
         ref: "User",
       },
     ],
-    // collaborators_actions: {
-    //   key: [{ type: "view" }, { type: "edit" }, { type: "comment" }],
-    // },
     collaborators_actions: {
       type: Map,
       of: {
