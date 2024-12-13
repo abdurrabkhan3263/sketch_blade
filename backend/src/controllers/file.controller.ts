@@ -473,19 +473,147 @@ export const getFiles = AsyncHandler(
          });
       }
 
-      const files = await FileModel.find({ creator_id: userId });
+      const files = await FileModel.aggregate([
+         {
+            $match: {
+               $or: [
+                  {
+                     creator_id: new Types.ObjectId(userId),
+                  },
+                  {
+                     collaborators: {
+                        $in: [new Types.ObjectId(userId)],
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "folders",
+               localField: "folder_id",
+               foreignField: "_id",
+               as: "folder",
+               pipeline: [
+                  {
+                     $project: {
+                        folder_name: 1,
+                        createdAt: 1,
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "active_collaborators",
+               foreignField: "_id",
+               as: "active_collaborators",
+               pipeline: [
+                  {
+                     $project: {
+                        _id: 0,
+                        profile_url: 1,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "creator_id",
+               foreignField: "_id",
+               as: "creator",
+               pipeline: [
+                  {
+                     $project: {
+                        _id: 0,
+                        profile_url: 1,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $addFields: {
+               folder: {
+                  $first: "$folder",
+               },
+               creator: {
+                  $first: "$creator",
+               },
+            },
+         },
+         {
+            $project: {
+               file_name: 1,
+               description: 1,
+               folder: 1,
+               active_collaborators: 1,
+               creator: 1,
+               createdAt: 1,
+            },
+         },
+      ]);
 
-      if (!files) {
+      if (!files?.length) {
          throw new ErrorHandler({
             statusCode: 404,
             message: "Files not found",
          });
       }
 
+      const beautifyFiles = files.reduce((acc: any[], file: any) => {
+         if (file.folder) {
+            const existingFolder = acc.find(
+               (f) => f._id.toString() === file.folder._id.toString(),
+            );
+
+            if (existingFolder) {
+               existingFolder.files.push({
+                  _id: file._id,
+                  file_name: file.file_name,
+                  description: file.description,
+                  active_collaborators: file.active_collaborators,
+                  creator: file.creator,
+                  createdAt: file.createdAt,
+               });
+            } else {
+               acc.push({
+                  ...file.folder,
+                  files: [
+                     {
+                        _id: file._id,
+                        file_name: file.file_name,
+                        description: file.description,
+                        active_collaborators: file.active_collaborators,
+                        creator: file.creator,
+                        createdAt: file.createdAt,
+                     },
+                  ],
+               });
+            }
+         } else {
+            acc.push({
+               ...file,
+               type: "file",
+            });
+         }
+         return acc;
+      }, []);
+
       res.status(200).json(
          ApiResponse.success({
             success: true,
-            data: files,
+            data: beautifyFiles,
             message: "Files found successfully",
          }),
       );
