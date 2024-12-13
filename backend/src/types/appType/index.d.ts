@@ -1,76 +1,76 @@
 export declare type User = {
-  _id: Id;
-  first_name: FirstName;
-  last_name: LastName;
-  email: Email;
-  password: Password;
-  image_url: Image;
-  socket_id: SocketId;
-  createdAt: CreatedAt;
-  updatedAt: UpdatedAt;
+   _id: Id;
+   first_name: FirstName;
+   last_name: LastName;
+   email: Email;
+   password: Password;
+   profile_url: Image;
+   socket_id: SocketId;
+   createdAt: CreatedAt;
+   updatedAt: UpdatedAt;
 };
 
 export declare type CreateUserRequest = {
-  id: Id;
-  first_name: FirstName;
-  last_name?: LastName;
-  email: Email;
-  password: Password;
-  image_url?: Image;
+   id: Id;
+   first_name: FirstName;
+   last_name?: LastName;
+   email: Email;
+   password: Password;
+   profile_url?: Image;
 };
 
 export declare type ApiResponse = {
-  success?: boolean;
-  statusCode?: number;
-  message: string;
-  data?: any;
+   success?: boolean;
+   statusCode?: number;
+   message: string;
+   data?: any;
 };
 
 export declare type Error = {
-  statusCode: number;
-  message: string;
+   statusCode: number;
+   message: string;
 };
 
 // Folder
 export declare type Folder = {
-  _id: Id;
-  folder_name: string;
-  creator_id: Id;
-  createdAt: CreatedAt;
-  updatedAt: UpdatedAt;
+   _id: Id;
+   folder_name: string;
+   creator_id: Id;
+   createdAt: CreatedAt;
+   updatedAt: UpdatedAt;
 };
 
 export declare type CreateFolderRequest = {
-  folder_name: string;
-  creator_id: Id;
+   folder_name: string;
+   creator_id: Id;
 };
 
 export declare type UpdateFolderRequest = {
-  folder_name: string;
+   folder_name: string;
 };
 
 // File
 export declare type File = {
-  _id: Id;
-  file_name: string;
-  folder?: Folder;
-  collaborators: User[];
-  active_collaborators: User[];
-  room_id?: string;
-  locked: boolean;
-  createdAt: CreatedAt;
-  updatedAt: UpdatedAt;
+   _id: Id;
+   file_name: string;
+   folder?: Folder;
+   collaborators: User[];
+   active_collaborators: User[];
+   room_id?: string;
+   locked: boolean;
+   createdAt: CreatedAt;
+   updatedAt: UpdatedAt;
 };
 
 export declare type CreateFileRequest = {
-  file_name: string;
-  folder_id?: Id;
-  collaborators?: Collaborators;
-  description?: string;
+   file_name: string;
+   folder_id?: Id;
+   collaborators?: Collaborators;
+   description?: string;
 };
 
 export declare type UpdateFileRequest = {
-  file_name: string;
+   file_name: string;
 };
 
 export declare type Password = string;
@@ -85,7 +85,8 @@ export declare type UpdatedAt = string;
 export declare type id = string;
 export declare type Collaborators = { [key: string]: CollaboratorAction };
 export declare enum CollaboratorAction {
-  Edit = "edit",
-  View = "view",
-  Comment = "comment",
+   Edit = "edit",
+   View = "view",
+   Comment = "comment",
+   Owner = "owner",
 }
