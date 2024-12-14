@@ -481,9 +481,7 @@ export const getFiles = AsyncHandler(
                      creator_id: new Types.ObjectId(userId),
                   },
                   {
-                     collaborators: {
-                        $in: [new Types.ObjectId(userId)],
-                     },
+                     collaborators: new Types.ObjectId(userId),
                   },
                ],
             },
@@ -572,39 +570,42 @@ export const getFiles = AsyncHandler(
       }
 
       const beautifyFiles = files.reduce((acc: any[], file: any) => {
-         if (file.folder) {
-            const existingFolder = acc.find(
-               (f) => f._id.toString() === file.folder._id.toString(),
-            );
-
-            if (existingFolder) {
-               existingFolder.files.push({
-                  _id: file._id,
-                  file_name: file.file_name,
-                  description: file.description,
-                  active_collaborators: file.active_collaborators,
-                  creator: file.creator,
-                  createdAt: file.createdAt,
-               });
-            } else {
-               acc.push({
-                  ...file.folder,
-                  files: [
-                     {
-                        _id: file._id,
-                        file_name: file.file_name,
-                        description: file.description,
-                        active_collaborators: file.active_collaborators,
-                        creator: file.creator,
-                        createdAt: file.createdAt,
-                     },
-                  ],
-               });
-            }
-         } else {
+         if (!file.folder) {
             acc.push({
                ...file,
                type: "file",
+            });
+            return acc;
+         }
+
+         const folderId = file.folder._id.toString();
+         const existingFolderIndex = acc.findIndex(
+            (f) => f._id.toString() === folderId,
+         );
+
+         if (existingFolderIndex !== -1) {
+            acc[existingFolderIndex].files.push({
+               _id: file._id,
+               file_name: file.file_name,
+               description: file.description,
+               active_collaborators: file.active_collaborators,
+               creator: file.creator,
+               createdAt: file.createdAt,
+            });
+         } else {
+            acc.push({
+               ...file.folder,
+               files: [
+                  {
+                     _id: file._id,
+                     file_name: file.file_name,
+                     description: file.description,
+                     active_collaborators: file.active_collaborators,
+                     creator: file.creator,
+                     createdAt: file.createdAt,
+                  },
+               ],
+               type: "folder",
             });
          }
          return acc;
@@ -703,13 +704,13 @@ export const getCollaborators = AsyncHandler(
          },
          {
             $project: {
-               _id: 1,
+               _id: 0,
                collaborators: 1,
             },
          },
       ]);
 
-      if (!findFileCollaborators) {
+      if (!findFileCollaborators.length) {
          throw new ErrorHandler({
             statusCode: 404,
             message: "Collaborators not found",
