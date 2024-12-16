@@ -1,4 +1,4 @@
-import { Error as ErrorType } from "../types/index";
+import { Error as ErrorType } from "../types/appType";
 
 export default class ErrorHandler extends Error {
   statusCode: number;
@@ -7,6 +7,8 @@ export default class ErrorHandler extends Error {
   constructor({ statusCode, message = "Something went wrong" }: ErrorType) {
     super(message);
     this.statusCode = statusCode;
-    this.stack = new Error().stack;
+    if (!this.stack) {
+      this.stack = new Error().stack;
+    }
   }
 }

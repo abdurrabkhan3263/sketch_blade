@@ -7,6 +7,7 @@ services:
       - "6379:6379"
     volumes:
       - ./dockerDB/redis-data:/data
+    command: ["redis-server", "--requirepass", "Abdul1234"]
 
   mongo-db:
     container_name: mongo-db

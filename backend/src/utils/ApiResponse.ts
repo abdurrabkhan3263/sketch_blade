@@ -1,4 +1,4 @@
-import { ApiResponse as TypeApiResponse } from "../types";
+import { ApiResponse as TypeApiResponse } from "../types/appType";
 
 export default class ApiResponse {
   static success({ data, message, statusCode = 200 }: TypeApiResponse) {

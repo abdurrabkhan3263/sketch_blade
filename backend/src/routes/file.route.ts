@@ -8,17 +8,22 @@ import {
   toggleLock,
   updateFile,
   addCollaborator,
+  changeCollaboratorPermission,
+  getFile,
 } from "../controllers/file.controller";
+import userMiddleware from "../middlewares/user.middleware";
 
 const router = Router();
 
+router.use(userMiddleware);
 router.route("/").post(createFile).get(getFiles);
-router.route("/:id").put(updateFile).delete(deleteFile);
+router.route("/:id").put(updateFile).delete(deleteFile).get(getFile);
 router.route("/:id/toggle-lock").put(toggleLock);
 router
   .route("/:id/collaborators")
   .get(getCollaborators)
-  .put(removeCollaborator);
+  .delete(removeCollaborator)
+  .put(changeCollaboratorPermission);
 router.route("/:id/collaborators/add").put(addCollaborator);
 
 export default router;
