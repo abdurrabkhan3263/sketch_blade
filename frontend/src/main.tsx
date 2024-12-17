@@ -9,6 +9,7 @@ import { createBrowserRouter } from "react-router";
 import Sign_In from "./pages/auth/Sign_In.tsx";
 import Sign_Up from "./pages/auth/Sign_Up.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { All, Recent, CreatedByMe, Folder } from "./pages/Home/index";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -19,11 +20,17 @@ if (!PUBLISHABLE_KEY) {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<App />}></Route>
+      <Route path="/home" element={<App />}>
+        <Route path={""} element={<All />} />
+        <Route path={"folder"} element={<Folder />} />
+        <Route path={"recent"} element={<Recent />} />
+        <Route path={"created-by-me"} element={<CreatedByMe />} />
+        <Route path={"file/:id"} element={<>File with id</>} />
+      </Route>
       <Route path="/sign-in" element={<Sign_In />} />
       <Route path="/sign-up" element={<Sign_Up />} />
-    </>
-  )
+    </>,
+  ),
 );
 
 createRoot(document.getElementById("root")!).render(
@@ -38,5 +45,5 @@ createRoot(document.getElementById("root")!).render(
         <RouterProvider router={router} />
       </Provider>
     </ClerkProvider>
-  </StrictMode>
+  </StrictMode>,
 );

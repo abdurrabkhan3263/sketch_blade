@@ -1,8 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
+    --primary: #1B262C;
+    --secondary: #0F4C75;
+    --tertiary: #3282B8;
+    --quaternary: #BBE1FA;
+    --dark-secondary: #0F4C75;
+    --btn: #1571AE;
+    --line: #B8A5A5;
+  }
+}
+
+@layer utilities{
+  .size-screen{
+    @apply w-screen h-screen;
+  }
+  .size-full{
+    @apply w-full h-full;
+  }
+  .flex-center{
+    @apply flex justify-center items-center;
+  }
+  .flex-start{
+    @apply flex justify-start items-center;
+  }
+  .main-container{
+    @apply xl:w-[1300px] lg:w-[1000px] md:w-[750px] sm:w-[600px] w-full;
+  }
+  .size-icon{
+    @apply w-12 h-12;
   }
 }
