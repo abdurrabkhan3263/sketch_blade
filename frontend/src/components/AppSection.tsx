@@ -69,28 +69,41 @@ const IfFile = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className={"flex size-full flex-col gap-y-8 px-4 md:px-0"}>
-      <div className={"w-full rounded-md border border-tertiary px-4 py-2"}>
-        <div>
-          <ul className={"flex-start select-none flex-wrap gap-4 capitalize"}>
-            {navLinks.map(({ pathName, name }) => {
-              return (
-                <li
-                  key={pathName}
-                  className={`rounded-md ${pathname === pathName && "bg-secondary"} px-8 py-1`}
-                >
-                  <NavLink
-                    to={pathName}
-                    className={
-                      "text-quaternary transition-colors hover:text-tertiary"
-                    }
+    <div className={"flex size-full flex-col gap-y-6 px-4 md:px-0"}>
+      <div className={"flex w-full flex-col gap-y-4"}>
+        <div className={"w-full rounded-md border border-tertiary px-4 py-2"}>
+          <div>
+            <ul className={"flex-start select-none flex-wrap gap-4 capitalize"}>
+              {navLinks.map(({ pathName, name }) => {
+                return (
+                  <li
+                    key={pathName}
+                    className={`rounded-md ${pathname === pathName && "bg-secondary"} py-1.5 text-sm`}
                   >
-                    {name}
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
+                    <NavLink
+                      to={pathName}
+                      className={
+                        "px-8 text-quaternary transition-colors hover:text-tertiary"
+                      }
+                    >
+                      {name}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+        <div className={"w-full text-end"}>
+          <Button className={"bg-tertiary"}>
+            Create File
+            <span className={"h-6 w-6"}>
+              <img
+                src={"/assets/icons/add.svg"}
+                className={"size-full object-cover"}
+              />
+            </span>
+          </Button>
         </div>
       </div>
       <div className={"size-full flex-1"}>

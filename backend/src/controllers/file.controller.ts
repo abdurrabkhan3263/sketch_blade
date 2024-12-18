@@ -553,11 +553,11 @@ export const getFiles = AsyncHandler(
          {
             $project: {
                file_name: 1,
-               description: 1,
                folder: 1,
                active_collaborators: 1,
                creator: 1,
                createdAt: 1,
+               updatedAt: 1,
             },
          },
       ]);
@@ -569,6 +569,7 @@ export const getFiles = AsyncHandler(
          });
       }
 
+      // TODO: Refactor this code
       const beautifyFiles = files.reduce((acc: any[], file: any) => {
          if (!file.folder) {
             acc.push({
@@ -591,6 +592,7 @@ export const getFiles = AsyncHandler(
                active_collaborators: file.active_collaborators,
                creator: file.creator,
                createdAt: file.createdAt,
+               updatedAt: file.updatedAt,
             });
          } else {
             acc.push({
@@ -603,6 +605,7 @@ export const getFiles = AsyncHandler(
                      active_collaborators: file.active_collaborators,
                      creator: file.creator,
                      createdAt: file.createdAt,
+                     updatedAt: file.updated,
                   },
                ],
                type: "folder",
