@@ -26,15 +26,11 @@ const navLinks: NavLinks = [
   },
 ];
 
-interface IfFileProps {
-  listFiles: any[];
-}
-
 const AppSection = () => {
   const [listFiles, setListFiles] = React.useState([1]);
 
   return (
-    <div className={"main-container mt-9 flex-1"}>
+    <div className={"main-container"} style={{ height: "calc(100vh - 5rem)" }}>
       {listFiles.length === 0 ? <IfNoFile /> : <IfFile />}
     </div>
   );
@@ -69,8 +65,8 @@ const IfFile = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className={"flex size-full flex-col gap-y-6 px-4 md:px-0"}>
-      <div className={"flex w-full flex-col gap-y-4"}>
+    <div className={"flex size-full flex-col gap-y-5 px-4 pt-9 md:px-0"}>
+      <div className={"flex w-full flex-col gap-y-4 overflow-y-hidden"}>
         <div className={"w-full rounded-md border border-tertiary px-4 py-2"}>
           <div>
             <ul className={"flex-start select-none flex-wrap gap-4 capitalize"}>
@@ -106,7 +102,7 @@ const IfFile = () => {
           </Button>
         </div>
       </div>
-      <div className={"size-full flex-1"}>
+      <div className={"size-full flex-1 overflow-y-auto"}>
         <Outlet />
       </div>
     </div>

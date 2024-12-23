@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "./Container.tsx";
-import FilesTable from "../../components/Table/File/FilesTable.tsx";
+import FilesTable from "../../components/Table/FilesTable.tsx";
 
 const All = () => {
   return (

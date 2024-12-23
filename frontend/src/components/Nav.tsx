@@ -1,11 +1,14 @@
 import React from "react";
+import AuthBtn from "./AuthBtn.tsx";
 
 const Nav = () => {
   return (
-    <nav className={"w-full h-20 px-12 flex items-center"}>
-      <div className={"flex items-center justify-between size-full"}>
+    <nav className={"flex h-20 w-full items-center px-12"}>
+      <div className={"flex size-full items-center justify-between"}>
         <div>Logo</div>
-        <div>User</div>
+        <div>
+          <AuthBtn />
+        </div>
       </div>
     </nav>
   );
@@ -14,7 +17,7 @@ export default Nav;
 
 const MobileNav = () => {
   return (
-    <nav className={"w-full h-20 flex items-center justify-between px-12 "}>
+    <nav className={"flex h-20 w-full items-center justify-between px-12"}>
       Nav
       <div>hello</div>
     </nav>

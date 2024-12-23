@@ -1,31 +1,32 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "../../ui/checkbox";
+import { ColumnDef, Column } from "@tanstack/react-table";
+import { Checkbox } from "../ui/checkbox.tsx";
 import { ArrowUpDown } from "lucide-react";
-import { Button } from "../../ui/button";
-import { File, UserDetails } from "../../../lib/Types";
-import { timeAgo } from "../../../lib/utils";
-import ProfileImg from "../../ProfileImg";
+import { Button } from "../ui/button.tsx";
+import { File, UserDetails } from "../../lib/Types";
+import { timeAgo } from "../../lib/utils.ts";
+import ProfileImg from "../ProfileImg.tsx";
 
-// Reusable function for creating sortable column headers
-const createSortableHeader = (label: string) => {
-  return ({ column }) => (
-    <Button
-      variant="none"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="flex items-center gap-1"
-    >
-      {label}
-      <ArrowUpDown className="h-4 w-4" />
-    </Button>
+type ColumnType = Column<File, unknown>;
+
+export const createSortableHeader = (label: string) => {
+  return ({ column }: { column: ColumnType }) => (
+    <div className={"w-full"}>
+      <Button
+        variant="none"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="mx-auto flex items-center gap-1"
+      >
+        {label}
+        <ArrowUpDown className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
 
-// Reusable component for time display
 const TimeDisplay = ({ value }: { value: string | null }) => (
   <div className="capitalize">{value ? timeAgo(value) : "-"}</div>
 );
 
-// Reusable component for active collaborators
 const ActiveCollaborators = ({
   collaborators,
 }: {
@@ -51,7 +52,7 @@ const ActiveCollaborators = ({
   );
 };
 
-export const columns: ColumnDef<File>[] = [
+export const fileColumns: ColumnDef<File>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -62,6 +63,7 @@ export const columns: ColumnDef<File>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className={"border-zinc-200"}
       />
     ),
     cell: ({ row }) => (
@@ -69,6 +71,7 @@ export const columns: ColumnDef<File>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className={"border-zinc-200"}
       />
     ),
     enableSorting: false,

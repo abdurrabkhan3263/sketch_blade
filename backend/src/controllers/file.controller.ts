@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import AsyncHandler from "../utils/AsyncHandler";
 import FileModel from "../models/file.model";
 import ErrorHandler from "../utils/ErrorHandler";
-import { isValidObjectId, Types } from "mongoose";
+import { isValidObjectId, Schema, Types, ObjectId } from "mongoose";
 import { Collaborators, CreateFileRequest } from "../types/appType";
 import ApiResponse from "../utils/ApiResponse";
+import DatabaseConnection from "../db/DatabaseConnection";
+import { CACHE_EXPIRATION } from "../lib/constants";
 
 export const createFile = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
@@ -30,23 +32,11 @@ export const createFile = AsyncHandler(
          });
       }
 
-      if (collaborators && !Object.keys(collaborators).length) {
-         throw new ErrorHandler({
-            statusCode: 400,
-            message: "Collaborators is required",
-         });
-      }
-
-      const collaborator_ids = collaborators
-         ? Object.keys(collaborators).map((id) => new Types.ObjectId(id))
-         : [];
-
       const file = await FileModel.create({
          file_name,
-         folder_id,
-         collaborators: collaborator_ids,
-         collaborators_actions: collaborators,
-         creator_id: id,
+         folder: folder_id,
+         creator: id,
+         collaborators,
          description,
       });
 
@@ -105,7 +95,7 @@ export const updateFile = AsyncHandler(
       }
 
       if (
-         file.creator_id.toString() !== userId &&
+         file.creator.toString() !== userId &&
          !file.collaborators_actions[userId]?.includes("edit")
       ) {
          throw new ErrorHandler({
@@ -156,7 +146,7 @@ export const deleteFile = AsyncHandler(
          });
       }
 
-      const file = await FileModel.findOne({ _id: id, creator_id: userId });
+      const file = await FileModel.findOne({ _id: id, creator: userId });
 
       if (!file) {
          throw new ErrorHandler({
@@ -202,7 +192,7 @@ export const toggleLock = AsyncHandler(
          });
       }
 
-      const file = await FileModel.findOne({ _id: id, creator_id: userId });
+      const file = await FileModel.findOne({ _id: id, creator: userId });
 
       if (!file) {
          throw new ErrorHandler({
@@ -238,7 +228,7 @@ export const addCollaborator = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
       const fileId = req.params.id;
       const userId = req.userId;
-      const { collaborators }: { collaborators: Collaborators } = req.body;
+      const { collaborators }: { collaborators: Collaborators[] } = req.body;
 
       if (!isValidObjectId(fileId)) {
          throw new ErrorHandler({
@@ -263,7 +253,7 @@ export const addCollaborator = AsyncHandler(
 
       const file = await FileModel.findOne({
          _id: fileId,
-         creator_id: userId,
+         creator: userId,
       }).lean();
 
       if (!file) {
@@ -274,26 +264,15 @@ export const addCollaborator = AsyncHandler(
          });
       }
 
-      const collaboratorIds = Object.keys(collaborators).map(
-         (id) => new Types.ObjectId(id),
-      );
-
-      console.log("Collaborator Ids: ", collaboratorIds);
-
-      const updatedFile = await FileModel.updateOne(
-         { _id: new Types.ObjectId(fileId) },
-         [
-            {
-               $set: {
-                  collaborators: {
-                     $setUnion: ["$collaborators", collaboratorIds],
-                  },
-                  collaborators_actions: {
-                     $mergeObjects: ["$collaborators_actions", collaborators],
-                  },
+      const updatedFile = await FileModel.findByIdAndUpdate(
+         fileId,
+         {
+            $push: {
+               collaborators: {
+                  $each: collaborators,
                },
             },
-         ],
+         },
          { new: true },
       );
 
@@ -343,14 +322,7 @@ export const removeCollaborator = AsyncHandler(
          });
       }
 
-      if (!collaboratorIds.every((id: string) => isValidObjectId(id))) {
-         throw new ErrorHandler({
-            statusCode: 400,
-            message: "Invalid collaborator id",
-         });
-      }
-
-      const file = await FileModel.findOne({ _id: fileId, creator_id: id });
+      const file = await FileModel.findOne({ _id: fileId, creator: id });
 
       if (!file) {
          throw new ErrorHandler({
@@ -365,16 +337,11 @@ export const removeCollaborator = AsyncHandler(
          {
             $pull: {
                collaborators: {
-                  $in: collaboratorIds,
+                  user: {
+                     $in: collaboratorIds,
+                  },
                },
             },
-            $unset: collaboratorIds.reduce(
-               (acc: Record<string, string>, id: string) => {
-                  acc[`collaborators_actions.${id}`] = "";
-                  return acc;
-               },
-               {},
-            ),
          },
          { new: true },
       );
@@ -398,16 +365,9 @@ export const removeCollaborator = AsyncHandler(
 
 export const changeCollaboratorPermission = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
-      const [fileId, collaborator, id] = [
-         req.params.id,
-         req.body.collaborator,
-         req.userId,
-      ];
-
-      console.log("Collaborator is:: ", collaborator);
-
-      const collaboratorId = Object.keys(collaborator)[0];
-      const collaboratorActions = collaborator[collaboratorId];
+      const { id: fileId } = req.params;
+      const { collaborator }: { collaborator: Collaborators } = req.body;
+      const id = req.userId;
 
       if (!isValidObjectId(fileId)) {
          throw new ErrorHandler({
@@ -423,14 +383,17 @@ export const changeCollaboratorPermission = AsyncHandler(
          });
       }
 
-      if (!isValidObjectId(collaboratorId)) {
+      if (
+         !Array.isArray(collaborator.actions) ||
+         collaborator.actions.length === 0
+      ) {
          throw new ErrorHandler({
             statusCode: 400,
-            message: "Invalid collaborator id",
+            message: "Collaborator actions is required",
          });
       }
 
-      const file = await FileModel.findOne({ _id: fileId, creator_id: id });
+      const file = await FileModel.findOne({ _id: fileId, creator: id });
 
       if (!file) {
          throw new ErrorHandler({
@@ -440,11 +403,20 @@ export const changeCollaboratorPermission = AsyncHandler(
          });
       }
 
-      const updatedFile = await FileModel.findByIdAndUpdate(fileId, {
-         $set: {
-            [`collaborators_actions.${collaboratorId}`]: collaboratorActions,
+      const updatedFile = await FileModel.findOneAndUpdate(
+         { _id: fileId },
+         {
+            $set: {
+               "collaborators.$[elem].actions": collaborator.actions,
+            },
          },
-      });
+         {
+            arrayFilters: [{ "elem.user": collaborator.user }],
+            new: true,
+            runValidators: true,
+            lean: true,
+         },
+      );
 
       if (!updatedFile) {
          throw new ErrorHandler({
@@ -473,12 +445,25 @@ export const getFiles = AsyncHandler(
          });
       }
 
+      const redisClient = DatabaseConnection.getRedisClient();
+      const cachedData = await redisClient.get(`files:${userId}`);
+
+      if (cachedData) {
+         res.status(200).json(
+            ApiResponse.success({
+               data: JSON.parse(cachedData),
+               message: "Files found successfully",
+            }),
+         );
+         return;
+      }
+
       const files = await FileModel.aggregate([
          {
             $match: {
                $or: [
                   {
-                     creator_id: new Types.ObjectId(userId),
+                     creator: new Types.ObjectId(userId),
                   },
                   {
                      collaborators: new Types.ObjectId(userId),
@@ -489,14 +474,13 @@ export const getFiles = AsyncHandler(
          {
             $lookup: {
                from: "folders",
-               localField: "folder_id",
+               localField: "folder",
                foreignField: "_id",
                as: "folder",
                pipeline: [
                   {
                      $project: {
                         folder_name: 1,
-                        createdAt: 1,
                      },
                   },
                ],
@@ -524,7 +508,7 @@ export const getFiles = AsyncHandler(
          {
             $lookup: {
                from: "users",
-               localField: "creator_id",
+               localField: "creator",
                foreignField: "_id",
                as: "creator",
                pipeline: [
@@ -554,7 +538,9 @@ export const getFiles = AsyncHandler(
             $project: {
                file_name: 1,
                folder: 1,
-               active_collaborators: 1,
+               active_collaborators: {
+                  $slice: ["$active_collaborators", 3],
+               },
                creator: 1,
                createdAt: 1,
                updatedAt: 1,
@@ -569,62 +555,173 @@ export const getFiles = AsyncHandler(
          });
       }
 
-      // TODO: Refactor this code
-      const beautifyFiles = files.reduce((acc: any[], file: any) => {
-         if (!file.folder) {
-            acc.push({
-               ...file,
-               type: "file",
-            });
-            return acc;
-         }
-
-         const folderId = file.folder._id.toString();
-         const existingFolderIndex = acc.findIndex(
-            (f) => f._id.toString() === folderId,
-         );
-
-         if (existingFolderIndex !== -1) {
-            acc[existingFolderIndex].files.push({
-               _id: file._id,
-               file_name: file.file_name,
-               description: file.description,
-               active_collaborators: file.active_collaborators,
-               creator: file.creator,
-               createdAt: file.createdAt,
-               updatedAt: file.updatedAt,
-            });
-         } else {
-            acc.push({
-               ...file.folder,
-               files: [
-                  {
-                     _id: file._id,
-                     file_name: file.file_name,
-                     description: file.description,
-                     active_collaborators: file.active_collaborators,
-                     creator: file.creator,
-                     createdAt: file.createdAt,
-                     updatedAt: file.updated,
-                  },
-               ],
-               type: "folder",
-            });
-         }
-         return acc;
-      }, []);
+      redisClient.set(`files:${userId}`, JSON.stringify(files), {
+         EX: CACHE_EXPIRATION,
+      });
 
       res.status(200).json(
          ApiResponse.success({
             success: true,
-            data: beautifyFiles,
+            data: files,
             message: "Files found successfully",
          }),
       );
    },
 );
 
-export const getFile = AsyncHandler(async (req: Request, res: Response) => {});
+export const getFile = AsyncHandler(async (req: Request, res: Response) => {
+   const { id } = req.params;
+
+   if (!isValidObjectId(id)) {
+      throw new ErrorHandler({
+         statusCode: 400,
+         message: "Invalid file id",
+      });
+   }
+
+   const redisClient = DatabaseConnection.getRedisClient();
+   const cachedData = await redisClient.get(`file:${id}`);
+
+   if (cachedData) {
+      res.status(200).json(
+         ApiResponse.success({
+            data: JSON.parse(cachedData),
+            message: "File found successfully",
+         }),
+      );
+      return;
+   }
+
+   const file = await FileModel.aggregate([
+      {
+         $match: {
+            _id: new Types.ObjectId(id),
+         },
+      },
+      {
+         $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+            pipeline: [
+               {
+                  $project: {
+                     _id: 0,
+                     full_name: {
+                        $concat: ["$first_name", " ", "$last_name"],
+                     },
+                     profile_url: 1,
+                  },
+               },
+            ],
+         },
+      },
+      {
+         $lookup: {
+            from: "users",
+            localField: "active_collaborators",
+            foreignField: "_id",
+            as: "active_collaborators",
+            pipeline: [
+               {
+                  $project: {
+                     _id: 0,
+                     full_name: {
+                        $concat: ["$first_name", " ", "$last_name"],
+                     },
+                     email: 1,
+                     profile_url: 1,
+                  },
+               },
+            ],
+         },
+      },
+      {
+         $unwind: "$collaborators",
+      },
+      {
+         $lookup: {
+            from: "users",
+            localField: "collaborators.user",
+            foreignField: "_id",
+            as: "collaborator",
+            pipeline: [
+               {
+                  $project: {
+                     _id: 0,
+                     full_name: {
+                        $concat: ["$first_name", " ", "$last_name"],
+                     },
+                     email: 1,
+                     profile_url: 1,
+                  },
+               },
+            ],
+         },
+      },
+      {
+         $unwind: "$collaborator",
+      },
+      {
+         $group: {
+            _id: "$_id",
+            file_name: {
+               $first: "$file_name",
+            },
+            description: {
+               $first: "$description",
+            },
+            locked: {
+               $first: "$locked",
+            },
+            updatedAt: {
+               $first: "$updatedAt",
+            },
+            creator: {
+               $first: "$creator",
+            },
+            active_collaborators: {
+               $first: "$active_collaborators",
+            },
+            collaborators: {
+               $push: {
+                  user: "$collaborator",
+                  actions: "$collaborators.actions",
+               },
+            },
+         },
+      },
+      {
+         $project: {
+            file_name: 1,
+            creator: {
+               $first: "$creator",
+            },
+            collaborators: 1,
+            active_collaborators: 1,
+            description: 1,
+            locked: 1,
+            updatedAt: 1,
+         },
+      },
+   ]);
+
+   if (!file) {
+      throw new ErrorHandler({
+         statusCode: 404,
+         message: "File not found",
+      });
+   }
+
+   redisClient.set(`file:${id}`, JSON.stringify(file), {
+      EX: CACHE_EXPIRATION,
+   });
+
+   res.status(200).json(
+      ApiResponse.success({ data: file, message: "File found successfully" }),
+   );
+});
 
 export const getCollaborators = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {

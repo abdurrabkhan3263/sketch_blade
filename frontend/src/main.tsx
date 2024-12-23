@@ -40,6 +40,8 @@ createRoot(document.getElementById("root")!).render(
       afterSignOutUrl="/sign-in"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
+      signInForceRedirectUrl={"/home"}
+      signUpForceRedirectUrl={"/home"}
     >
       <Provider store={store}>
         <RouterProvider router={router} />
