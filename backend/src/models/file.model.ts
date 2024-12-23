@@ -50,6 +50,7 @@ const fileSchema = new Schema<IFile>(
       folder: {
          type: Schema.Types.ObjectId,
          ref: "Folder",
+         default: null,
       },
       creator: {
          type: Schema.Types.ObjectId,
@@ -73,9 +74,6 @@ const fileSchema = new Schema<IFile>(
             ref: "User",
          },
       ],
-      room_id: {
-         type: String,
-      },
       description: {
          type: String,
          default: "",

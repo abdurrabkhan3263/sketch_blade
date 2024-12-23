@@ -514,7 +514,6 @@ export const getFiles = AsyncHandler(
                pipeline: [
                   {
                      $project: {
-                        _id: 0,
                         profile_url: 1,
                         full_name: {
                            $concat: ["$first_name", " ", "$last_name"],
@@ -684,6 +683,9 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
             active_collaborators: {
                $first: "$active_collaborators",
             },
+            folder: {
+               $first: "$folder",
+            },
             collaborators: {
                $push: {
                   user: "$collaborator",
@@ -703,6 +705,7 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
             description: 1,
             locked: 1,
             updatedAt: 1,
+            folder: 1,
          },
       },
    ]);

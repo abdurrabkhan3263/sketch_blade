@@ -1,4 +1,3 @@
-import React from "react";
 import Container from "./Container.tsx";
 import FilesTable from "../../components/Table/FilesTable.tsx";
 
@@ -6,7 +5,7 @@ const All = () => {
   return (
     <Container>
       <div className={"size-full"}>
-        <FilesTable />
+        <FilesTable type={"all"} />
       </div>
     </Container>
   );

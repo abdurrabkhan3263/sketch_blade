@@ -1,11 +1,11 @@
-import React from "react";
 import Container from "./Container.tsx";
+import FilesTable from "../../components/Table/FilesTable.tsx";
 
 const Recent = () => {
   return (
     <Container>
-      <div>
-        <h1>Recent</h1>
+      <div className={"size-full"}>
+        <FilesTable type={"recent"} />
       </div>
     </Container>
   );

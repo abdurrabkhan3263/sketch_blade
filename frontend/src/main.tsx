@@ -10,6 +10,7 @@ import Sign_In from "./pages/auth/Sign_In.tsx";
 import Sign_Up from "./pages/auth/Sign_Up.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { All, Recent, CreatedByMe, Folder } from "./pages/Home/index";
+import { Toaster } from "@/components/ui/toaster";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -45,6 +46,7 @@ createRoot(document.getElementById("root")!).render(
     >
       <Provider store={store}>
         <RouterProvider router={router} />
+        <Toaster />
       </Provider>
     </ClerkProvider>
   </StrictMode>,

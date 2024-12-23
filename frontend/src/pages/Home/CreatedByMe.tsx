@@ -1,11 +1,11 @@
-import React from "react";
 import Container from "./Container.tsx";
+import FilesTable from "../../components/Table/FilesTable.tsx";
 
 const CreatedByMe = () => {
   return (
     <Container>
-      <div className={"size-fullbg-red-500"}>
-        <h1> Created By Me</h1>
+      <div className={"size-full"}>
+        <FilesTable type={"my"} />
       </div>
     </Container>
   );
