@@ -2,13 +2,17 @@ import { ColumnDef, Column } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox.tsx";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button.tsx";
-import { File, UserDetails } from "../../lib/Types";
+import {
+  ActiveCollaborators as ActiveCollaboratorsType,
+  Files,
+} from "../../lib/Types";
 import { timeAgo } from "../../lib/utils.ts";
 import ProfileImg from "../ProfileImg.tsx";
+import { Link } from "react-router";
 
-type ColumnType = Column<File, unknown>;
+type ColumnType = Column<Files>;
 
-export const createSortableHeader = (label: string) => {
+const createSortableHeader = (label: string) => {
   return ({ column }: { column: ColumnType }) => (
     <div className={"w-full"}>
       <Button
@@ -30,7 +34,7 @@ const TimeDisplay = ({ value }: { value: string | null }) => (
 const ActiveCollaborators = ({
   collaborators,
 }: {
-  collaborators: UserDetails[];
+  collaborators: ActiveCollaboratorsType[];
 }) => {
   if (!collaborators?.length) return null;
 
@@ -52,7 +56,7 @@ const ActiveCollaborators = ({
   );
 };
 
-export const fileColumns: ColumnDef<File>[] = [
+export const fileColumns: ColumnDef<Files>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -81,14 +85,26 @@ export const fileColumns: ColumnDef<File>[] = [
     accessorKey: "file_name",
     header: createSortableHeader("NAME"),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("file_name")}</div>
+      <span className={"transition-all hover:text-tertiary"}>
+        <Link to={`/file/${row.original._id}`}>{row.original.file_name}</Link>
+      </span>
     ),
   },
   {
-    accessorKey: "folder_name",
+    accessorKey: "folder",
     header: createSortableHeader("LOCATION"),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("folder_name")}</div>
+      <>
+        {row.original.folder ? (
+          <span className={"transition-all hover:text-tertiary"}>
+            <Link to={`/folder/${row.original._id}`}>
+              {row.original.folder?.folder_name}
+            </Link>
+          </span>
+        ) : (
+          <>-</>
+        )}
+      </>
     ),
   },
   {
@@ -115,14 +131,11 @@ export const fileColumns: ColumnDef<File>[] = [
   {
     accessorKey: "creator",
     header: "AUTHOR",
-    cell: ({ row }) => {
-      const creator = row.getValue("creator") as UserDetails;
-      return (
-        <ProfileImg
-          full_name={creator?.full_name}
-          profile_url={creator?.profile_url}
-        />
-      );
-    },
+    cell: ({ row }) => (
+      <ProfileImg
+        full_name={row.original.creator?.full_name}
+        profile_url={row.original.creator?.profile_url}
+      />
+    ),
   },
 ];

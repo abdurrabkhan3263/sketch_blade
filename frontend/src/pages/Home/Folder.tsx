@@ -1,11 +1,12 @@
 import React from "react";
 import Container from "./Container";
+import FolderTable from "../../components/Table/FolderTable.tsx";
 
 const Folder = () => {
   return (
     <Container>
-      <div>
-        <h1>Folder</h1>
+      <div className={"size-full"}>
+        <FolderTable />
       </div>
     </Container>
   );

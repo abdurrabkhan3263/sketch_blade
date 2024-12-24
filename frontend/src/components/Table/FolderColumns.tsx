@@ -1,13 +1,30 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { Column, ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox.tsx";
 import { Button } from "../ui/button.tsx";
-import { createSortableHeader } from "./FileColumns.tsx";
 import { timeAgo } from "../../lib/utils.ts";
 import ProfileImg from "../ProfileImg.tsx";
-import { UserDetails } from "../../lib/Types";
+import { CreatorDetails, Folders } from "../../lib/Types";
 import { BsThreeDots } from "react-icons/bs";
+import { ArrowUpDown } from "lucide-react";
 
-export const folderColumns: ColumnDef<Folder>[] = [
+type ColumnType = Column<Folders>;
+
+const createSortableHeader = (label: string) => {
+  return ({ column }: { column: ColumnType }) => (
+    <div className={"w-full"}>
+      <Button
+        variant="none"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="mx-auto flex items-center gap-1"
+      >
+        {label}
+        <ArrowUpDown className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+};
+
+export const folderColumns: ColumnDef<Folders>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -31,34 +48,32 @@ export const folderColumns: ColumnDef<Folder>[] = [
     ),
   },
   {
-    accessorKey: "folder_name",
+    accessorKey: "folder",
     header: createSortableHeader("NAME"),
+    cell: ({ row }) => <div>{row.original.folder_name}</div>,
   },
   {
     accessorKey: "createdAt",
-    header: createSortableHeader("DATE CREATED"),
-    cell: ({ row }) => <div>{timeAgo(row.getValue("createdAt"))}</div>,
+    header: createSortableHeader("CREATED"),
+    cell: ({ row }) => <div>{timeAgo(row.original.createdAt)}</div>,
   },
   {
     accessorKey: "updatedAt",
-    header: createSortableHeader("LAST MODIFIED"),
-    cell: ({ row }) => <div>{timeAgo(row.getValue("updatedAt"))}</div>,
+    header: createSortableHeader("EDITED"),
+    cell: ({ row }) => <div>{timeAgo(row.original.updatedAt)}</div>,
   },
   {
     accessorKey: "creator",
     header: "AUTHOR",
-    cell: ({ row }) => {
-      const creator: UserDetails = row.getValue("creator");
-      return (
-        <ProfileImg
-          profile_url={creator.profile_url}
-          full_name={creator.full_name}
-        />
-      );
-    },
+    cell: ({ row }) => (
+      <ProfileImg
+        profile_url={row.original.creator.profile_url}
+        full_name={row.original.creator.full_name}
+      />
+    ),
   },
   {
-    id: "actions",
+    accessorKey: "files",
     header: "ACTIONS",
     cell: ({ row }) => (
       <Button

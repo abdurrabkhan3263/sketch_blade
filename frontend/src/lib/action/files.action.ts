@@ -1,11 +1,11 @@
-import { File } from "../Types/index";
+import { Files, Folders } from "../Types/index";
 import axios, { AxiosError } from "axios";
 
 export const getFiles = async ({
   user,
 }: {
   user: string;
-}): Promise<File[] | undefined> => {
+}): Promise<Files[] | undefined> => {
   try {
     const response = await axios.get("/api/file", {
       headers: {
@@ -23,4 +23,8 @@ export const getFiles = async ({
         : err?.message,
     );
   }
+};
+
+export const getFolders = async (): Promise<Folders[]> => {
+  return [] as Folders[];
 };

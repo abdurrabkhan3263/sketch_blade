@@ -32,6 +32,15 @@ export declare type Folder = {
   folder_name: string;
 };
 
+export declare type Folders = {
+  _id: string;
+  folder: Folder;
+  files: Files[];
+  creator: CreatorDetails;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export declare type CreatorDetails = {
   _id: string;
   full_name: string;
