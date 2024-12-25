@@ -466,7 +466,7 @@ export const getFiles = AsyncHandler(
                      creator: new Types.ObjectId(userId),
                   },
                   {
-                     collaborators: new Types.ObjectId(userId),
+                     "collaborators.user": new Types.ObjectId(userId),
                   },
                ],
             },
@@ -725,6 +725,130 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
       ApiResponse.success({ data: file, message: "File found successfully" }),
    );
 });
+
+export const getFolderFiles = AsyncHandler(
+   async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const userId = req.userId;
+
+      if (!isValidObjectId(id)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid folder id",
+         });
+      }
+
+      if (!isValidObjectId(userId)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid user id",
+         });
+      }
+
+      const files = await FileModel.aggregate([
+         {
+            $match: {
+               $or: [
+                  {
+                     folder: new Types.ObjectId(id),
+                     creator: new Types.ObjectId(userId),
+                  },
+                  {
+                     folder: new Types.ObjectId(id),
+                     "collaborators.user": new Types.ObjectId(userId),
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "creator",
+               foreignField: "_id",
+               as: "creator",
+               pipeline: [
+                  {
+                     $project: {
+                        _id: 0,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                        profile_url: 1,
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "active_collaborators",
+               foreignField: "_id",
+               as: "active_collaborators",
+               pipeline: [
+                  {
+                     $project: {
+                        _id: 0,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                        email: 1,
+                        profile_url: 1,
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "collaborators.user",
+               foreignField: "_id",
+               as: "collaborators",
+               pipeline: [
+                  {
+                     $project: {
+                        _id: 0,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                        email: 1,
+                        profile_url: 1,
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $project: {
+               file_name: 1,
+               creator: {
+                  $first: "$creator",
+               },
+               collaborators: 1,
+               active_collaborators: 1,
+               createdAt: 1,
+               updatedAt: 1,
+            },
+         },
+      ]);
+
+      if (!files?.length) {
+         throw new ErrorHandler({
+            statusCode: 404,
+            message: "Files not found",
+         });
+      }
+
+      res.status(200).json(
+         ApiResponse.success({
+            success: true,
+            data: files,
+            message: "Files found successfully",
+         }),
+      );
+   },
+);
 
 export const getCollaborators = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {

@@ -1,4 +1,4 @@
-import { Files, Folders } from "../Types/index";
+import { Files } from "../Types/index";
 import axios, { AxiosError } from "axios";
 
 export const getFiles = async ({
@@ -25,6 +25,24 @@ export const getFiles = async ({
   }
 };
 
-export const getFolders = async (): Promise<Folders[]> => {
-  return [] as Folders[];
+export const getFolderFiles = async ({
+  folderId,
+  userId,
+}: {
+  folderId: string;
+  userId: string;
+}): Promise<Files[] | undefined> => {
+  try {
+    const response = await axios.get(`/api/file/${folderId}/folder`, {
+      headers: {
+        Authorization: `Bearer ${userId}`,
+      },
+    });
+    if (response.status === 200) {
+      return response.data.data;
+    }
+  } catch (err) {
+    const error = err as AxiosError;
+    throw new Error(error?.response?.data?.message || "An Error Occurred");
+  }
 };

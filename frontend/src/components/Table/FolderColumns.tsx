@@ -3,9 +3,11 @@ import { Checkbox } from "../ui/checkbox.tsx";
 import { Button } from "../ui/button.tsx";
 import { timeAgo } from "../../lib/utils.ts";
 import ProfileImg from "../ProfileImg.tsx";
-import { CreatorDetails, Folders } from "../../lib/Types";
+import { Folders } from "../../lib/Types";
 import { BsThreeDots } from "react-icons/bs";
 import { ArrowUpDown } from "lucide-react";
+import { Link } from "react-router";
+import ActionDropMenu from "../ActionDropMenu.tsx";
 
 type ColumnType = Column<Folders>;
 
@@ -48,9 +50,16 @@ export const folderColumns: ColumnDef<Folders>[] = [
     ),
   },
   {
-    accessorKey: "folder",
+    id: "name",
+    accessorKey: "folder_name",
     header: createSortableHeader("NAME"),
-    cell: ({ row }) => <div>{row.original.folder_name}</div>,
+    cell: ({ row }) => (
+      <span>
+        <Link to={`/folder/${row.original._id}`}>
+          {row.original.folder_name}
+        </Link>
+      </span>
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -75,13 +84,6 @@ export const folderColumns: ColumnDef<Folders>[] = [
   {
     accessorKey: "files",
     header: "ACTIONS",
-    cell: ({ row }) => (
-      <Button
-        className="text-xs"
-        onClick={() => console.log("clicked on row", row.original)}
-      >
-        <BsThreeDots />
-      </Button>
-    ),
+    cell: ({ row }) => <ActionDropMenu />,
   },
 ];

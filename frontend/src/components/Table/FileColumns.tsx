@@ -9,6 +9,8 @@ import {
 import { timeAgo } from "../../lib/utils.ts";
 import ProfileImg from "../ProfileImg.tsx";
 import { Link } from "react-router";
+import ActionDropMenu from "../ActionDropMenu.tsx";
+import { FileEditDialog } from "../FileEditDialog.tsx";
 
 type ColumnType = Column<Files>;
 
@@ -82,6 +84,7 @@ export const fileColumns: ColumnDef<Files>[] = [
     enableHiding: false,
   },
   {
+    id: "name",
     accessorKey: "file_name",
     header: createSortableHeader("NAME"),
     cell: ({ row }) => (
@@ -137,5 +140,26 @@ export const fileColumns: ColumnDef<Files>[] = [
         profile_url={row.original.creator?.profile_url}
       />
     ),
+  },
+  {
+    accessorKey: "files",
+    header: "ACTIONS",
+    cell: ({ row }) => {
+      const payment = row.original;
+      const { openDialogId, setOpenDialogId } = table.options.meta as {
+        openDialogId: string | null;
+        setOpenDialogId: (id: string | null) => void;
+      };
+
+      return (
+        <ActionDropMenu>
+          <FileEditDialog
+            _id={payment._id}
+            open={openDialogId === payment._id}
+            onOpenChange={(open) => setOpenDialogId(open ? payment._id : null)}
+          />
+        </ActionDropMenu>
+      );
+    },
   },
 ];

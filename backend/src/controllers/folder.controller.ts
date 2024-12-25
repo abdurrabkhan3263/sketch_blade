@@ -5,132 +5,209 @@ import ErrorHandler from "../utils/ErrorHandler";
 import { isValidObjectId, Types } from "mongoose";
 import { CreateFolderRequest } from "../types/appType";
 import ApiResponse from "../utils/ApiResponse";
+import DatabaseConnection from "../db/DatabaseConnection";
+import { CACHE_EXPIRATION } from "../lib/constants";
 
 export const createFolder = AsyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { folder_name }: CreateFolderRequest = req.body;
-    const userId = req.userId;
+   async (req: Request, res: Response): Promise<void> => {
+      const { folder_name }: CreateFolderRequest = req.body;
+      const userId = req.userId;
 
-    if (!userId) {
-      throw new ErrorHandler({
-        statusCode: 400,
-        message: "Invalid creator id",
+      if (!userId) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid creator id",
+         });
+      }
+
+      const folder = await FolderModel.create({
+         folder_name,
+         creator_id: userId,
       });
-    }
 
-    const folder = await FolderModel.create({
-      folder_name,
-      creator_id: userId,
-    });
+      if (!folder) {
+         throw new ErrorHandler({
+            statusCode: 500,
+            message: "Folder not created",
+         });
+      }
 
-    if (!folder) {
-      throw new ErrorHandler({
-        statusCode: 500,
-        message: "Folder not created",
-      });
-    }
-
-    res.status(201).json({ success: true, data: folder });
-  },
+      res.status(201).json({ success: true, data: folder });
+   },
 );
 
 export const updateFolder = AsyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const { folder_name } = req.body;
-    const userId = req.userId;
+   async (req: Request, res: Response): Promise<void> => {
+      const { id } = req.params;
+      const { folder_name } = req.body;
+      const userId = req.userId;
 
-    if (!userId) {
-      throw new ErrorHandler({
-        statusCode: 400,
-        message: "Invalid creator id",
+      if (!userId) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid creator id",
+         });
+      }
+
+      if (!isValidObjectId(id)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid folder id",
+         });
+      }
+
+      if (!folder_name) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Folder name is required",
+         });
+      }
+
+      const folder = await FolderModel.findByIdAndUpdate({
+         _id: id,
+         creator_id: userId,
       });
-    }
 
-    if (!isValidObjectId(id)) {
-      throw new ErrorHandler({ statusCode: 400, message: "Invalid folder id" });
-    }
+      console.log("folder", folder);
 
-    if (!folder_name) {
-      throw new ErrorHandler({
-        statusCode: 400,
-        message: "Folder name is required",
-      });
-    }
+      if (!folder) {
+         throw new ErrorHandler({
+            statusCode: 403,
+            message: "You are not authorized to update this folder",
+         });
+      }
 
-    const folder = await FolderModel.findByIdAndUpdate({
-      _id: id,
-      creator_id: userId,
-    });
+      const updatedFolder = await FolderModel.findByIdAndUpdate(
+         id,
+         { folder_name },
+         { new: true },
+      );
 
-    console.log("folder", folder);
+      if (!updatedFolder) {
+         throw new ErrorHandler({
+            statusCode: 500,
+            message: "Folder not updated",
+         });
+      }
 
-    if (!folder) {
-      throw new ErrorHandler({
-        statusCode: 403,
-        message: "You are not authorized to update this folder",
-      });
-    }
-
-    const updatedFolder = await FolderModel.findByIdAndUpdate(
-      id,
-      { folder_name },
-      { new: true },
-    );
-
-    if (!updatedFolder) {
-      throw new ErrorHandler({
-        statusCode: 500,
-        message: "Folder not updated",
-      });
-    }
-
-    res.status(200).json({ success: true, data: updatedFolder });
-  },
+      res.status(200).json({ success: true, data: updatedFolder });
+   },
 );
 
 export const deleteFolder = AsyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const userId = req.userId;
+   async (req: Request, res: Response): Promise<void> => {
+      const { id } = req.params;
+      const userId = req.userId;
 
-    if (!userId) {
-      throw new ErrorHandler({
-        statusCode: 400,
-        message: "Invalid creator id",
+      if (!userId) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid creator id",
+         });
+      }
+
+      if (!isValidObjectId(id)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid folder id",
+         });
+      }
+
+      const findFolder = await FolderModel.findOne({
+         _id: id,
+         creator_id: userId,
       });
-    }
 
-    if (!isValidObjectId(id)) {
-      throw new ErrorHandler({ statusCode: 400, message: "Invalid folder id" });
-    }
+      if (!findFolder) {
+         throw new ErrorHandler({
+            statusCode: 403,
+            message:
+               "You are not authorized to delete this folder or folder not found",
+         });
+      }
 
-    const findFolder = await FolderModel.findOne({
-      _id: id,
-      creator_id: userId,
-    });
+      const folder = await FolderModel.findByIdAndDelete(id);
 
-    if (!findFolder) {
-      throw new ErrorHandler({
-        statusCode: 403,
-        message:
-          "You are not authorized to delete this folder or folder not found",
-      });
-    }
+      if (!folder) {
+         throw new ErrorHandler({
+            statusCode: 500,
+            message: "Folder not deleted",
+         });
+      }
 
-    const folder = await FolderModel.findByIdAndDelete(id);
-
-    if (!folder) {
-      throw new ErrorHandler({
-        statusCode: 500,
-        message: "Folder not deleted",
-      });
-    }
-
-    res
-      .status(200)
-      .json(
-        ApiResponse.success({ statusCode: 200, message: "Folder deleted" }),
+      res.status(200).json(
+         ApiResponse.success({ statusCode: 200, message: "Folder deleted" }),
       );
-  },
+   },
 );
+
+export const getFolders = AsyncHandler(async (req: Request, res: Response) => {
+   const userId = req.userId;
+
+   if (!userId) {
+      throw new ErrorHandler({
+         statusCode: 400,
+         message: "Invalid creator id",
+      });
+   }
+
+   const redisClient = DatabaseConnection.getRedisClient();
+   const cacheKey = `folders:${userId}`;
+   const cacheData = await redisClient.get(cacheKey);
+
+   if (cacheData) {
+      return res
+         .status(200)
+         .json({ success: true, data: JSON.parse(cacheData) });
+   }
+
+   const folders = await FolderModel.aggregate([
+      {
+         $match: {
+            creator_id: new Types.ObjectId(userId),
+         },
+      },
+      {
+         $lookup: {
+            from: "users",
+            localField: "creator_id",
+            foreignField: "_id",
+            as: "creator",
+            pipeline: [
+               {
+                  $project: {
+                     _id: 0,
+                     full_name: {
+                        $concat: ["$first_name", " ", "$last_name"],
+                     },
+                     profile_url: 1,
+                  },
+               },
+            ],
+         },
+      },
+      {
+         $project: {
+            folder_name: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            creator: {
+               $first: "$creator",
+            },
+         },
+      },
+   ]);
+
+   if (!folders) {
+      throw new ErrorHandler({
+         statusCode: 404,
+         message: "Folders not found",
+      });
+   }
+
+   await redisClient.set(cacheKey, JSON.stringify(folders), {
+      EX: CACHE_EXPIRATION,
+   });
+
+   res.status(200).json({ success: true, data: folders });
+});

@@ -35,4 +35,8 @@
   .size-icon{
     @apply w-12 h-12;
   }
+
+  .dark-container{
+    @apply bg-gray-800 text-quaternary border-quaternary select-none ;
+  }
 }

@@ -1,4 +1,3 @@
-import React from "react";
 import { folderColumns } from "./FolderColumns.tsx";
 import { DataTable } from "./Data-table.tsx";
 import { useResponse } from "../../hooks/useResponse.tsx";
@@ -6,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Folders } from "../../lib/Types";
 import { useToast } from "../../hooks/use-toast.ts";
 import { ToastAction } from "../ui/toast.tsx";
+import { getFolders } from "../../lib/action/folder.action.ts";
 
 const FolderTable = () => {
   const { toast } = useToast();
@@ -17,7 +17,7 @@ const FolderTable = () => {
     _id: string;
   }): Promise<Folders[] | undefined> => {
     try {
-      const response = await getFolders({ user: clerkId });
+      const response = await getFolders({ userId: clerkId });
       if (response) {
         return response;
       } else {

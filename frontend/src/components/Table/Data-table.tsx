@@ -60,20 +60,14 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  useEffect(() => {
-    console.log("Selected rows: ", rowSelection);
-  }, [rowSelection]);
-
   return (
     <div className="flex h-full w-full flex-col gap-4">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter files..."
-          value={
-            (table.getColumn("file_name")?.getFilterValue() as string) ?? ""
-          }
+          placeholder="Filter by name..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("file_name")?.setFilterValue(event.target.value)
+            table?.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-full"
         />
