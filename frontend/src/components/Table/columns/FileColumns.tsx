@@ -1,16 +1,17 @@
 import { ColumnDef, Column } from "@tanstack/react-table";
-import { Checkbox } from "../ui/checkbox.tsx";
+import { Checkbox } from "../../ui/checkbox.tsx";
 import { ArrowUpDown } from "lucide-react";
-import { Button } from "../ui/button.tsx";
+import { Button } from "../../ui/button.tsx";
 import {
   ActiveCollaborators as ActiveCollaboratorsType,
   Files,
-} from "../../lib/Types";
-import { timeAgo } from "../../lib/utils.ts";
-import ProfileImg from "../ProfileImg.tsx";
+} from "../../../lib/Types";
+import { timeAgo } from "../../../lib/utils.ts";
+import ProfileImg from "../../ProfileImg.tsx";
 import { Link } from "react-router";
-import ActionDropMenu from "../ActionDropMenu.tsx";
-import { FileEditDialog } from "../FileEditDialog.tsx";
+import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
+import { FileEditDialog } from "../../dialogs/FileEditDialog.tsx";
+import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 
 type ColumnType = Column<Files>;
 
@@ -142,24 +143,19 @@ export const fileColumns: ColumnDef<Files>[] = [
     ),
   },
   {
-    accessorKey: "files",
+    accessorKey: "_id",
     header: "ACTIONS",
-    cell: ({ row }) => {
-      const payment = row.original;
-      const { openDialogId, setOpenDialogId } = table.options.meta as {
-        openDialogId: string | null;
-        setOpenDialogId: (id: string | null) => void;
-      };
-
-      return (
-        <ActionDropMenu>
-          <FileEditDialog
-            _id={payment._id}
-            open={openDialogId === payment._id}
-            onOpenChange={(open) => setOpenDialogId(open ? payment._id : null)}
-          />
-        </ActionDropMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <ActionDropMenu>
+        <FileEditDialog _id={row.original._id} fileData={row.original}>
+          <DropdownMenuItem
+            onSelect={(event) => event.preventDefault()}
+            className={"w-full"}
+          >
+            Edit
+          </DropdownMenuItem>
+        </FileEditDialog>
+      </ActionDropMenu>
+    ),
   },
 ];

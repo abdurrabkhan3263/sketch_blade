@@ -7,10 +7,11 @@ import { CreateFolderRequest } from "../types/appType";
 import ApiResponse from "../utils/ApiResponse";
 import DatabaseConnection from "../db/DatabaseConnection";
 import { CACHE_EXPIRATION } from "../lib/constants";
+import FileModel from "../models/file.model";
 
 export const createFolder = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
-      const { folder_name }: CreateFolderRequest = req.body;
+      const { folder_name, files }: CreateFolderRequest = req.body;
       const userId = req.userId;
 
       if (!userId) {
@@ -30,6 +31,24 @@ export const createFolder = AsyncHandler(
             statusCode: 500,
             message: "Folder not created",
          });
+      }
+
+      if (Array.isArray(files) && files.length > 0) {
+         const file = await FileModel.updateMany(
+            {
+               _id: { $in: files },
+            },
+            {
+               folder: folder._id,
+            },
+         );
+
+         if (!file) {
+            throw new ErrorHandler({
+               statusCode: 500,
+               message: "Files not updated",
+            });
+         }
       }
 
       res.status(201).json({ success: true, data: folder });

@@ -1,6 +1,6 @@
 import React from "react";
 import { DataTable } from "./Data-table.tsx";
-import { fileColumns } from "./FileColumns.tsx";
+import { fileColumns } from "./columns/FileColumns.tsx";
 import { Button } from "../ui/button.tsx";
 import { Loader2 } from "lucide-react";
 import { useResponse } from "../../hooks/useResponse.tsx";

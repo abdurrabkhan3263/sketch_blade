@@ -1,4 +1,4 @@
-import { folderColumns } from "./FolderColumns.tsx";
+import { folderColumns } from "./columns/FolderColumns.tsx";
 import { DataTable } from "./Data-table.tsx";
 import { useResponse } from "../../hooks/useResponse.tsx";
 import { Loader2 } from "lucide-react";

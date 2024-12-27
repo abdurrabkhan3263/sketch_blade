@@ -43,6 +43,7 @@ export declare type Folder = {
 export declare type CreateFolderRequest = {
    folder_name: string;
    creator_id: Id;
+   files: String[];
 };
 
 export declare type UpdateFolderRequest = {

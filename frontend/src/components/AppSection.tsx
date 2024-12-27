@@ -1,5 +1,6 @@
 import { Button } from "./ui/button.tsx";
 import { NavLink, Outlet, useLocation } from "react-router";
+import { FileCreateDialog } from "./dialogs/FileCreateDialog.tsx";
 
 type NavLinks = {
   name: string;
@@ -54,15 +55,7 @@ const AppSection = () => {
             </div>
           </div>
           <div className={"w-full text-end"}>
-            <Button className={"bg-tertiary"}>
-              Create File
-              <span className={"h-6 w-6"}>
-                <img
-                  src={"/assets/icons/add.svg"}
-                  className={"size-full object-cover"}
-                />
-              </span>
-            </Button>
+            <FileCreateDialog />
           </div>
         </div>
         <div className={"size-full flex-1 overflow-y-auto"}>

@@ -21,12 +21,14 @@ const buttonVariants = cva(
           "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
         link: "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50",
         none: "bg-transparent text-zinc-50 dark:text-zinc-900",
+        app: "bg-tertiary text-zinc-50 hover:bg-tertiary/90 dark:bg-tertiary dark:text-zinc-50 hover:text-zinc-200 dark:hover:bg-tertiary/90",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        none: "p-0 w-full",
       },
     },
     defaultVariants: {

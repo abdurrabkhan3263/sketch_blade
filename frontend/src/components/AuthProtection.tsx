@@ -1,6 +1,6 @@
 import { useSession } from "@clerk/clerk-react";
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/slices/authSlice.ts";
 
@@ -12,6 +12,7 @@ export default function AuthProtection({ children }: AuthLayoutProps) {
   const { session, isLoaded, isSignedIn } = useSession();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const pathName = useLocation().pathname;
 
   useEffect(() => {
     if (isLoaded && (!session || !isSignedIn)) {

@@ -1,13 +1,14 @@
 import { Column, ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "../ui/checkbox.tsx";
-import { Button } from "../ui/button.tsx";
-import { timeAgo } from "../../lib/utils.ts";
-import ProfileImg from "../ProfileImg.tsx";
-import { Folders } from "../../lib/Types";
-import { BsThreeDots } from "react-icons/bs";
+import { Checkbox } from "../../ui/checkbox.tsx";
+import { Button } from "../../ui/button.tsx";
+import { timeAgo } from "../../../lib/utils.ts";
+import ProfileImg from "../../ProfileImg.tsx";
+import { Folders } from "../../../lib/Types";
 import { ArrowUpDown } from "lucide-react";
 import { Link } from "react-router";
-import ActionDropMenu from "../ActionDropMenu.tsx";
+import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
+import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
+import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
 
 type ColumnType = Column<Folders>;
 
@@ -84,6 +85,17 @@ export const folderColumns: ColumnDef<Folders>[] = [
   {
     accessorKey: "files",
     header: "ACTIONS",
-    cell: ({ row }) => <ActionDropMenu />,
+    cell: ({ row }) => (
+      <ActionDropMenu>
+        <FolderEditDialog _id={row.original._id}>
+          <DropdownMenuItem
+            onSelect={(event) => event.preventDefault()}
+            className={"w-full"}
+          >
+            Edit
+          </DropdownMenuItem>
+        </FolderEditDialog>
+      </ActionDropMenu>
+    ),
   },
 ];

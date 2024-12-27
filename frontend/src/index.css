@@ -39,4 +39,8 @@
   .dark-container{
     @apply bg-gray-800 text-quaternary border-quaternary select-none ;
   }
+
+  .dark-input{
+    @apply bg-secondary text-quaternary border-quaternary transition-all !placeholder-quaternary focus:!placeholder-gray-400;
+  }
 }
