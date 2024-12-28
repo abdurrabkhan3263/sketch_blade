@@ -32,6 +32,8 @@ export const createFile = AsyncHandler(
          });
       }
 
+      const redisClient = DatabaseConnection.getRedisClient();
+
       const file = await FileModel.create({
          file_name,
          folder: folder_id,
@@ -46,6 +48,8 @@ export const createFile = AsyncHandler(
             message: "Failed to create file",
          });
       }
+
+      await redisClient.del(`files:${id}`);
 
       res.status(201).json(
          ApiResponse.success({

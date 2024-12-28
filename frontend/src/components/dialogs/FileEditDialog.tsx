@@ -20,7 +20,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Files } from "../../lib/Types";
+import { Files } from "../../lib/types";
 
 interface FileEditDialogProps {
   _id: string;

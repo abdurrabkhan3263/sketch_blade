@@ -1,4 +1,4 @@
-import { Files } from "../Types/index";
+import { Files } from "../types/index";
 import axios, { AxiosError } from "axios";
 
 export const getFiles = async ({

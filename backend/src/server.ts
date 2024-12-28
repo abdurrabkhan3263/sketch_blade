@@ -31,11 +31,13 @@ import folderRouter from "./routes/folder.route";
 import fileRouter from "./routes/file.route";
 import ErrorMiddleware from "./middlewares/error.middleware";
 import canvasRouter from "./routes/canvas.router";
+import getUserAsCollaborator from "./controllers/user.controller";
 
 app.use("/api", svixRouter);
 app.use("/api/folder", folderRouter);
 app.use("/api/file", fileRouter);
 app.use("/api/canvas", canvasRouter);
+app.post("/api/users", getUserAsCollaborator);
 
 // Error Middleware
 app.use(ErrorMiddleware);

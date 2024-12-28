@@ -5,7 +5,7 @@ import { Button } from "../../ui/button.tsx";
 import {
   ActiveCollaborators as ActiveCollaboratorsType,
   Files,
-} from "../../../lib/Types";
+} from "../../../lib/types";
 import { timeAgo } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Link } from "react-router";

@@ -59,6 +59,19 @@ export declare type ActiveCollaborators = {
   email: string;
 };
 
+export declare type CollaboratorData = {
+  user: string;
+  full_name: string;
+  profile_url: string;
+  actions: CollaboratorActions;
+};
+
+export declare type ListCollaborator = {
+  _id: string;
+  full_name: string;
+  profile_url: string;
+};
+
 export declare enum CollaboratorActions {
   Edit = "edit",
   View = "view",

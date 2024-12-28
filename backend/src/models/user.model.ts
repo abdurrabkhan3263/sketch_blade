@@ -17,10 +17,12 @@ const userSchema = new Schema<IUser>(
          type: String,
          required: true,
          trim: true,
+         index: true,
       },
       last_name: {
          type: String,
          trim: true,
+         index: true,
       },
       email: {
          type: String,

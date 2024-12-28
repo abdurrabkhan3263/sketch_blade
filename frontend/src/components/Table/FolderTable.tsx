@@ -2,7 +2,7 @@ import { folderColumns } from "./columns/FolderColumns.tsx";
 import { DataTable } from "./Data-table.tsx";
 import { useResponse } from "../../hooks/useResponse.tsx";
 import { Loader2 } from "lucide-react";
-import { Folders } from "../../lib/Types";
+import { Folders } from "../../lib/types";
 import { useToast } from "../../hooks/use-toast.ts";
 import { ToastAction } from "../ui/toast.tsx";
 import { getFolders } from "../../lib/action/folder.action.ts";

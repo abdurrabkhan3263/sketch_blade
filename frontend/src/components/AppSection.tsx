@@ -1,6 +1,4 @@
-import { Button } from "./ui/button.tsx";
 import { NavLink, Outlet, useLocation } from "react-router";
-import { FileCreateDialog } from "./dialogs/FileCreateDialog.tsx";
 
 type NavLinks = {
   name: string;
@@ -53,9 +51,6 @@ const AppSection = () => {
                 })}
               </ul>
             </div>
-          </div>
-          <div className={"w-full text-end"}>
-            <FileCreateDialog />
           </div>
         </div>
         <div className={"size-full flex-1 overflow-y-auto"}>

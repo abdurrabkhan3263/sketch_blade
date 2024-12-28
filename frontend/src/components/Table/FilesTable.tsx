@@ -2,20 +2,17 @@ import React from "react";
 import { DataTable } from "./Data-table.tsx";
 import { fileColumns } from "./columns/FileColumns.tsx";
 import { Button } from "../ui/button.tsx";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 import { useResponse } from "../../hooks/useResponse.tsx";
 import { getFiles } from "../../lib/action/files.action.ts";
-import { Files } from "../../lib/Types";
-import { ToastAction } from "../ui/toast.tsx";
-import { useToast } from "../../hooks/use-toast.ts";
+import { Files } from "../../lib/types";
+import { FileCreateDialog } from "../dialogs/FileCreateDialog.tsx";
 
 interface FilesTableProps {
   type: "all" | "my";
 }
 
 const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
-  const { toast } = useToast();
-
   const queryFn = async ({
     clerkId,
     _id,
@@ -36,17 +33,14 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
         return [];
       }
     } catch (err) {
-      toast({
-        title: err,
-        variant: "destructive",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      console.error(err);
+      return [];
     }
   };
 
   const { data, isPending } = useResponse({
+    queryKeys: ["getFiles"],
     queryFn: queryFn,
-    queryKeys: ["files"],
   });
 
   return (
@@ -58,7 +52,17 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
           </div>
         </div>
       ) : data && data.length > 0 ? (
-        <DataTable columns={fileColumns} data={data as Files[]} />
+        <>
+          <div className={"mb-3 w-full text-end"}>
+            <FileCreateDialog>
+              <Button className="hover:bg-tertiary/90 bg-tertiary px-6">
+                Create File
+                <PlusIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </FileCreateDialog>
+          </div>
+          <DataTable columns={fileColumns} data={data as Files[]} />
+        </>
       ) : (
         <IfNoFile />
       )}
@@ -82,9 +86,14 @@ const IfNoFile = () => {
           />
         </div>
         <div className={"text-center"}>
-          <Button className={"capitalize"} onClick={handleCreateFile}>
-            create a black file
-          </Button>
+          <div className={"w-full"}>
+            <FileCreateDialog>
+              <Button className="hover:bg-tertiary/90 bg-tertiary px-6">
+                Create File
+                <PlusIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </FileCreateDialog>
+          </div>
         </div>
       </div>
     </div>

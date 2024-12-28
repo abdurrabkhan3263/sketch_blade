@@ -21,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table.tsx";
-import { useEffect } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,7 +60,10 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="flex h-full w-full flex-col gap-4">
+    <div
+      className="flex w-full flex-col gap-2"
+      style={{ height: "calc(100% - 3.25rem)" }}
+    >
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter by name..."

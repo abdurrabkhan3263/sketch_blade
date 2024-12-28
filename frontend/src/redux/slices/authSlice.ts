@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { User } from "../../lib/Types";
+import { User } from "../../lib/types";
 
 const initialState: User = {
   _id: "",

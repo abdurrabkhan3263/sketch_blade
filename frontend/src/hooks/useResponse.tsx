@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Files, Folder } from "../lib/Types";
+import { Files, Folder } from "../lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
 

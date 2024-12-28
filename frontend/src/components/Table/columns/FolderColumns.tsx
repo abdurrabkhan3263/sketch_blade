@@ -3,7 +3,7 @@ import { Checkbox } from "../../ui/checkbox.tsx";
 import { Button } from "../../ui/button.tsx";
 import { timeAgo } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
-import { Folders } from "../../../lib/Types";
+import { Folders } from "../../../lib/types";
 import { ArrowUpDown } from "lucide-react";
 import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";

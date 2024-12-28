@@ -1,4 +1,4 @@
-import { Folders } from "../Types/index";
+import { Folders } from "../types/index";
 import axios, { AxiosError } from "axios";
 
 export const getFolders = async ({
