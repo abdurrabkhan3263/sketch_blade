@@ -87,8 +87,6 @@ export const updateFolder = AsyncHandler(
          creator_id: userId,
       });
 
-      console.log("folder", folder);
-
       if (!folder) {
          throw new ErrorHandler({
             statusCode: 403,

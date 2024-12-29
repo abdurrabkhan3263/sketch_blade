@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +31,9 @@ import {
 import { SearchIcon, XIcon } from "lucide-react";
 import { Input } from "./ui/input.tsx";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store.ts";
+import { debounce } from "lodash";
 
 interface AddCollaboratorInputProps {
   collaborators: CollaboratorData[];
@@ -43,19 +52,38 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
   const [selectedCollaborator, setSelectedCollaborator] =
     useState<CollaboratorData | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { email } = useSelector((state: RootState) => state.auth);
 
-  const handleSearchCollaborator = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setInputSearch(e.target.value);
-    const user_name = {
-      user_name: e.target.value,
-    };
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (searchTerm: { email: string; current_email: string }) => {
+        try {
+          const response = await axios.post("/api/users", searchTerm);
+          if (response.data.statusCode === 200) {
+            if (
+              Array.isArray(response.data.data) &&
+              response.data.data.length
+            ) {
+              setListColl(response.data.data);
+            } else {
+              setListColl([]);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, 700),
+    [],
+  );
 
-    const user = await axios.post("/api/users", user_name);
-    const users = user.data.data.users;
-    console.log(user);
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const searchItem = e.target.value;
+      setInputSearch(searchItem);
+      debouncedSearch({ email: searchItem, current_email: email });
+    },
+    [debouncedSearch],
+  );
 
   const handleAddCollaborators = (collaboratorData: CollaboratorData) => {
     const isAlreadySelected = collaborators.some(
@@ -101,7 +129,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
         <div className="flex-1">
           <motion.div
             className={cn(
-              "border-input min-h-10 rounded-md border bg-secondary pl-2",
+              "border-input transform-center min-h-10 rounded-md border bg-secondary pl-2",
               "focus-within:ring-ring focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2",
               collaborators.length > 0 && "pt-2",
             )}
@@ -117,6 +145,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
+                      layout
                       transition={{
                         type: "tween",
                         stiffness: 500,
@@ -166,9 +195,9 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                   "dark-input bg-gray-100 dark:bg-gray-800",
                   "placeholder:text-gray-400 dark:placeholder:text-gray-500",
                 )}
-                placeholder={"Search for collaborators"}
+                placeholder={"Search for collaborators by email"}
                 value={inputSearch}
-                onChange={handleSearchCollaborator}
+                onChange={handleInputChange}
                 onFocus={() => setSelectedCollaborator(null)}
               />
             </div>
@@ -234,7 +263,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                             alt={collaborator.full_name}
                             className="h-8 w-8 rounded-full"
                           />
-                          <p className="ml-4">{collaborator.full_name}</p>
+                          <p className="ml-4">{collaborator.email}</p>
                           <TooltipContent>
                             <p>
                               Click to add {collaborator.full_name} as a

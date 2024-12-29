@@ -68,6 +68,7 @@ export declare type CollaboratorData = {
 
 export declare type ListCollaborator = {
   _id: string;
+  email: string;
   full_name: string;
   profile_url: string;
 };

@@ -159,6 +159,8 @@ export const deleteFile = AsyncHandler(
          });
       }
 
+      const redisClient = DatabaseConnection.getRedisClient();
+
       const deleteFile = await FileModel.findByIdAndDelete(id);
 
       if (!deleteFile) {
@@ -167,6 +169,9 @@ export const deleteFile = AsyncHandler(
             message: "File not deleted",
          });
       }
+
+      await redisClient.del(`file:${id}`);
+      await redisClient.del(`files:${userId}`);
 
       res.status(200).json(
          ApiResponse.success({
@@ -552,10 +557,14 @@ export const getFiles = AsyncHandler(
       ]);
 
       if (!files?.length) {
-         throw new ErrorHandler({
-            statusCode: 404,
-            message: "Files not found",
-         });
+         res.status(200).json(
+            ApiResponse.success({
+               success: true,
+               data: [],
+               message: "No files found",
+            }),
+         );
+         return;
       }
 
       redisClient.set(`files:${userId}`, JSON.stringify(files), {

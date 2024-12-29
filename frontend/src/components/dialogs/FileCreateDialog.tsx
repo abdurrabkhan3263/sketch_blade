@@ -28,6 +28,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store.ts";
+import { Textarea } from "../ui/textarea";
+import { Loader2 } from "lucide-react";
+import { useToast } from "../../hooks/use-toast.ts";
 
 const formSchema = z.object({
   file_name: z
@@ -39,6 +42,7 @@ const formSchema = z.object({
       message:
         "File name can only contain letters, numbers, underscores, and hyphens",
     }),
+  description: z.string().optional(),
   collaborators: z
     .array(
       z.object({
@@ -60,12 +64,14 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { clerkId } = useSelector((state: RootState) => state.auth);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       file_name: "",
       collaborators: [],
+      description: "",
     },
   });
 
@@ -81,6 +87,14 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getFiles"] });
       setIsOpen(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description:
+          error.response.data.message ?? error.message ?? "An error occurred",
+        variant: "destructive",
+      });
     },
   });
 
@@ -122,9 +136,33 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
               setCollaborators={setCollaborators}
               collaborators={collaborators}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter file description"
+                      {...field}
+                      className="dark-input"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <Button type="submit" variant={"app"} className={"w-full"}>
-                {form.formState.isSubmitting ? "Creating..." : "Create File"}
+                {createMutation.isPending ? (
+                  <>
+                    Creating...
+                    <Loader2 className="mr-3 h-8 w-8 animate-spin" />
+                  </>
+                ) : (
+                  "Create File"
+                )}
               </Button>
             </DialogFooter>
           </form>

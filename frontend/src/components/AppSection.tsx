@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router";
+import { motion } from "motion/react";
 
 type NavLinks = {
   name: string;
@@ -34,18 +35,19 @@ const AppSection = () => {
               >
                 {navLinks.map(({ pathName, name }) => {
                   return (
-                    <li
-                      key={pathName}
-                      className={`rounded-md ${pathname === pathName && "bg-secondary"} py-1.5 text-sm`}
-                    >
+                    <li className="relative rounded-md py-1.5 text-sm">
                       <NavLink
                         to={pathName}
-                        className={
-                          "px-8 text-quaternary transition-colors hover:text-tertiary"
-                        }
+                        className="relative z-20 px-8 text-quaternary transition-colors hover:text-tertiary"
                       >
                         {name}
                       </NavLink>
+                      {pathname === pathName && (
+                        <motion.span
+                          layoutId="active"
+                          className="absolute left-0 top-0 z-10 h-full w-full rounded-md bg-secondary"
+                        />
+                      )}
                     </li>
                   );
                 })}

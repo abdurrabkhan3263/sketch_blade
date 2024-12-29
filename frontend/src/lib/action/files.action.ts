@@ -5,7 +5,7 @@ export const getFiles = async ({
   user,
 }: {
   user: string;
-}): Promise<Files[] | undefined> => {
+}): Promise<Files[]> => {
   try {
     const response = await axios.get("/api/file", {
       headers: {
@@ -14,8 +14,9 @@ export const getFiles = async ({
     });
 
     if (response.status === 200) {
-      return response.data.data;
+      return response.data.data || [];
     }
+    return [];
   } catch (err) {
     throw new Error(
       (err as AxiosError)

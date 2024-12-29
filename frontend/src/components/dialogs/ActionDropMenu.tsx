@@ -9,13 +9,26 @@ import {
 } from "../ui/dropdown-menu.tsx";
 import { BsThreeDots } from "react-icons/bs";
 import { useState } from "react";
+import DeleteDialog from "./DeleteDialog.tsx";
 
 interface ActionDropMenuProps {
+  _id: string;
   children: React.ReactNode;
+  handleDelete: () => void;
+  isLoading?: boolean;
+  deleteDialogOpen: boolean;
+  setDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function ActionDropMenu({ children }: ActionDropMenuProps) {
+function ActionDropMenu({
+  children,
+  handleDelete,
+  isLoading,
+  deleteDialogOpen,
+  setDeleteDialogOpen,
+}: ActionDropMenuProps) {
   const [open, setOpen] = useState(false);
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
@@ -30,9 +43,12 @@ function ActionDropMenu({ children }: ActionDropMenuProps) {
           Open
         </DropdownMenuItem>
         {children}
-        <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-          Delete
-        </DropdownMenuItem>
+        <DeleteDialog
+          isOpen={deleteDialogOpen}
+          handleDelete={handleDelete}
+          setOpen={setDeleteDialogOpen}
+          isLoading={isLoading}
+        />
         <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
           Share
         </DropdownMenuItem>

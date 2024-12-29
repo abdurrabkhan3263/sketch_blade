@@ -7,6 +7,7 @@ import { useResponse } from "../../hooks/useResponse.tsx";
 import { getFiles } from "../../lib/action/files.action.ts";
 import { Files } from "../../lib/types";
 import { FileCreateDialog } from "../dialogs/FileCreateDialog.tsx";
+import { AxiosError } from "axios";
 
 interface FilesTableProps {
   type: "all" | "my";
@@ -19,21 +20,25 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
   }: {
     clerkId: string;
     _id: string;
-  }): Promise<Files[] | undefined> => {
+  }): Promise<Files[]> => {
     try {
       const response = await getFiles({ user: clerkId });
-      if (response) {
+      if (response.length > 0) {
         switch (type) {
           case "all":
             return response;
           case "my":
             return response.filter((file: Files) => file.creator._id === _id);
         }
-      } else {
-        return [];
       }
+      return [];
     } catch (err) {
-      console.error(err);
+      const error = err as AxiosError;
+      if (error.response) {
+        throw new Error(error.response?.data?.message || "An error occurred");
+      } else if (error.request) {
+        throw new Error("An unknown error occurred while making the request");
+      }
       return [];
     }
   };
@@ -72,10 +77,6 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
 export default FilesTable;
 
 const IfNoFile = () => {
-  const handleCreateFile = () => {
-    console.log("create file");
-  };
-
   return (
     <div className={"flex-center size-full select-none px-8 md:px-0"}>
       <div className={"w-full rounded-2xl border py-14 md:w-[600px]"}>

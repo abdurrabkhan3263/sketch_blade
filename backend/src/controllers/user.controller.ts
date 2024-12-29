@@ -5,13 +5,17 @@ import ApiResponse from "../utils/ApiResponse";
 
 const getUserAsCollaborator = AsyncHandler(
    async (req: Request, res: Response) => {
-      const { user_name } = req.body;
+      const { email, current_email } = req.body;
 
-      console.log(req.body);
+      if ((!email || email.trim() === "") && !current_email) {
+         return res
+            .status(400)
+            .json(ApiResponse.error({ message: "User name is required" }));
+      }
 
       const findUser = await User.find(
          {
-            first_name: user_name,
+            email: { $regex: new RegExp(email, "i"), $ne: current_email },
          },
          {
             full_name: {

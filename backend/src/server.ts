@@ -11,7 +11,6 @@ const app = express();
 const server = createServer(app);
 
 // Middleware
-
 app.use(clerkMiddleware());
 app.use(cookieParser());
 app.use(express.json());

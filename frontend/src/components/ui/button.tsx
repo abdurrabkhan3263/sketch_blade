@@ -22,6 +22,8 @@ const buttonVariants = cva(
         link: "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50",
         none: "bg-transparent text-zinc-50 dark:text-zinc-900",
         app: "bg-tertiary text-zinc-50 hover:bg-tertiary/90 dark:bg-tertiary dark:text-zinc-50 hover:text-zinc-200 dark:hover:bg-tertiary/90",
+        delete:
+          "bg-red-500 text-zinc-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-zinc-50 dark:hover:bg-red-900/90",
       },
       size: {
         default: "h-10 px-4 py-2",
