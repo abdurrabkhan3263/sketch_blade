@@ -8,26 +8,20 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu.tsx";
 import { BsThreeDots } from "react-icons/bs";
-import { useState } from "react";
+import React, { useState } from "react";
 import DeleteDialog from "./DeleteDialog.tsx";
+import { useNavigate } from "react-router";
 
 interface ActionDropMenuProps {
   _id: string;
   children: React.ReactNode;
-  handleDelete: () => void;
-  isLoading?: boolean;
-  deleteDialogOpen: boolean;
-  setDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  type: "file" | "folder";
 }
 
-function ActionDropMenu({
-  children,
-  handleDelete,
-  isLoading,
-  deleteDialogOpen,
-  setDeleteDialogOpen,
-}: ActionDropMenuProps) {
+function ActionDropMenu({ _id, children, type }: ActionDropMenuProps) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const childrenArray = React.Children.toArray(children);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -39,16 +33,15 @@ function ActionDropMenu({
       <DropdownMenuContent className="dark-container w-56">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+        <DropdownMenuItem
+          onSelect={() =>
+            navigate(type === "folder" ? `${_id}` : `/file/${_id}`)
+          }
+        >
           Open
         </DropdownMenuItem>
-        {children}
-        <DeleteDialog
-          isOpen={deleteDialogOpen}
-          handleDelete={handleDelete}
-          setOpen={setDeleteDialogOpen}
-          isLoading={isLoading}
-        />
+        {childrenArray[0]}
+        {childrenArray[1]}
         <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
           Share
         </DropdownMenuItem>

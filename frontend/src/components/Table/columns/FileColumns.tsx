@@ -12,12 +12,15 @@ import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { FileEditDialog } from "../../dialogs/FileEditDialog.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../../hooks/use-toast.ts";
 import axios, { AxiosError } from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store.ts";
+import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
+import useMutate from "../../../hooks/useMutate.ts";
+import { FileCreateDialog } from "../../dialogs/FileCreateDialog.tsx";
 
 type ColumnType = Column<Files>;
 
@@ -152,15 +155,10 @@ export const fileColumns: ColumnDef<Files>[] = [
     accessorKey: "_id",
     header: "ACTIONS",
     cell: ({ row }) => {
-      const [isLoading, setIsLoading] = useState(false);
       const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-      const queryClient = useQueryClient();
-      const { toast } = useToast();
-      const { clerkId } = useSelector((state: RootState) => state.auth);
 
-      const deleteFn = async () => {
+      const deleteFn = async (clerkId: string): Promise<void> => {
         try {
-          setIsLoading(true);
           const response = await axios.delete(`/api/file/${row.original._id}`, {
             headers: {
               Authorization: `Bearer ${clerkId}`,
@@ -180,45 +178,34 @@ export const fileColumns: ColumnDef<Files>[] = [
         }
       };
 
-      const deleteMutation = useMutation({
-        mutationKey: ["deleteFile", row.original._id],
-        mutationFn: deleteFn,
-        onSuccess: () => {
-          setIsLoading(false);
-          setDeleteDialogOpen(false);
-          queryClient.invalidateQueries({ queryKey: ["getFiles"] });
-        },
-        onError: (err) => {
-          setIsLoading(false);
-          toast({
-            title: "Error",
-            description: err.message,
-            variant: "destructive",
-          });
-        },
-        networkMode: "online",
-      });
+      const mutate = useMutate(
+        deleteFn,
+        { queryKey: ["getFiles"] },
+        setDeleteDialogOpen,
+      );
 
       const handleDeleteFile = () => {
-        deleteMutation.mutate();
+        if (mutate?.mutate) {
+          mutate.mutate();
+        }
       };
 
       return (
-        <ActionDropMenu
-          _id={row.original._id}
-          handleDelete={handleDeleteFile}
-          isLoading={isLoading}
-          deleteDialogOpen={deleteDialogOpen}
-          setDeleteDialogOpen={setDeleteDialogOpen}
-        >
-          <FileEditDialog _id={row.original._id} fileData={row.original}>
+        <ActionDropMenu _id={row.original._id} type={"file"}>
+          <FileCreateDialog _id={row.original._id} fileData={row.original}>
             <DropdownMenuItem
               onSelect={(event) => event.preventDefault()}
               className={"w-full"}
             >
               Edit
             </DropdownMenuItem>
-          </FileEditDialog>
+          </FileCreateDialog>
+          <DeleteDialog
+            isOpen={deleteDialogOpen}
+            handleDelete={handleDeleteFile}
+            setOpen={setDeleteDialogOpen}
+            isLoading={mutate?.isPending}
+          />
         </ActionDropMenu>
       );
     },

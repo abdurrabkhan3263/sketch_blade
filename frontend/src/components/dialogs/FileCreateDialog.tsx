@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { CollaboratorData } from "../../lib/types";
+import { CollaboratorData, Files } from "../../lib/types";
 import AddCollaboratorInput from "../AddCollaboratorInput.tsx";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -57,9 +57,15 @@ const formSchema = z.object({
 
 interface FileCreateDialogProps {
   children: React.ReactNode;
+  _id?: string;
+  fileData?: Files;
 }
 
-export function FileCreateDialog({ children }: FileCreateDialogProps) {
+export function FileCreateDialog({
+  children,
+  _id,
+  fileData,
+}: FileCreateDialogProps) {
   const [collaborators, setCollaborators] = useState<CollaboratorData[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -69,9 +75,9 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      file_name: "",
+      file_name: fileData?.file_name ?? "",
       collaborators: [],
-      description: "",
+      description: fileData?.description ?? "",
     },
   });
 
@@ -102,6 +108,13 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
     data["collaborators"] = collaborators;
     createMutation.mutate(data);
   };
+
+  useEffect(() => {
+    if (fileData?.collaborators) {
+      console.log(fileData);
+      setCollaborators(fileData.collaborators);
+    }
+  }, [fileData]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -157,11 +170,13 @@ export function FileCreateDialog({ children }: FileCreateDialogProps) {
               <Button type="submit" variant={"app"} className={"w-full"}>
                 {createMutation.isPending ? (
                   <>
-                    Creating...
+                    {fileData ? "Updating..." : "Creating..."}
                     <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                   </>
-                ) : (
+                ) : !fileData ? (
                   "Create File"
+                ) : (
+                  "Update File"
                 )}
               </Button>
             </DialogFooter>

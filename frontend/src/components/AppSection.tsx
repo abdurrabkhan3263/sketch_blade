@@ -33,24 +33,25 @@ const AppSection = () => {
               <ul
                 className={"flex-start select-none flex-wrap gap-4 capitalize"}
               >
-                {navLinks.map(({ pathName, name }) => {
-                  return (
-                    <li className="relative rounded-md py-1.5 text-sm">
-                      <NavLink
-                        to={pathName}
-                        className="relative z-20 px-8 text-quaternary transition-colors hover:text-tertiary"
-                      >
-                        {name}
-                      </NavLink>
-                      {pathname === pathName && (
-                        <motion.span
-                          layoutId="active"
-                          className="absolute left-0 top-0 z-10 h-full w-full rounded-md bg-secondary"
-                        />
-                      )}
-                    </li>
-                  );
-                })}
+                {navLinks.map(({ pathName, name }) => (
+                  <li
+                    key={pathName}
+                    className="relative rounded-md py-1.5 text-sm"
+                  >
+                    <NavLink
+                      to={pathName}
+                      className="relative z-20 px-8 text-quaternary transition-colors hover:text-tertiary"
+                    >
+                      {name}
+                    </NavLink>
+                    {pathName === pathname && (
+                      <motion.span
+                        layoutId="active"
+                        className="absolute left-0 top-0 z-10 h-full w-full rounded-md bg-secondary"
+                      />
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

@@ -33,6 +33,8 @@ export const createFolder = AsyncHandler(
          });
       }
 
+      const redisClient = DatabaseConnection.getRedisClient();
+
       if (Array.isArray(files) && files.length > 0) {
          const file = await FileModel.updateMany(
             {
@@ -50,6 +52,8 @@ export const createFolder = AsyncHandler(
             });
          }
       }
+
+      await redisClient.del(`folders:${userId}`);
 
       res.status(201).json({ success: true, data: folder });
    },
@@ -130,6 +134,8 @@ export const deleteFolder = AsyncHandler(
          });
       }
 
+      const redisClient = DatabaseConnection.getRedisClient();
+
       const findFolder = await FolderModel.findOne({
          _id: id,
          creator_id: userId,
@@ -151,6 +157,8 @@ export const deleteFolder = AsyncHandler(
             message: "Folder not deleted",
          });
       }
+
+      await redisClient.del(`folders:${userId}`);
 
       res.status(200).json(
          ApiResponse.success({ statusCode: 200, message: "Folder deleted" }),

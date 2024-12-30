@@ -25,8 +25,15 @@ const router = createBrowserRouter(
         <Route path={""} element={<All />} />
         <Route path={"folder"} element={<Folder />} />
         <Route path={"created-by-me"} element={<CreatedByMe />} />
-        <Route path={"file/:id"} element={<>File with id</>} />
+        <Route
+          path={"folder/:id"}
+          element={<div className={"main-container bg-blue-500"}></div>}
+        />
       </Route>
+      <Route
+        path={"file/:id"}
+        element={<div className={"main-container bg-blue-500"}></div>}
+      />
       <Route path="/sign-in" element={<Sign_In />} />
       <Route path="/sign-up" element={<Sign_Up />} />
     </>,

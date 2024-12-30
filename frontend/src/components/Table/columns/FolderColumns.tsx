@@ -9,6 +9,14 @@ import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
+import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "../../../hooks/use-toast.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store.ts";
+import { deleteFolder } from "../../../lib/action/folder.action.ts";
+import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
+import useMutate from "../../../hooks/useMutate.ts";
 
 type ColumnType = Column<Folders>;
 
@@ -56,9 +64,7 @@ export const folderColumns: ColumnDef<Folders>[] = [
     header: createSortableHeader("NAME"),
     cell: ({ row }) => (
       <span>
-        <Link to={`/folder/${row.original._id}`}>
-          {row.original.folder_name}
-        </Link>
+        <Link to={`${row.original._id}`}>{row.original.folder_name}</Link>
       </span>
     ),
   },
@@ -85,17 +91,51 @@ export const folderColumns: ColumnDef<Folders>[] = [
   {
     accessorKey: "files",
     header: "ACTIONS",
-    cell: ({ row }) => (
-      <ActionDropMenu>
-        <FolderEditDialog _id={row.original._id}>
-          <DropdownMenuItem
-            onSelect={(event) => event.preventDefault()}
-            className={"w-full"}
-          >
-            Edit
-          </DropdownMenuItem>
-        </FolderEditDialog>
-      </ActionDropMenu>
-    ),
+    cell: ({ row }) => {
+      const [deleteDialog, setDeleteDialog] = useState(false);
+
+      const deleteMutation = async (clerkId: string): Promise<any> => {
+        try {
+          return await deleteFolder({
+            folderIds: row.original._id,
+            userId: clerkId,
+          });
+        } catch (e) {
+          const error = e as Error;
+          throw new Error(error?.message || "An Error Occurred");
+        }
+      };
+
+      const mutate = useMutate(
+        deleteMutation,
+        { queryKey: ["getFolders"] },
+        setDeleteDialog,
+      );
+
+      const handleDelete = () => {
+        if (mutate?.mutate) {
+          mutate.mutate();
+        }
+      };
+
+      return (
+        <ActionDropMenu _id={row.original._id} type={"folder"}>
+          <FolderEditDialog _id={row.original._id}>
+            <DropdownMenuItem
+              onSelect={(event) => event.preventDefault()}
+              className={"w-full"}
+            >
+              Edit
+            </DropdownMenuItem>
+          </FolderEditDialog>
+          <DeleteDialog
+            isOpen={deleteDialog}
+            handleDelete={handleDelete}
+            setOpen={setDeleteDialog}
+            isLoading={mutate?.isPending}
+          />
+        </ActionDropMenu>
+      );
+    },
   },
 ];

@@ -8,6 +8,7 @@ import { getFiles } from "../../lib/action/files.action.ts";
 import { Files } from "../../lib/types";
 import { FileCreateDialog } from "../dialogs/FileCreateDialog.tsx";
 import { AxiosError } from "axios";
+import { FaFileCirclePlus } from "react-icons/fa6";
 
 interface FilesTableProps {
   type: "all" | "my";
@@ -62,7 +63,7 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
             <FileCreateDialog>
               <Button className="hover:bg-tertiary/90 bg-tertiary px-6">
                 Create File
-                <PlusIcon className="ml-2 h-4 w-4" />
+                <FaFileCirclePlus className="ml-2" />
               </Button>
             </FileCreateDialog>
           </div>

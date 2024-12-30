@@ -66,7 +66,7 @@ export const updateFile = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
       const { id } = req.params;
 
-      const { file_name, description } = req.body;
+      const { file_name, description, collaborators } = req.body;
       const userId = req.userId;
 
       if (!file_name && !description) {
@@ -110,7 +110,7 @@ export const updateFile = AsyncHandler(
 
       const updatedFile = await FileModel.findByIdAndUpdate(
          id,
-         { file_name, description },
+         { file_name, description, collaborators },
          { new: true },
       );
 
@@ -517,6 +517,24 @@ export const getFiles = AsyncHandler(
          {
             $lookup: {
                from: "users",
+               localField: "collaborators",
+               foreignField: "_id",
+               as: "collaborators",
+               pipeline: [
+                  {
+                     $project: {
+                        profile_url: 1,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
                localField: "creator",
                foreignField: "_id",
                as: "creator",
@@ -549,6 +567,8 @@ export const getFiles = AsyncHandler(
                active_collaborators: {
                   $slice: ["$active_collaborators", 3],
                },
+               collaborators: 1,
+               description: 1,
                creator: 1,
                createdAt: 1,
                updatedAt: 1,

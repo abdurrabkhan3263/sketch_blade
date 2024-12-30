@@ -11,6 +11,7 @@ export declare type Files = {
   folder?: Folder;
   active_collaborators: CreatorDetails[];
   creator: CreatorDetails;
+  collaborators: CollaboratorsDetails[];
   createdAt: string;
   updatedAt?: string;
 };

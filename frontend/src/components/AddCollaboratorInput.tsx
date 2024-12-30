@@ -59,6 +59,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
       debounce(async (searchTerm: { email: string; current_email: string }) => {
         try {
           const response = await axios.post("/api/users", searchTerm);
+          console.log(response);
           if (response.data.statusCode === 200) {
             if (
               Array.isArray(response.data.data) &&
