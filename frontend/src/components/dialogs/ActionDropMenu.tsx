@@ -3,14 +3,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu.tsx";
 import { BsThreeDots } from "react-icons/bs";
 import React, { useState } from "react";
-import DeleteDialog from "./DeleteDialog.tsx";
 import { useNavigate } from "react-router";
+import {AiFillFolderOpen} from "react-icons/ai";
+import {Share2} from "lucide-react";
 
 interface ActionDropMenuProps {
   _id: string;
@@ -30,19 +29,20 @@ function ActionDropMenu({ _id, children, type }: ActionDropMenuProps) {
           <BsThreeDots />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="dark-container w-56">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent className="dark-container w-40">
         <DropdownMenuItem
           onSelect={() =>
             navigate(type === "folder" ? `${_id}` : `/file/${_id}`)
           }
         >
+          <AiFillFolderOpen className="w-4 h-4" />
           Open
         </DropdownMenuItem>
         {childrenArray[0]}
         {childrenArray[1]}
+        {childrenArray[2]}
         <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+          <Share2 className="w-4 h-4" />
           Share
         </DropdownMenuItem>
       </DropdownMenuContent>

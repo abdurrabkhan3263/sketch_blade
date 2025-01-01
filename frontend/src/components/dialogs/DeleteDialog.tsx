@@ -11,6 +11,7 @@ import {
 import { DropdownMenuItem } from "../ui/dropdown-menu.tsx";
 import React from "react";
 import { Loader2 } from "lucide-react";
+import {MdDelete} from "react-icons/md";
 
 interface DeleteDialogProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ function DeleteDialog({
             event.preventDefault();
           }}
         >
+          <MdDelete className="h-4 w-4" />
           Delete
         </DropdownMenuItem>
       </DialogTrigger>

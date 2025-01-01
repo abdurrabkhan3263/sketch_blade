@@ -11,7 +11,8 @@ export declare type Files = {
   folder?: Folder;
   active_collaborators: CreatorDetails[];
   creator: CreatorDetails;
-  collaborators: CollaboratorsDetails[];
+  collaborators: CollaboratorData[];
+  description: string;
   createdAt: string;
   updatedAt?: string;
 };
@@ -23,7 +24,7 @@ export declare type File = {
   description?: string;
   locked: boolean;
   active_collaborators: ActiveCollaborators[];
-  collaborators: CollaboratorsDetails[];
+  collaborators: CollaboratorData[];
   creator: CreatorDetails;
   updatedAt: string;
 };
@@ -47,13 +48,6 @@ export declare type CreatorDetails = {
   profile_url: string;
 };
 
-export declare type CollaboratorsDetails = {
-  full_name: string;
-  profile_url: string;
-  email: string;
-  actions: CollaboratorActions;
-};
-
 export declare type ActiveCollaborators = {
   full_name: string;
   profile_url: string;
@@ -61,10 +55,11 @@ export declare type ActiveCollaborators = {
 };
 
 export declare type CollaboratorData = {
-  user: string;
+  _id: string;
   full_name: string;
   profile_url: string;
   actions: CollaboratorActions;
+  email: string;
 };
 
 export declare type ListCollaborator = {
@@ -74,8 +69,10 @@ export declare type ListCollaborator = {
   profile_url: string;
 };
 
-export declare enum CollaboratorActions {
-  Edit = "edit",
-  View = "view",
-  Owner = "owner",
-}
+export declare type CreateFile = {
+  file_name: string;
+  collaborators: CollaboratorData[];
+  description: string;
+};
+
+export declare type CollaboratorActions = "edit" | "view";

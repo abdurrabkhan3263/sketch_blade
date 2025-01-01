@@ -1,6 +1,6 @@
 import { useSession } from "@clerk/clerk-react";
 import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/slices/authSlice";
 

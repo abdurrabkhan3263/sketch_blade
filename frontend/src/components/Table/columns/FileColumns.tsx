@@ -1,6 +1,7 @@
+import React, { useState } from "react";
 import { ColumnDef, Column } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox.tsx";
-import { ArrowUpDown } from "lucide-react";
+import {ArrowUpDown, Edit2, Move} from "lucide-react";
 import { Button } from "../../ui/button.tsx";
 import {
   ActiveCollaborators as ActiveCollaboratorsType,
@@ -10,17 +11,13 @@ import { timeAgo } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
-import { FileEditDialog } from "../../dialogs/FileEditDialog.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
-import React, { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "../../../hooks/use-toast.ts";
 import axios, { AxiosError } from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store.ts";
 import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
 import useMutate from "../../../hooks/useMutate.ts";
 import { FileCreateDialog } from "../../dialogs/FileCreateDialog.tsx";
+import MoveFileDialog from "../../dialogs/MoveFileDialog.tsx";
+import {FaEdit} from "react-icons/fa";
 
 type ColumnType = Column<Files>;
 
@@ -197,6 +194,7 @@ export const fileColumns: ColumnDef<Files>[] = [
               onSelect={(event) => event.preventDefault()}
               className={"w-full"}
             >
+              <FaEdit className="h-4 w-4" />
               Edit
             </DropdownMenuItem>
           </FileCreateDialog>
@@ -206,6 +204,15 @@ export const fileColumns: ColumnDef<Files>[] = [
             setOpen={setDeleteDialogOpen}
             isLoading={mutate?.isPending}
           />
+          <MoveFileDialog>
+            <DropdownMenuItem
+                onSelect={(event) => event.preventDefault()}
+                className={"w-full"}
+            >
+              <Move className="h-4 w-4" />
+              Move File
+            </DropdownMenuItem>
+          </MoveFileDialog>
         </ActionDropMenu>
       );
     },

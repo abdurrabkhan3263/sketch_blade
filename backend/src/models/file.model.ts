@@ -21,7 +21,7 @@ export interface CollaboratorActionDocument extends Document {
 
 const collaboratorsAction = new Schema<CollaboratorActionDocument>(
    {
-      user: {
+      _id: {
          type: Schema.Types.ObjectId,
          ref: "User",
          required: true,
@@ -61,7 +61,7 @@ const fileSchema = new Schema<IFile>(
          type: [collaboratorsAction],
          validate: {
             validator: function (permissions: CollaboratorActionDocument[]) {
-               const users = permissions.map((p) => p.user.toString());
+               const users = permissions.map((p) => p._id);
                return new Set(users).size === users.length;
             },
             message: "Duplicate users are not allowed in permissions",

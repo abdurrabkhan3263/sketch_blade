@@ -59,7 +59,6 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
       debounce(async (searchTerm: { email: string; current_email: string }) => {
         try {
           const response = await axios.post("/api/users", searchTerm);
-          console.log(response);
           if (response.data.statusCode === 200) {
             if (
               Array.isArray(response.data.data) &&
@@ -88,7 +87,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
 
   const handleAddCollaborators = (collaboratorData: CollaboratorData) => {
     const isAlreadySelected = collaborators.some(
-      (coll) => coll.user === collaboratorData.user,
+      (coll) => coll._id === collaboratorData._id,
     );
 
     if (isAlreadySelected) return;
@@ -102,7 +101,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
   const handleChangeRole = (_id: string, role: CollaboratorActions) => {
     setCollaborators((prevColl) =>
       prevColl.map((coll) =>
-        coll.user === _id ? { ...coll, actions: role } : coll,
+        coll._id === _id ? { ...coll, actions: role } : coll,
       ),
     );
   };
@@ -142,7 +141,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                 <div className="flex max-h-32 flex-wrap gap-2 overflow-y-auto p-1">
                   {collaborators.map((collaborator) => (
                     <motion.div
-                      key={collaborator.user}
+                      key={collaborator._id}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
@@ -155,8 +154,8 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                       }}
                       className={cn(
                         "flex items-center justify-center gap-x-2.5 rounded-full border border-zinc-200 bg-primary px-2 py-1 text-white focus:border-2",
-                        selectedCollaborator?.user === collaborator.user &&
-                          selectedCollaborator?.user === collaborator.user &&
+                        selectedCollaborator?._id === collaborator._id &&
+                          selectedCollaborator?._id === collaborator._id &&
                           "ring-1 ring-offset-1",
                       )}
                       onClick={() => {
@@ -167,7 +166,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                       <img
                         src={collaborator.profile_url}
                         alt={collaborator.full_name}
-                        className="h-6 w-5 rounded-full"
+                        className="h-6 w-6 rounded-full"
                       />
                       <p>{collaborator.full_name}</p>
                       <button
@@ -176,7 +175,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                           e.stopPropagation();
                           setCollaborators((prevColl) =>
                             prevColl.filter(
-                              (coll) => coll.user !== collaborator.user,
+                              (coll) => coll._id !== collaborator._id,
                             ),
                           );
                         }}
@@ -211,7 +210,7 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
             onValueChange={(value) => {
               if (selectedCollaborator) {
                 handleChangeRole(
-                  selectedCollaborator.user,
+                  selectedCollaborator._id,
                   value as CollaboratorActions,
                 );
               }
@@ -251,10 +250,8 @@ const AddCollaboratorInput: React.FC<AddCollaboratorInputProps> = ({
                         onClick={(e) => {
                           e.preventDefault();
                           handleAddCollaborators({
-                            user: collaborator._id,
+                            ...collaborator,
                             actions: role,
-                            full_name: collaborator.full_name,
-                            profile_url: collaborator.profile_url,
                           });
                         }}
                       >

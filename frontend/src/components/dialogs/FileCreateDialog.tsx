@@ -21,16 +21,12 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { CollaboratorData, Files } from "../../lib/types";
 import AddCollaboratorInput from "../AddCollaboratorInput.tsx";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store.ts";
+import axios, {AxiosError} from "axios";
 import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
-import { useToast } from "../../hooks/use-toast.ts";
+import useMutate from "../../hooks/useMutate.ts";
+import {CollaboratorData, CreateFile, Files} from "../../lib/types";
 
 const formSchema = z.object({
   file_name: z
@@ -46,10 +42,11 @@ const formSchema = z.object({
   collaborators: z
     .array(
       z.object({
-        user: z.string(),
+        _id: z.string(),
         full_name: z.string(),
         profile_url: z.string(),
-        actions: z.enum(["view", "edit"]),
+        email: z.string().email(),
+        actions:z.enum(["edit","view"])
       }),
     )
     .optional(),
@@ -68,9 +65,6 @@ export function FileCreateDialog({
 }: FileCreateDialogProps) {
   const [collaborators, setCollaborators] = useState<CollaboratorData[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { clerkId } = useSelector((state: RootState) => state.auth);
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,37 +75,54 @@ export function FileCreateDialog({
     },
   });
 
-  const createMutation = useMutation({
-    mutationKey: ["createFile"],
-    mutationFn: (data: CollaboratorData) => {
-      return axios.post("/api/file", data, {
+  const createMutationFun = async (clerkId:string,data:CreateFile):Promise<void> => {
+    try {
+      const response = await axios.post("/api/file", data, {
         headers: {
           Authorization: `Bearer ${clerkId}`,
         },
       });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getFiles"] });
-      setIsOpen(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description:
-          error.response.data.message ?? error.message ?? "An error occurred",
-        variant: "destructive",
-      });
-    },
-  });
+      return response.data
+    } catch (e) {
+      const error = e as AxiosError;
+      throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
+    }finally {
+        form.reset();
+        setCollaborators([]);
+    }
+  };
+
+  const updateMutationFun = async (clerkId:string,data:CreateFile):Promise<void> => {
+    try {
+      const response = await axios.put(`/api/file/${_id}`, data, {
+        headers: {
+            Authorization: `Bearer ${clerkId}`,
+        }
+        });
+      return response.data;
+    } catch (e) {
+        const error = e as AxiosError;
+        throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
+    }finally {
+        form.reset();
+        setCollaborators([]);
+    }
+  };
+
+  const createMutation = useMutate(createMutationFun,{queryKey:["getFiles"]},setIsOpen)
+    const updateMutation = useMutate(updateMutationFun,{queryKey:["getFiles"]},setIsOpen)
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    data["collaborators"] = collaborators;
-    createMutation.mutate(data);
+    data["collaborators"] = collaborators ?? [];
+    if (fileData) {
+        updateMutation.mutate(data);
+    } else {
+      createMutation.mutate(data);
+    }
   };
 
   useEffect(() => {
     if (fileData?.collaborators) {
-      console.log(fileData);
       setCollaborators(fileData.collaborators);
     }
   }, [fileData]);
@@ -168,7 +179,7 @@ export function FileCreateDialog({
             />
             <DialogFooter>
               <Button type="submit" variant={"app"} className={"w-full"}>
-                {createMutation.isPending ? (
+                {createMutation.isPending || updateMutation.isPending ? (
                   <>
                     {fileData ? "Updating..." : "Creating..."}
                     <Loader2 className="mr-3 h-8 w-8 animate-spin" />

@@ -1,22 +1,19 @@
+import React, { useState } from "react";
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox.tsx";
 import { Button } from "../../ui/button.tsx";
 import { timeAgo } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Folders } from "../../../lib/types";
-import { ArrowUpDown } from "lucide-react";
+import {ArrowUpDown} from "lucide-react";
 import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
-import React, { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "../../../hooks/use-toast.ts";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store.ts";
 import { deleteFolder } from "../../../lib/action/folder.action.ts";
 import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
 import useMutate from "../../../hooks/useMutate.ts";
+import {FaEdit} from "react-icons/fa";
 
 type ColumnType = Column<Folders>;
 
@@ -125,6 +122,7 @@ export const folderColumns: ColumnDef<Folders>[] = [
               onSelect={(event) => event.preventDefault()}
               className={"w-full"}
             >
+              <FaEdit className={"h-4 w-4"} />
               Edit
             </DropdownMenuItem>
           </FolderEditDialog>

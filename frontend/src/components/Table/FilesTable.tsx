@@ -36,7 +36,7 @@ const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
     } catch (err) {
       const error = err as AxiosError;
       if (error.response) {
-        throw new Error(error.response?.data?.message || "An error occurred");
+        throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
       } else if (error.request) {
         throw new Error("An unknown error occurred while making the request");
       }

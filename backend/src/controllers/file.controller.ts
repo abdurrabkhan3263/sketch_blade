@@ -65,7 +65,6 @@ export const createFile = AsyncHandler(
 export const updateFile = AsyncHandler(
    async (req: Request, res: Response): Promise<void> => {
       const { id } = req.params;
-
       const { file_name, description, collaborators } = req.body;
       const userId = req.userId;
 
@@ -88,6 +87,8 @@ export const updateFile = AsyncHandler(
             statusCode: 400,
             message: "Invalid user id",
          });
+
+      const redisClient = DatabaseConnection.getRedisClient();
 
       const file = await FileModel.findById(id);
 
@@ -120,6 +121,8 @@ export const updateFile = AsyncHandler(
             message: "File not updated",
          });
       }
+
+        await redisClient.del(`files:${userId}`);
 
       res.status(200).json(
          ApiResponse.success({
@@ -475,59 +478,7 @@ export const getFiles = AsyncHandler(
                      creator: new Types.ObjectId(userId),
                   },
                   {
-                     "collaborators.user": new Types.ObjectId(userId),
-                  },
-               ],
-            },
-         },
-         {
-            $lookup: {
-               from: "folders",
-               localField: "folder",
-               foreignField: "_id",
-               as: "folder",
-               pipeline: [
-                  {
-                     $project: {
-                        folder_name: 1,
-                     },
-                  },
-               ],
-            },
-         },
-         {
-            $lookup: {
-               from: "users",
-               localField: "active_collaborators",
-               foreignField: "_id",
-               as: "active_collaborators",
-               pipeline: [
-                  {
-                     $project: {
-                        _id: 0,
-                        profile_url: 1,
-                        full_name: {
-                           $concat: ["$first_name", " ", "$last_name"],
-                        },
-                     },
-                  },
-               ],
-            },
-         },
-         {
-            $lookup: {
-               from: "users",
-               localField: "collaborators",
-               foreignField: "_id",
-               as: "collaborators",
-               pipeline: [
-                  {
-                     $project: {
-                        profile_url: 1,
-                        full_name: {
-                           $concat: ["$first_name", " ", "$last_name"],
-                        },
-                     },
+                     "collaborators._id": new Types.ObjectId(userId),
                   },
                ],
             },
@@ -538,40 +489,133 @@ export const getFiles = AsyncHandler(
                localField: "creator",
                foreignField: "_id",
                as: "creator",
+            },
+         },
+         {
+            $unwind: {
+               path: "$creator",
+               preserveNullAndEmptyArrays: true,
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               localField: "active_collaborators",
+               foreignField: "_id",
+               as: "active_collaborators",
+            },
+         },
+         {
+            $lookup: {
+               from: "users",
+               let: { collaborators: "$collaborators" },
                pipeline: [
                   {
-                     $project: {
-                        profile_url: 1,
-                        full_name: {
-                           $concat: ["$first_name", " ", "$last_name"],
+                     $match: {
+                        $expr: {
+                           $in: ["$_id", "$$collaborators._id"],
                         },
                      },
                   },
+                  {
+                     $project: {
+                        _id: 1,
+                        full_name: {
+                           $concat: ["$first_name", " ", "$last_name"],
+                        },
+                        email: 1,
+                        profile_url: 1,
+                     },
+                  },
                ],
+               as: "collaborator_details",
             },
          },
          {
             $addFields: {
-               folder: {
-                  $first: "$folder",
-               },
-               creator: {
-                  $first: "$creator",
+               collaborators: {
+                  $map: {
+                     input: "$collaborators",
+                     as: "collab",
+                     in: {
+                        $mergeObjects: [
+                           "$$collab",
+                           {
+                              $arrayElemAt: [
+                                 {
+                                    $filter: {
+                                       input: "$collaborator_details",
+                                       cond: {
+                                          $eq: ["$$this._id", "$$collab._id"],
+                                       },
+                                    },
+                                 },
+                                 0,
+                              ],
+                           },
+                        ],
+                     },
+                  },
                },
             },
          },
          {
             $project: {
                file_name: 1,
-               folder: 1,
-               active_collaborators: {
-                  $slice: ["$active_collaborators", 3],
-               },
-               collaborators: 1,
                description: 1,
-               creator: 1,
-               createdAt: 1,
+               locked: 1,
                updatedAt: 1,
+               createdAt: 1,
+               folder: 1,
+               creator: {
+                   _id:1,
+                  full_name: {
+                     $concat: [
+                        "$creator.first_name",
+                        " ",
+                        "$creator.last_name",
+                     ],
+                  },
+                  profile_url: "$creator.profile_url",
+               },
+               active_collaborators: {
+                  $map: {
+                     input: "$active_collaborators",
+                     as: "active",
+                     in: {
+                        full_name: {
+                           $concat: [
+                              "$$active.first_name",
+                              " ",
+                              "$$active.last_name",
+                           ],
+                        },
+                        email: "$$active.email",
+                        profile_url: "$$active.profile_url",
+                     },
+                  },
+               },
+               collaborators: {
+                  $cond: {
+                     if: {
+                        $eq: [{ $size: "$collaborators" }, 0],
+                     },
+                     then: [],
+                     else: {
+                        $map: {
+                           input: "$collaborators",
+                           as: "collab",
+                           in: {
+                              _id: "$$collab._id",
+                              full_name: "$$collab.full_name",
+                              email: "$$collab.email",
+                              profile_url: "$$collab.profile_url",
+                              actions: "$$collab.actions",
+                           },
+                        },
+                     },
+                  },
+               },
             },
          },
       ]);
@@ -636,17 +680,12 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
             localField: "creator",
             foreignField: "_id",
             as: "creator",
-            pipeline: [
-               {
-                  $project: {
-                     _id: 0,
-                     full_name: {
-                        $concat: ["$first_name", " ", "$last_name"],
-                     },
-                     profile_url: 1,
-                  },
-               },
-            ],
+         },
+      },
+      {
+         $unwind: {
+            path: "$creator",
+            preserveNullAndEmptyArrays: true,
          },
       },
       {
@@ -655,33 +694,23 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
             localField: "active_collaborators",
             foreignField: "_id",
             as: "active_collaborators",
-            pipeline: [
-               {
-                  $project: {
-                     _id: 0,
-                     full_name: {
-                        $concat: ["$first_name", " ", "$last_name"],
-                     },
-                     email: 1,
-                     profile_url: 1,
-                  },
-               },
-            ],
          },
-      },
-      {
-         $unwind: "$collaborators",
       },
       {
          $lookup: {
             from: "users",
-            localField: "collaborators.user",
-            foreignField: "_id",
-            as: "collaborator",
+            let: { collaborators: "$collaborators" },
             pipeline: [
                {
+                  $match: {
+                     $expr: {
+                        $in: ["$_id", "$$collaborators.user"],
+                     },
+                  },
+               },
+               {
                   $project: {
-                     _id: 0,
+                     _id: 1,
                      full_name: {
                         $concat: ["$first_name", " ", "$last_name"],
                      },
@@ -690,39 +719,33 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
                   },
                },
             ],
+            as: "collaborator_details",
          },
       },
       {
-         $unwind: "$collaborator",
-      },
-      {
-         $group: {
-            _id: "$_id",
-            file_name: {
-               $first: "$file_name",
-            },
-            description: {
-               $first: "$description",
-            },
-            locked: {
-               $first: "$locked",
-            },
-            updatedAt: {
-               $first: "$updatedAt",
-            },
-            creator: {
-               $first: "$creator",
-            },
-            active_collaborators: {
-               $first: "$active_collaborators",
-            },
-            folder: {
-               $first: "$folder",
-            },
+         $addFields: {
             collaborators: {
-               $push: {
-                  user: "$collaborator",
-                  actions: "$collaborators.actions",
+               $map: {
+                  input: "$collaborators",
+                  as: "collab",
+                  in: {
+                     $mergeObjects: [
+                        "$$collab",
+                        {
+                           $arrayElemAt: [
+                              {
+                                 $filter: {
+                                    input: "$collaborator_details",
+                                    cond: {
+                                       $eq: ["$$this._id", "$$collab.user"],
+                                    },
+                                 },
+                              },
+                              0,
+                           ],
+                        },
+                     ],
+                  },
                },
             },
          },
@@ -730,15 +753,54 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
       {
          $project: {
             file_name: 1,
-            creator: {
-               $first: "$creator",
-            },
-            collaborators: 1,
-            active_collaborators: 1,
             description: 1,
             locked: 1,
             updatedAt: 1,
             folder: 1,
+            creator: {
+               full_name: {
+                  $concat: ["$creator.first_name", " ", "$creator.last_name"],
+               },
+               profile_url: "$creator.profile_url",
+            },
+            active_collaborators: {
+               $map: {
+                  input: "$active_collaborators",
+                  as: "active",
+                  in: {
+                     full_name: {
+                        $concat: [
+                           "$$active.first_name",
+                           " ",
+                           "$$active.last_name",
+                        ],
+                     },
+                     email: "$$active.email",
+                     profile_url: "$$active.profile_url",
+                  },
+               },
+            },
+            collaborators: {
+               $cond: {
+                  if: {
+                     $eq: [{ $size: "$collaborators" }, 0],
+                  },
+                  then: [],
+                  else: {
+                     $map: {
+                        input: "$collaborators",
+                        as: "collab",
+                        in: {
+                           _id: "$$collab._id",
+                           full_name: "$$collab.full_name",
+                           email: "$$collab.email",
+                           profile_url: "$$collab.profile_url",
+                           actions: "$$collab.actions",
+                        },
+                     },
+                  },
+               },
+            },
          },
       },
    ]);

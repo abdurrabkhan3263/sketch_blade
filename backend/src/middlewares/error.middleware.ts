@@ -10,8 +10,6 @@ const errorMiddleware = (
    const statusCode = err.statusCode || 500;
    const message = err.message || "Internal Server Error";
 
-   console.log(err.stack, "error.middleware.ts");
-
    res.status(statusCode).json({
       success: false,
       message,

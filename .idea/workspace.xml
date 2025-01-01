@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/middlewares/error.middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/middlewares/error.middleware.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/models/file.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/file.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AddCollaboratorInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AddCollaboratorInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/ActionDropMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/ActionDropMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/DeleteDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/DeleteDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;abdurrabkhan3263&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/abdurrabkhan3263/sketch_blade.git&quot;,
+    &quot;accountId&quot;: &quot;c67ceaec-6a16-47e4-984c-0f7e64d8a348&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2r1kbXfptuTvcICIHP3xuI80x79" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "add/frontend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\prettier",
+    "ts.external.directory.path": "D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.112" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="" />
+      <created>1735734041792</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1735734041792</updated>
+      <workItem from="1735734044439" duration="47000" />
+      <workItem from="1735734109845" duration="739000" />
+      <workItem from="1735737428023" duration="5280000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

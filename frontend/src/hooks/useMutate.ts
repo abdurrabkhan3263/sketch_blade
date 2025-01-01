@@ -2,20 +2,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
+import {useNavigate} from "react-router";
 
 const useMutate = (
-  mutation: (clerkId: string) => Promise<void>,
+  mutation: (clerkId: string,data?:any) => Promise<void>,
   options: { [key: string]: string[] },
   setDialogOpen?: React.Dispatch<React.SetStateAction<boolean>>,
-): { mutate: any; isPending: boolean; isError: boolean } | undefined => {
+): { mutate: any; isPending: boolean; isError: boolean } => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const clerkId = useSelector((state: RootState) => state.auth.clerkId);
+  const navigate = useNavigate();
 
   const { mutate, isPending, isError } = useMutation({
     mutationKey: ["deleteFile"],
-    mutationFn: () => {
-      return mutation(clerkId);
+    mutationFn: (data) => {
+      return mutation(clerkId,data ?? {});
     },
     onSuccess: () => {
       if (setDialogOpen) {
@@ -44,7 +46,7 @@ const useMutate = (
       description: "Clerk ID not found",
       variant: "destructive",
     });
-    return undefined;
+    navigate("/sign-in");
   }
 
   return {
