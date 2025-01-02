@@ -1048,3 +1048,8 @@ export const getCollaborators = AsyncHandler(
       );
    },
 );
+
+export const MoveFileIntoFolder = AsyncHandler(async (req:Request,res:Response):Promise<void> =>{
+    const {id:fileId} = req.params;
+    const {folderId} = req.body;
+})

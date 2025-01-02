@@ -5,31 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/middlewares/error.middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/middlewares/error.middleware.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/models/file.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/file.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/AddCollaboratorInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AddCollaboratorInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/routes/file.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/routes/file.route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/ActionDropMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/ActionDropMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/DeleteDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/DeleteDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,21 +44,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "add/frontend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\prettier",
-    "ts.external.directory.path": "D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;add/frontend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Code\\Javascript\\Web\\Working_On\\excalidraw\\backend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -92,7 +76,8 @@
       <updated>1735734041792</updated>
       <workItem from="1735734044439" duration="47000" />
       <workItem from="1735734109845" duration="739000" />
-      <workItem from="1735737428023" duration="5280000" />
+      <workItem from="1735737428023" duration="5455000" />
+      <workItem from="1735824688540" duration="4689000" />
     </task>
     <servers />
   </component>

@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Files, Folder } from "../lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
+import {useToast} from "./use-toast.ts";
+import {AxiosError, AxiosResponse} from "axios";
 
 interface type {
   queryKeys: string[];
@@ -11,14 +12,29 @@ interface type {
   }: {
     _id: string;
     clerkId: string;
-  }) => Promise<Files[] | Folder[] | undefined>;
+  }) => Promise<AxiosResponse>;
 }
 
 export const useResponse = ({ queryFn, queryKeys }: type) => {
   const { _id, clerkId } = useSelector((state: RootState) => state.auth);
+  const {toast} = useToast()
+
   const { data, isPending } = useQuery({
     queryKey: [...queryKeys],
-    queryFn: async () => await queryFn({ _id, clerkId }),
+    queryFn: async () => {
+      try {
+        const response =  await queryFn({ _id, clerkId })
+        return response.data?.data || []
+      }catch (e) {
+        const Error = e as AxiosError;
+        toast({
+          title: "Error",
+          description: Error.response?.data?.message || Error?.message || "An Error Occurred",
+          variant: "destructive",
+        });
+        return []
+      }
+    },
     retry: 2,
     retryDelay: 1000,
     refetchOnReconnect: true,

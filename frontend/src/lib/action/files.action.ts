@@ -2,14 +2,14 @@ import { Files } from "../types/index";
 import axios, { AxiosError } from "axios";
 
 export const getFiles = async ({
-  user,
+  clerkId,
 }: {
-  user: string;
+  clerkId: string;
 }): Promise<Files[]> => {
   try {
     const response = await axios.get("/api/file", {
       headers: {
-        Authorization: `Bearer ${user}`,
+        Authorization: `Bearer ${clerkId}`,
       },
     });
 

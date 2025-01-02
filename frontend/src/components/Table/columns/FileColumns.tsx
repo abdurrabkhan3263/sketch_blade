@@ -204,7 +204,7 @@ export const fileColumns: ColumnDef<Files>[] = [
             setOpen={setDeleteDialogOpen}
             isLoading={mutate?.isPending}
           />
-          <MoveFileDialog>
+          <MoveFileDialog _id={row.original._id}>
             <DropdownMenuItem
                 onSelect={(event) => event.preventDefault()}
                 className={"w-full"}

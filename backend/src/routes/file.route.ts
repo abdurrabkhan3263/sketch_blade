@@ -10,7 +10,7 @@ import {
    addCollaborator,
    changeCollaboratorPermission,
    getFile,
-   getFolderFiles,
+   getFolderFiles, MoveFileIntoFolder,
 } from "../controllers/file.controller";
 import userMiddleware from "../middlewares/user.middleware";
 
@@ -26,6 +26,6 @@ router
    .delete(removeCollaborator)
    .put(changeCollaboratorPermission);
 router.route("/:id/collaborators/add").put(addCollaborator);
-router.route("/:id/folder").get(getFolderFiles);
+router.route("/:id/folder").get(getFolderFiles).put(MoveFileIntoFolder);
 
 export default router;

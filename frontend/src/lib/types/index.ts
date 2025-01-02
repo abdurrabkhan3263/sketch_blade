@@ -32,6 +32,7 @@ export declare type File = {
 export declare type Folder = {
   _id: string;
   folder_name: string;
+  createdAt: string;
 };
 
 export declare type Folders = {

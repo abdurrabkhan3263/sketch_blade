@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { DataTable } from "./Data-table.tsx";
 import { fileColumns } from "./columns/FileColumns.tsx";
 import { Button } from "../ui/button.tsx";
@@ -7,46 +7,25 @@ import { useResponse } from "../../hooks/useResponse.tsx";
 import { getFiles } from "../../lib/action/files.action.ts";
 import { Files } from "../../lib/types";
 import { FileCreateDialog } from "../dialogs/FileCreateDialog.tsx";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { FaFileCirclePlus } from "react-icons/fa6";
+import {useSelector} from "react-redux";
+import {RootState} from "../../redux/store.ts";
 
 interface FilesTableProps {
   type: "all" | "my";
 }
 
 const FilesTable: React.FC<FilesTableProps> = ({ type }) => {
-  const queryFn = async ({
-    clerkId,
-    _id,
-  }: {
-    clerkId: string;
-    _id: string;
-  }): Promise<Files[]> => {
-    try {
-      const response = await getFiles({ user: clerkId });
-      if (response.length > 0) {
-        switch (type) {
-          case "all":
-            return response;
-          case "my":
-            return response.filter((file: Files) => file.creator._id === _id);
-        }
-      }
-      return [];
-    } catch (err) {
-      const error = err as AxiosError;
-      if (error.response) {
-        throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
-      } else if (error.request) {
-        throw new Error("An unknown error occurred while making the request");
-      }
-      return [];
-    }
-  };
 
   const { data, isPending } = useResponse({
     queryKeys: ["getFiles"],
-    queryFn: queryFn,
+    queryFn: async ({ clerkId }) =>
+      await axios.get("/api/file", {
+        headers: {
+          Authorization: `Bearer ${clerkId}`,
+        },
+      }),
   });
 
   return (
