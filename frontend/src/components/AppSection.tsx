@@ -44,7 +44,7 @@ const AppSection = () => {
                     >
                       {name}
                     </NavLink>
-                    {pathName === pathname && (
+                    {pathname.split('/')[2] === pathName.split("/")[2] && (
                       <motion.span
                         layoutId="active"
                         className="absolute left-0 top-0 z-10 h-full w-full rounded-md bg-secondary"

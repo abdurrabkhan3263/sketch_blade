@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ColumnDef, Column } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox.tsx";
-import {ArrowUpDown, Edit2, Move} from "lucide-react";
+import { ArrowUpDown, Edit2, Move } from "lucide-react";
 import { Button } from "../../ui/button.tsx";
 import {
   ActiveCollaborators as ActiveCollaboratorsType,
@@ -12,12 +12,12 @@ import ProfileImg from "../../ProfileImg.tsx";
 import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
 import useMutate from "../../../hooks/useMutate.ts";
 import { FileCreateDialog } from "../../dialogs/FileCreateDialog.tsx";
 import MoveFileDialog from "../../dialogs/MoveFileDialog.tsx";
-import {FaEdit} from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 
 type ColumnType = Column<Files>;
 
@@ -107,7 +107,7 @@ export const fileColumns: ColumnDef<Files>[] = [
       <>
         {row.original.folder ? (
           <span className={"transition-all hover:text-tertiary"}>
-            <Link to={`/folder/${row.original._id}`}>
+            <Link to={`folder/${row.original.folder?._id}`}>
               {row.original.folder?.folder_name}
             </Link>
           </span>
@@ -141,12 +141,15 @@ export const fileColumns: ColumnDef<Files>[] = [
   {
     accessorKey: "creator",
     header: "AUTHOR",
-    cell: ({ row }) => (
-      <ProfileImg
-        full_name={row.original.creator?.full_name}
-        profile_url={row.original.creator?.profile_url}
-      />
-    ),
+    cell: ({ row }) =>
+      row.original.creator ? (
+        <ProfileImg
+          full_name={row.original.creator?.full_name}
+          profile_url={row.original.creator?.profile_url}
+        />
+      ) : (
+        <>-</>
+      ),
   },
   {
     accessorKey: "_id",
@@ -154,32 +157,24 @@ export const fileColumns: ColumnDef<Files>[] = [
     cell: ({ row }) => {
       const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-      const deleteFn = async (clerkId: string): Promise<void> => {
-        try {
-          const response = await axios.delete(`/api/file/${row.original._id}`, {
-            headers: {
-              Authorization: `Bearer ${clerkId}`,
-            },
-          });
-          if (response.status !== 200) {
-            throw new Error(response.data.message);
-          }
-          return response.data;
-        } catch (err) {
-          const error = err as AxiosError;
-          throw new Error(
-            error.response?.data?.message ||
-              error.message ||
-              "An error occurred",
-          );
-        }
+      const deleteFn = ({
+        clerkId,
+      }: {
+        clerkId: string;
+      }): Promise<AxiosResponse> => {
+        return axios.delete(`/api/file/${row.original._id}`, {
+          headers: {
+            Authorization: `Bearer ${clerkId}`,
+          },
+        });
       };
 
-      const mutate = useMutate(
-        deleteFn,
-        { queryKey: ["getFiles"] },
-        setDeleteDialogOpen,
-      );
+      const mutate = useMutate({
+        mutateFn: deleteFn,
+        isShowSuccessToast: true,
+        options: { queryKey: ["getFiles"] },
+        finallyFn: () => setDeleteDialogOpen(false),
+      });
 
       const handleDeleteFile = () => {
         if (mutate?.mutate) {
@@ -204,10 +199,13 @@ export const fileColumns: ColumnDef<Files>[] = [
             setOpen={setDeleteDialogOpen}
             isLoading={mutate?.isPending}
           />
-          <MoveFileDialog _id={row.original._id}>
+          <MoveFileDialog
+            _id={row.original._id}
+            existingFolderId={row.original.folder?._id}
+          >
             <DropdownMenuItem
-                onSelect={(event) => event.preventDefault()}
-                className={"w-full"}
+              onSelect={(event) => event.preventDefault()}
+              className={"w-full"}
             >
               <Move className="h-4 w-4" />
               Move File

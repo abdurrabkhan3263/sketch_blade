@@ -7,13 +7,20 @@
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/routes/file.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/routes/file.route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FilesTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/controllers/folder.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/folder.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/routes/folder.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/routes/folder.route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ProfileImg.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ProfileImg.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/action/folder.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/action/folder.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +84,9 @@
       <workItem from="1735734044439" duration="47000" />
       <workItem from="1735734109845" duration="739000" />
       <workItem from="1735737428023" duration="5455000" />
-      <workItem from="1735824688540" duration="4689000" />
+      <workItem from="1735824688540" duration="4974000" />
+      <workItem from="1735877804623" duration="8105000" />
+      <workItem from="1735988445608" duration="5405000" />
     </task>
     <servers />
   </component>

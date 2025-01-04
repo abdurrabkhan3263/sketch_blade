@@ -22,11 +22,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import AddCollaboratorInput from "../AddCollaboratorInput.tsx";
-import axios, {AxiosError} from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
 import useMutate from "../../hooks/useMutate.ts";
-import {CollaboratorData, CreateFile, Files} from "../../lib/types";
+import { CollaboratorData, Files } from "../../lib/types";
 
 const formSchema = z.object({
   file_name: z
@@ -46,7 +46,7 @@ const formSchema = z.object({
         full_name: z.string(),
         profile_url: z.string(),
         email: z.string().email(),
-        actions:z.enum(["edit","view"])
+        actions: z.enum(["edit", "view"]),
       }),
     )
     .optional(),
@@ -75,47 +75,56 @@ export function FileCreateDialog({
     },
   });
 
-  const createMutationFun = async (clerkId:string,data:CreateFile):Promise<void> => {
-    try {
-      const response = await axios.post("/api/file", data, {
-        headers: {
-          Authorization: `Bearer ${clerkId}`,
-        },
-      });
-      return response.data
-    } catch (e) {
-      const error = e as AxiosError;
-      throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
-    }finally {
-        form.reset();
-        setCollaborators([]);
-    }
+  const createMutationFun = ({
+    clerkId,
+    data,
+  }: {
+    clerkId: string;
+    data: any;
+  }): Promise<AxiosResponse> => {
+    return axios.post("/api/file", data, {
+      headers: {
+        Authorization: `Bearer ${clerkId}`,
+      },
+    });
   };
 
-  const updateMutationFun = async (clerkId:string,data:CreateFile):Promise<void> => {
-    try {
-      const response = await axios.put(`/api/file/${_id}`, data, {
-        headers: {
-            Authorization: `Bearer ${clerkId}`,
-        }
-        });
-      return response.data;
-    } catch (e) {
-        const error = e as AxiosError;
-        throw new Error((error.response?.data as { message: string })?.message || "An error occurred");
-    }finally {
-        form.reset();
-        setCollaborators([]);
-    }
+  const updateMutationFun = ({
+    clerkId,
+    data,
+  }: {
+    clerkId: string;
+    data: any;
+  }): Promise<AxiosResponse> => {
+    return axios.put(`/api/file/${_id}`, data, {
+      headers: {
+        Authorization: `Bearer ${clerkId}`,
+      },
+    });
   };
 
-  const createMutation = useMutate(createMutationFun,{queryKey:["getFiles"]},setIsOpen)
-    const updateMutation = useMutate(updateMutationFun,{queryKey:["getFiles"]},setIsOpen)
+  const createMutation = useMutate({
+    mutateFn: createMutationFun,
+    options: { queryKey: ["getFiles"] },
+    finallyFn: () => {
+      form.reset();
+      setIsOpen(false);
+    },
+  });
+
+  const updateMutation = useMutate({
+    mutateFn: updateMutationFun,
+    options: { queryKey: ["getFiles"] },
+    finallyFn: () => {
+      form.reset();
+      setIsOpen(false);
+    },
+  });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     data["collaborators"] = collaborators ?? [];
     if (fileData) {
-        updateMutation.mutate(data);
+      updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
     }

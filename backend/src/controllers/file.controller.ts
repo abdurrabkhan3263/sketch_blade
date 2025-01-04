@@ -122,7 +122,7 @@ export const updateFile = AsyncHandler(
          });
       }
 
-        await redisClient.del(`files:${userId}`);
+      await redisClient.del(`files:${userId}`);
 
       res.status(200).json(
          ApiResponse.success({
@@ -507,6 +507,21 @@ export const getFiles = AsyncHandler(
          },
          {
             $lookup: {
+               from: "folders",
+               localField: "folder",
+               foreignField: "_id",
+               as: "folder",
+               pipeline: [
+                  {
+                     $project: {
+                        folder_name: 1,
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $lookup: {
                from: "users",
                let: { collaborators: "$collaborators" },
                pipeline: [
@@ -566,9 +581,11 @@ export const getFiles = AsyncHandler(
                locked: 1,
                updatedAt: 1,
                createdAt: 1,
-               folder: 1,
+               folder: {
+                  $first: "$folder",
+               },
                creator: {
-                   _id:1,
+                  _id: 1,
                   full_name: {
                      $concat: [
                         "$creator.first_name",
@@ -1049,7 +1066,56 @@ export const getCollaborators = AsyncHandler(
    },
 );
 
-export const MoveFileIntoFolder = AsyncHandler(async (req:Request,res:Response):Promise<void> =>{
-    const {id:fileId} = req.params;
-    const {folderId} = req.body;
-})
+export const MoveFileIntoFolder = AsyncHandler(
+   async (req: Request, res: Response): Promise<void> => {
+      const { id: fileId } = req.params;
+      const { folderId } = req.body;
+      const userId = req.userId;
+
+      if (!isValidObjectId(userId)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid user id",
+         });
+      }
+
+      if (!isValidObjectId(fileId) || !isValidObjectId(folderId)) {
+         throw new ErrorHandler({
+            statusCode: 400,
+            message: `Invalid ${!isValidObjectId(fileId) ? "file" : "folder"} id`,
+         });
+      }
+
+      const redisClient = await DatabaseConnection.getRedisClient();
+
+      const updatedFile = await FileModel.updateOne(
+         {
+            _id: fileId,
+            creator: userId,
+         },
+         {
+            $set: {
+               folder: folderId,
+            },
+         },
+         { new: true },
+      );
+
+      if (updatedFile.matchedCount === 0) {
+         throw new ErrorHandler({
+            statusCode: 403,
+            message: "You are not authorized to move this file",
+         });
+      }
+
+      await redisClient.del(`files:${userId}`);
+
+      res.status(200).json(
+         ApiResponse.success({
+            success: true,
+            data: updatedFile,
+            message: "File moved into folder successfully",
+         }),
+      );
+   },
+);

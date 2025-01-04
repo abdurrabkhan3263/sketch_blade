@@ -23,7 +23,7 @@ const router = createBrowserRouter(
     <>
       <Route path="/home" element={<App />}>
         <Route path={""} element={<All />} />
-        <Route path={"folder"} element={<Folder />} />
+        <Route path={"folder/:id?"} element={<Folder />} />
         <Route path={"created-by-me"} element={<CreatedByMe />} />
         <Route
           path={"folder/:id"}

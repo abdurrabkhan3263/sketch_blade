@@ -10,10 +10,10 @@ import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
-import { deleteFolder } from "../../../lib/action/folder.action.ts";
 import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
 import useMutate from "../../../hooks/useMutate.ts";
 import {FaEdit} from "react-icons/fa";
+import axios, {AxiosResponse} from "axios";
 
 type ColumnType = Column<Folders>;
 
@@ -91,22 +91,20 @@ export const folderColumns: ColumnDef<Folders>[] = [
     cell: ({ row }) => {
       const [deleteDialog, setDeleteDialog] = useState(false);
 
-      const deleteMutation = async (clerkId: string): Promise<any> => {
-        try {
-          return await deleteFolder({
-            folderIds: row.original._id,
-            userId: clerkId,
+      const deleteMutation = async ({clerkId}:{clerkId:string}): Promise<AxiosResponse> => {
+          return axios.delete(`/api/folder/${row.original._id}`, {
+            headers: {
+              Authorization: `Bearer ${clerkId}`,
+            },
           });
-        } catch (e) {
-          const error = e as Error;
-          throw new Error(error?.message || "An Error Occurred");
-        }
       };
 
       const mutate = useMutate(
-        deleteMutation,
-        { queryKey: ["getFolders"] },
-        setDeleteDialog,
+          {
+            mutateFn:deleteMutation,
+            options:{queryKey:["getFolders"]},
+            finallyFn:()=>setDeleteDialog(false)
+          }
       );
 
       const handleDelete = () => {

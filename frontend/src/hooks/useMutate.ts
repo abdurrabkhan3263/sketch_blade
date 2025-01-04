@@ -2,36 +2,61 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
-import {useNavigate} from "react-router";
+import { AxiosError, AxiosResponse } from "axios";
 
-const useMutate = (
-  mutation: (clerkId: string,data?:any) => Promise<void>,
-  options: { [key: string]: string[] },
-  setDialogOpen?: React.Dispatch<React.SetStateAction<boolean>>,
-): { mutate: any; isPending: boolean; isError: boolean } => {
+const useMutate = ({
+  mutateFn,
+  options,
+  finallyFn,
+  isShowSuccessToast = false,
+}: {
+  mutateFn: ({
+    clerkId,
+    data,
+  }: {
+    clerkId: string;
+    data: any;
+  }) => Promise<AxiosResponse>;
+  options?: { [key: string]: string[] };
+  finallyFn?: () => void;
+  isShowSuccessToast?: boolean;
+}): { mutate: any; isPending: boolean; isError: boolean; data?: any } => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const clerkId = useSelector((state: RootState) => state.auth.clerkId);
-  const navigate = useNavigate();
 
-  const { mutate, isPending, isError } = useMutation({
-    mutationKey: ["deleteFile"],
-    mutationFn: (data) => {
-      return mutation(clerkId,data ?? {});
-    },
-    onSuccess: () => {
-      if (setDialogOpen) {
-        setDialogOpen(false);
+  const mutationFn = async (data) => {
+    try {
+      const res = await mutateFn({ clerkId, data: data || {} });
+      return res.data?.data || [];
+    } catch (err) {
+      const error = err as AxiosError;
+      throw new Error(error.response?.data?.message || error.message);
+    } finally {
+      if (finallyFn) {
+        finallyFn();
       }
-      queryClient.invalidateQueries(options);
+    }
+  };
+
+  const { mutate, isPending, isError, data } = useMutation({
+    mutationKey: ["deleteFile"],
+    mutationFn,
+    onSuccess: (res) => {
+      if (options) {
+        queryClient.invalidateQueries(options);
+      }
+      if (isShowSuccessToast) {
+        toast({
+          title: "Success",
+          description: res?.message || "Successfully deleted",
+        });
+      }
     },
     onError: (err) => {
-      if (setDialogOpen) {
-        setDialogOpen(false);
-      }
       toast({
         title: "Error",
-        description: err.message || "An error occurred",
+        description: err?.message || "An error occurred",
         variant: "destructive",
       });
     },
@@ -40,19 +65,11 @@ const useMutate = (
     retryDelay: 1000,
   });
 
-  if (!clerkId) {
-    toast({
-      title: "Error",
-      description: "Clerk ID not found",
-      variant: "destructive",
-    });
-    navigate("/sign-in");
-  }
-
   return {
     mutate,
     isPending,
     isError,
+    data,
   };
 };
 

@@ -236,3 +236,31 @@ export const getFolders = AsyncHandler(async (req: Request, res: Response) => {
 
    res.status(200).json({ success: true, data: folders });
 });
+
+export const getFoldersForMoveFile = AsyncHandler(async (req: Request, res: Response) => {
+    const userId = req.userId;
+
+    if (!userId) {
+        throw new ErrorHandler({
+            statusCode: 400,
+            message: "Invalid creator id",
+        });
+    }
+
+    const folders = await FolderModel.find({
+        creator_id: userId,
+    });
+
+    if (!folders) {
+        throw new ErrorHandler({
+            statusCode: 404,
+            message: "Folders not found",
+        });
+    }
+
+    res.status(200).json(ApiResponse.success({
+        statusCode: 200,
+        message: "Folders found",
+        data: folders,
+    }));
+})

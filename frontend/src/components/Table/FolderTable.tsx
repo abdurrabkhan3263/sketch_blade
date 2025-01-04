@@ -5,7 +5,6 @@ import { Loader2 } from "lucide-react";
 import { Folders } from "../../lib/types";
 import { useToast } from "../../hooks/use-toast.ts";
 import { ToastAction } from "../ui/toast.tsx";
-import { getFolders } from "../../lib/action/folder.action.ts";
 import { Button } from "../ui/button.tsx";
 import { FaFolderPlus } from "react-icons/fa";
 import {
@@ -19,11 +18,9 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store.ts";
+import axios, { AxiosResponse} from "axios";
 import { useState } from "react";
+import useMutate from "../../hooks/useMutate.ts";
 
 const folderSchema = z.object({
   folderName: z
@@ -36,32 +33,19 @@ const folderSchema = z.object({
 
 const FolderTable = () => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const { clerkId } = useSelector((state: RootState) => state.auth);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const queryFn = async ({
+  const queryFn = ({
     clerkId,
   }: {
     clerkId: string;
     _id: string;
-  }): Promise<Folders[] | undefined> => {
-    try {
-      const response = await getFolders({ userId: clerkId });
-      if (response) {
-        return response;
-      } else {
-        return [];
-      }
-    } catch (err) {
-      const error = err as Error;
-      toast({
-        title: "Error",
-        description: error.message || "An error occurred",
-        variant: "destructive",
-      });
-      return [];
-    }
+  }): Promise<AxiosResponse> => {
+    return axios.get("/api/folder", {
+      headers: {
+        Authorization: `Bearer ${clerkId}`,
+      },
+    });
   };
 
   const { data, isPending } = useResponse({
@@ -69,51 +53,23 @@ const FolderTable = () => {
     queryKeys: ["getFolders"],
   });
 
-  const mutationFun = async (folderName: string) => {
-    try {
-      const response = await axios.post(
+  const mutationFun = ({clerkId,data}:{clerkId:string,data:{folder_name:string}}) => {
+    return axios.post(
         "/api/folder",
-        { folder_name: folderName },
+        data,
         {
           headers: {
             Authorization: `Bearer ${clerkId}`,
           },
         },
-      );
-      if (response.data.success) {
-        return response.data.data;
-      }
-    } catch (e) {
-      const error = e as AxiosError;
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "An error occurred",
-        variant: "destructive",
-      });
-      return [];
-    }
+    );
   };
 
-  const folderMutation = useMutation({
-    mutationKey: ["createFolder"],
-    mutationFn: mutationFun,
-    onSuccess: () => {
-      setIsDeleteDialogOpen(false);
-      queryClient.invalidateQueries({
-        queryKey: ["getFolders"],
-      });
-      toast({
-        title: "Success",
-        description: "Folder created successfully",
-      });
-    },
-    onError: (e) => {
-      toast({
-        title: e,
-        variant: "destructive",
-      });
-    },
-  });
+  const folderMutation = useMutate({
+    mutateFn: mutationFun,
+    options:{queryKey:["getFolders"]},
+    finallyFn:()=>setIsDeleteDialogOpen(false)
+  })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,7 +86,7 @@ const FolderTable = () => {
         });
       }
       const folderName = zodHandler.data.folderName;
-      folderMutation.mutate(folderName);
+      folderMutation.mutate({folder_name:folderName});
     } catch (e) {
       toast({
         title: e,

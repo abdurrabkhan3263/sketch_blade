@@ -15,7 +15,7 @@ const ProfileImg: React.FC<ProfileImgProps> = ({
   return (
     <span
       className={cn(
-        "mx-auto block h-10 w-10 overflow-hidden rounded-full",
+        "mx-auto block h-8 w-8 overflow-hidden rounded-full",
         containerClassName,
       )}
     >
