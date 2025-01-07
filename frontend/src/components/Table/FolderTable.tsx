@@ -19,8 +19,9 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { z } from "zod";
 import axios, { AxiosResponse} from "axios";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import useMutate from "../../hooks/useMutate.ts";
+import {useParams} from "react-router";
 
 const folderSchema = z.object({
   folderName: z
@@ -107,6 +108,7 @@ const FolderTable = () => {
     if (folderMutation.isPending) return;
     setIsDeleteDialogOpen((prev) => !prev);
   };
+
 
   return (
     <>

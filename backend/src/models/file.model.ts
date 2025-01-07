@@ -45,7 +45,7 @@ const fileSchema = new Schema<IFile>(
    {
       file_name: {
          type: String,
-         default: "Untitled File",
+         default: "Untitled file",
       },
       folder: {
          type: Schema.Types.ObjectId,

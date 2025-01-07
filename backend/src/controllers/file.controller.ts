@@ -56,7 +56,7 @@ export const createFile = AsyncHandler(
             statusCode: 201,
             success: true,
             data: file,
-            message: "File created successfully",
+            message: "file created successfully",
          }),
       );
    },
@@ -71,7 +71,7 @@ export const updateFile = AsyncHandler(
       if (!file_name && !description) {
          throw new ErrorHandler({
             statusCode: 400,
-            message: "File name or description is required",
+            message: "file name or description is required",
          });
       }
 
@@ -95,7 +95,7 @@ export const updateFile = AsyncHandler(
       if (!file) {
          throw new ErrorHandler({
             statusCode: 404,
-            message: "File not found",
+            message: "file not found",
          });
       }
 
@@ -118,7 +118,7 @@ export const updateFile = AsyncHandler(
       if (!updatedFile) {
          throw new ErrorHandler({
             statusCode: 500,
-            message: "File not updated",
+            message: "file not updated",
          });
       }
 
@@ -128,7 +128,7 @@ export const updateFile = AsyncHandler(
          ApiResponse.success({
             success: true,
             data: updatedFile,
-            message: "File updated successfully",
+            message: "file updated successfully",
          }),
       );
    },
@@ -169,7 +169,7 @@ export const deleteFile = AsyncHandler(
       if (!deleteFile) {
          throw new ErrorHandler({
             statusCode: 500,
-            message: "File not deleted",
+            message: "file not deleted",
          });
       }
 
@@ -179,7 +179,7 @@ export const deleteFile = AsyncHandler(
       res.status(200).json(
          ApiResponse.success({
             success: true,
-            message: "File deleted successfully",
+            message: "file deleted successfully",
          }),
       );
    },
@@ -230,7 +230,7 @@ export const toggleLock = AsyncHandler(
          ApiResponse.success({
             success: true,
             data: updatedFile,
-            message: "File locked/unlocked successfully",
+            message: "file locked/unlocked successfully",
          }),
       );
    },
@@ -679,7 +679,7 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
       res.status(200).json(
          ApiResponse.success({
             data: JSON.parse(cachedData),
-            message: "File found successfully",
+            message: "file found successfully",
          }),
       );
       return;
@@ -825,7 +825,7 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
    if (!file) {
       throw new ErrorHandler({
          statusCode: 404,
-         message: "File not found",
+         message: "file not found",
       });
    }
 
@@ -834,7 +834,7 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
    });
 
    res.status(200).json(
-      ApiResponse.success({ data: file, message: "File found successfully" }),
+      ApiResponse.success({ data: file, message: "file found successfully" }),
    );
 });
 
@@ -1114,7 +1114,7 @@ export const MoveFileIntoFolder = AsyncHandler(
          ApiResponse.success({
             success: true,
             data: updatedFile,
-            message: "File moved into folder successfully",
+            message: "file moved into folder successfully",
          }),
       );
    },

@@ -31,8 +31,8 @@ interface FileEditDialogProps {
 const formSchema = z.object({
   file_name: z
     .string()
-    .min(3, "File name must be at least 3 characters long")
-    .nonempty("File name is required"),
+    .min(3, "file name must be at least 3 characters long")
+    .nonempty("file name is required"),
   folder: z.string().nonempty("Folder is required"),
   // collaborators: z.array(z.string()).nonempty("Collaborators is required"),
   // description: z.string().nonempty("Description is required"),

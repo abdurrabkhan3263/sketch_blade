@@ -50,7 +50,7 @@ export declare type UpdateFolderRequest = {
    folder_name: string;
 };
 
-// File
+// file
 export declare type File = {
    _id: Id;
    file_name: string;

@@ -106,10 +106,8 @@ export const fileColumns: ColumnDef<Files>[] = [
     cell: ({ row }) => (
       <>
         {row.original.folder ? (
-          <span className={"transition-all hover:text-tertiary"}>
-            <Link to={`folder/${row.original.folder?._id}`}>
+          <span>
               {row.original.folder?.folder_name}
-            </Link>
           </span>
         ) : (
           <>-</>

@@ -6,7 +6,6 @@ import { timeAgo } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Folders } from "../../../lib/types";
 import {ArrowUpDown} from "lucide-react";
-import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
@@ -61,7 +60,7 @@ export const folderColumns: ColumnDef<Folders>[] = [
     header: createSortableHeader("NAME"),
     cell: ({ row }) => (
       <span>
-        <Link to={`${row.original._id}`}>{row.original.folder_name}</Link>
+        {row.original.folder_name}
       </span>
     ),
   },
@@ -91,21 +90,23 @@ export const folderColumns: ColumnDef<Folders>[] = [
     cell: ({ row }) => {
       const [deleteDialog, setDeleteDialog] = useState(false);
 
-      const deleteMutation = async ({clerkId}:{clerkId:string}): Promise<AxiosResponse> => {
-          return axios.delete(`/api/folder/${row.original._id}`, {
-            headers: {
-              Authorization: `Bearer ${clerkId}`,
-            },
-          });
+      const deleteMutation = async ({
+        clerkId,
+      }: {
+        clerkId: string;
+      }): Promise<AxiosResponse> => {
+        return axios.delete(`/api/folder/${row.original._id}`, {
+          headers: {
+            Authorization: `Bearer ${clerkId}`,
+          },
+        });
       };
 
-      const mutate = useMutate(
-          {
-            mutateFn:deleteMutation,
-            options:{queryKey:["getFolders"]},
-            finallyFn:()=>setDeleteDialog(false)
-          }
-      );
+      const mutate = useMutate({
+        mutateFn: deleteMutation,
+        options: { queryKey: ["getFolders"] },
+        finallyFn: () => setDeleteDialog(false),
+      });
 
       const handleDelete = () => {
         if (mutate?.mutate) {

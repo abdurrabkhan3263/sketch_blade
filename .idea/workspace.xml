@@ -5,21 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ShareSection.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/UndoBtn.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ZoomBtn.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/lib/const.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/controllers/folder.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/folder.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/routes/folder.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/routes/folder.route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AuthProtection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/ProfileImg.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ProfileImg.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/models/file.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/file.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/types/appType/index.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/types/appType/index.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/MoveFileDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useMutate.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/action/files.action.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/action/folder.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/action/folder.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileEditDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileEditDialog.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,7 +88,10 @@
       <workItem from="1735737428023" duration="5455000" />
       <workItem from="1735824688540" duration="4974000" />
       <workItem from="1735877804623" duration="8105000" />
-      <workItem from="1735988445608" duration="5405000" />
+      <workItem from="1735988445608" duration="5590000" />
+      <workItem from="1736170418484" duration="3142000" />
+      <workItem from="1736265833797" duration="115000" />
+      <workItem from="1736265994378" duration="7846000" />
     </task>
     <servers />
   </component>

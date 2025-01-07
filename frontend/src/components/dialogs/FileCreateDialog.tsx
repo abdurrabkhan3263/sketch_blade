@@ -31,12 +31,12 @@ import { CollaboratorData, Files } from "../../lib/types";
 const formSchema = z.object({
   file_name: z
     .string()
-    .min(3, "File name must be at least 3 characters long")
-    .max(50, "File name must not exceed 50 characters")
-    .nonempty("File name is required")
+    .min(3, "file name must be at least 3 characters long")
+    .max(50, "file name must not exceed 50 characters")
+    .nonempty("file name is required")
     .refine((value) => /^[a-zA-Z0-9_-]+$/.test(value), {
       message:
-        "File name can only contain letters, numbers, underscores, and hyphens",
+        "file name can only contain letters, numbers, underscores, and hyphens",
     }),
   description: z.string().optional(),
   collaborators: z
@@ -194,9 +194,9 @@ export function FileCreateDialog({
                     <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                   </>
                 ) : !fileData ? (
-                  "Create File"
+                  "Create file"
                 ) : (
-                  "Update File"
+                  "Update file"
                 )}
               </Button>
             </DialogFooter>

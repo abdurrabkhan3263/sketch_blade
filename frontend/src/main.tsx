@@ -11,6 +11,7 @@ import Sign_Up from "./pages/auth/Sign_Up.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { All, CreatedByMe, Folder } from "./pages/Home/index";
 import { Toaster } from "@/components/ui/toaster";
+import File from "./pages/File.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -23,7 +24,7 @@ const router = createBrowserRouter(
     <>
       <Route path="/home" element={<App />}>
         <Route path={""} element={<All />} />
-        <Route path={"folder/:id?"} element={<Folder />} />
+        <Route path={"folder"} element={<Folder />} />
         <Route path={"created-by-me"} element={<CreatedByMe />} />
         <Route
           path={"folder/:id"}
@@ -32,7 +33,7 @@ const router = createBrowserRouter(
       </Route>
       <Route
         path={"file/:id"}
-        element={<div className={"main-container bg-blue-500"}></div>}
+        element={<File />}
       />
       <Route path="/sign-in" element={<Sign_In />} />
       <Route path="/sign-up" element={<Sign_Up />} />
