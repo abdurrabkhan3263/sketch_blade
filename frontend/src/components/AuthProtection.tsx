@@ -35,7 +35,7 @@ export default function AuthProtection({ children }: AuthLayoutProps) {
   }
 
   if (!session) {
-    return <div>Redirecting...</div>;
+    return <div className={"size-screen flex-center bg-primary"}>Redirecting...</div>;
   }
 
   return <div>{children}</div>;

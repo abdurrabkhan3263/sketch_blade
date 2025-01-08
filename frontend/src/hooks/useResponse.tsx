@@ -17,13 +17,13 @@ interface type {
 
 export const useResponse = ({ queryFn, queryKeys }: type) => {
   const { _id, clerkId } = useSelector((state: RootState) => state.auth);
-  const {toast} = useToast()
+  const {toast} = useToast();
 
-  const { data, isPending } = useQuery({
+  const { data, isPending,isError,error } = useQuery({
     queryKey: [...queryKeys],
     queryFn: async () => {
       try {
-        const response =  await queryFn({ _id, clerkId })
+        const response =  await queryFn({ _id, clerkId });
         return response.data?.data || []
       }catch (e) {
         const Error = e as AxiosError;
@@ -41,5 +41,5 @@ export const useResponse = ({ queryFn, queryKeys }: type) => {
     enabled: !!clerkId && !!_id,
   });
 
-  return { data, isPending };
+  return { data, isPending,isError,error };
 };

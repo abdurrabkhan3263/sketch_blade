@@ -1,16 +1,13 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { DataTable } from "./Data-table.tsx";
 import { fileColumns } from "./columns/FileColumns.tsx";
 import { Button } from "../ui/button.tsx";
 import { Loader2, PlusIcon } from "lucide-react";
 import { useResponse } from "../../hooks/useResponse.tsx";
-import { getFiles } from "../../lib/action/files.action.ts";
 import { Files } from "../../lib/types";
 import { FileCreateDialog } from "../dialogs/FileCreateDialog.tsx";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { FaFileCirclePlus } from "react-icons/fa6";
-import {useSelector} from "react-redux";
-import {RootState} from "../../redux/store.ts";
 
 interface FilesTableProps {
   type: "all" | "my";

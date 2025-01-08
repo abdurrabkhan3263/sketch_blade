@@ -12,7 +12,10 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { All, CreatedByMe, Folder } from "./pages/Home/index";
 import { Toaster } from "@/components/ui/toaster";
 import File from "./pages/File.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AuthProtection from "./components/AuthProtection.tsx";
 
+const queryClient = new QueryClient();
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -22,7 +25,14 @@ if (!PUBLISHABLE_KEY) {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/home" element={<App />}>
+      <Route
+        path="/home"
+        element={
+          <AuthProtection>
+            <App />
+          </AuthProtection>
+        }
+      >
         <Route path={""} element={<All />} />
         <Route path={"folder"} element={<Folder />} />
         <Route path={"created-by-me"} element={<CreatedByMe />} />
@@ -33,7 +43,11 @@ const router = createBrowserRouter(
       </Route>
       <Route
         path={"file/:id"}
-        element={<File />}
+        element={
+          <AuthProtection>
+            <File />
+          </AuthProtection>
+        }
       />
       <Route path="/sign-in" element={<Sign_In />} />
       <Route path="/sign-up" element={<Sign_Up />} />
@@ -52,8 +66,10 @@ createRoot(document.getElementById("root")!).render(
       signUpForceRedirectUrl={"/home"}
     >
       <Provider store={store}>
-        <RouterProvider router={router} />
-        <Toaster />
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+            <Toaster />
+        </QueryClientProvider>
       </Provider>
     </ClerkProvider>
   </StrictMode>,

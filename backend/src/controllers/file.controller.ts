@@ -829,12 +829,14 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
       });
    }
 
-   redisClient.set(`file:${id}`, JSON.stringify(file), {
+   console.log(file)
+
+   redisClient.set(`file:${id}`, JSON.stringify(file[0]), {
       EX: CACHE_EXPIRATION,
    });
 
    res.status(200).json(
-      ApiResponse.success({ data: file, message: "file found successfully" }),
+      ApiResponse.success({ data: file[0], message: "file found successfully" }),
    );
 });
 
