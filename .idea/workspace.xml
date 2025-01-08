@@ -5,24 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ShareSection.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/UndoBtn.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ZoomBtn.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/lib/const.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarAction.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/models/file.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/models/file.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/types/appType/index.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/types/appType/index.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/FolderTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FileColumns.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Table/columns/FolderColumns.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileCreateDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dialogs/FileEditDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dialogs/FileEditDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/UndoBtn.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/UndoBtn.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ZoomBtn.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ZoomBtn.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/const.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/const.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/File.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +85,8 @@
       <workItem from="1735988445608" duration="5590000" />
       <workItem from="1736170418484" duration="3142000" />
       <workItem from="1736265833797" duration="115000" />
-      <workItem from="1736265994378" duration="7846000" />
+      <workItem from="1736265994378" duration="8035000" />
+      <workItem from="1736305396792" duration="4409000" />
     </task>
     <servers />
   </component>

@@ -1,19 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  sidebar: true,
+  currentToolBar:"cursor",
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    toggleSidebar: (state) => {
-      state.sidebar = !state.sidebar;
+    toggleCurrentToolBar: (state,action) => {
+      state.currentToolBar = action.payload;
     },
-    getToggleValue: (state) => state.sidebar,
   },
 });
 
-export const { toggleSidebar, getToggleValue } = appSlice.actions;
+export const { toggleCurrentToolBar } = appSlice.actions;
 export default appSlice.reducer;

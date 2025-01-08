@@ -7,35 +7,35 @@ import {BsArrow90DegDown} from "react-icons/bs";
 
 const ToolBarElem = [
     {
-        name:"Cursor",
+        name:"cursor",
         icon:<GrCursor />,
     },
     {
-        name:"Circle",
+        name:"circle",
         icon:<GoCircle />
     },
     {
-        name:"Rectangle",
+        name:"rectangle",
         icon:<PiRectangle />
     },
     {
-        name:"Free Draw",
+        name:"free hand",
         icon:<FaPencilAlt />
     },
     {
-        name:"Text",
+        name:"text",
         icon:<RiText />
     },
     {
-        name:"Eraser",
+        name:"eraser",
         icon:<FaEraser />
     },
     {
-        name:"Arrow",
+        name:"arrow",
         icon:<GoArrowDown />
     },
     {
-        name:"Point Arrow",
+        name:"point arrow",
         icon:<BsArrow90DegDown />
     }
 ]

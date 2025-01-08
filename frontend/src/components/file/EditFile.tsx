@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Input} from "../ui/input.tsx";
 import {HiPencilAlt} from "react-icons/hi";
-import {FaCheck} from "react-icons/fa";
 import {Loader2} from "lucide-react";
 import {IoMdCheckmark} from "react-icons/io";
 

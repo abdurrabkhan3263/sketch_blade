@@ -47,7 +47,7 @@ const AppSection = () => {
                     {pathname.split('/')[2] === pathName.split("/")[2] && (
                       <motion.span
                         layoutId="active"
-                        className="absolute left-0 top-0 z-10 h-full w-full rounded-md bg-secondary"
+                        className="absolute left-0 top-0 z-10 size-full rounded-md bg-secondary"
                       />
                     )}
                   </li>
