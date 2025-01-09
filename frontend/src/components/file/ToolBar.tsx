@@ -24,7 +24,7 @@ const ToolBar = () => {
             <div
               key={index}
               className={
-                "relative flex items-center gap-1.5 hover:bg-teal-950/30 transition-all p-2 rounded-md bg-secondary text-quaternary"
+                "relative flex items-center justify-center gap-1.5 hover:bg-teal-950/30 transition-all p-2 rounded-md bg-secondary text-quaternary"
               }
               onClick={()=>handleToolBarClick(elem.name)}
             >

@@ -77,3 +77,11 @@ export declare type CreateFile = {
 };
 
 export declare type CollaboratorActions = "edit" | "view";
+
+export declare type StrokeStyle = "SOLID" | "DOTTED" | "DASHED";
+
+export declare type FillStyle = "SOLID" | "CROSSHATCH";
+
+export declare type EdgeRounded = "SHARP" | "ROUNDED";
+
+export declare type StrokeWidth = "THIN" | "MEDIUM" | "THICK";

@@ -1,6 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+type StateType = {
+  currentToolBar: "cursor" | "circle" | "rectangle" | "free hand" | "text" | "eraser" | "arrow" | "point arrow" | "upload";
+};
+
+const initialState:StateType = {
   currentToolBar:"cursor",
 };
 

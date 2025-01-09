@@ -829,8 +829,6 @@ export const getFile = AsyncHandler(async (req: Request, res: Response) => {
       });
    }
 
-   console.log(file)
-
    redisClient.set(`file:${id}`, JSON.stringify(file[0]), {
       EX: CACHE_EXPIRATION,
    });

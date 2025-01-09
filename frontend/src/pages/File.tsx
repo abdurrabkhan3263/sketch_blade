@@ -4,7 +4,7 @@ import ToolBar from "../components/file/ToolBar.tsx";
 import ShareSection from "../components/file/ShareSection.tsx";
 import ZoomBtn from "../components/file/ZoomBtn.tsx";
 import UndoBtn from "../components/file/UndoBtn.tsx";
-import ToolBarAction from "../components/file/ToolBarAction.tsx";
+import ToolBarAction from "../components/file/ToolBarActions/ToolBarAction.tsx";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import { useResponse } from "../hooks/useResponse.tsx";
@@ -15,7 +15,7 @@ const File = () => {
   const fileId = useParams().id;
   const navigate = useNavigate();
 
-  const { data, isPending,isError }:{data:FileType,isPending:boolean} = useResponse({
+  const { data, isPending,isError,error }:{data:FileType,isPending:boolean} = useResponse({
     queryKeys: [fileId as string],
     queryFn: async ({ clerkId }) => {
       return axios.get(`/api/file/${fileId}`, {
@@ -27,11 +27,14 @@ const File = () => {
   });
 
   useEffect(() => {
-    console.log(data)
-    if(isError){
-      navigate("/home")
+    if(isError) {
+      if (error?.response?.status === 404) {
+        navigate("/404");
+      }else if(error?.response?.status == 400 || error?.response?.status === 403){
+        navigate("/")
+      }
     }
-  }, [isError,data]);
+  }, [isError,error,data]);
 
   if (isPending)
     return (
@@ -49,7 +52,7 @@ const File = () => {
               "flex w-full flex-col gap-y-3 md:flex-row md:justify-between"
             }
           >
-            <EditFile fileId={fileId} fileName={data.file_name} />
+            <EditFile fileId={fileId} fileName={"fuck"} />
             <ToolBar />
             <ShareSection />
           </div>

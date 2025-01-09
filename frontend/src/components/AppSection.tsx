@@ -9,15 +9,15 @@ type NavLinks = {
 const navLinks: NavLinks = [
   {
     name: "All",
-    pathName: "/home",
+    pathName: "",
   },
   {
     name: "Folder",
-    pathName: "/home/folder",
+    pathName: "folder",
   },
   {
     name: "Created by me",
-    pathName: "/home/created-by-me",
+    pathName: "created-by-me",
   },
 ];
 
@@ -44,7 +44,7 @@ const AppSection = () => {
                     >
                       {name}
                     </NavLink>
-                    {pathname.split('/')[2] === pathName.split("/")[2] && (
+                    {pathname.split('/')[1] === pathName && (
                       <motion.span
                         layoutId="active"
                         className="absolute left-0 top-0 z-10 size-full rounded-md bg-secondary"

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
 import {useToast} from "./use-toast.ts";
 import {AxiosError, AxiosResponse} from "axios";
+import {useEffect} from "react";
 
 interface type {
   queryKeys: string[];
@@ -22,24 +23,26 @@ export const useResponse = ({ queryFn, queryKeys }: type) => {
   const { data, isPending,isError,error } = useQuery({
     queryKey: [...queryKeys],
     queryFn: async () => {
-      try {
         const response =  await queryFn({ _id, clerkId });
         return response.data?.data || []
-      }catch (e) {
-        const Error = e as AxiosError;
+      },
+        retry: 2,
+        retryDelay: 1000,
+        refetchOnReconnect: true,
+        enabled: !!clerkId && !!_id,
+    }
+    );
+
+  useEffect(() => {
+    if(isError){
+        const axiosError = error as AxiosError;
         toast({
-          title: "Error",
-          description: Error.response?.data?.message || Error?.message || "An Error Occurred",
-          variant: "destructive",
+            title: "Error",
+            description: axiosError.response?.data?.message || axiosError.message || "An error occurred",
+            variant:"destructive"
         });
-        return []
-      }
-    },
-    retry: 2,
-    retryDelay: 1000,
-    refetchOnReconnect: true,
-    enabled: !!clerkId && !!_id,
-  });
+    }
+  }, [isError]);
 
   return { data, isPending,isError,error };
 };
