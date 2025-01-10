@@ -5,34 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Circle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Eraser.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/FreeHand.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/PointedArrow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Rectangle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Text.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Background.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/ColorContainer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Container.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Fill.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Opacity.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Stroke.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeStyle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeWidth.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/const.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/NotFound.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/file.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AppSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useResponse.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Eraser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Eraser.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/FreeHand.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/PointedArrow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/PointedArrow.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Text.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Text.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Background.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/ColorContainer.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Container.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Fill.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Opacity.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Stroke.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeStyle.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeWidth.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/File.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,8 +74,9 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Code\Javascript\Web\Working_On\excalidraw\frontend\src\components\file\ToolBarActions\compo" />
+      <recent name="D:\Code\Javascript\Web\Working_On\excalidraw\frontend\src\components\file\ToolBarActions\ListToolBar" />
       <recent name="D:\Code\Javascript\Web\Working_On\excalidraw\frontend\src\components\file\ToolBarActions" />
+      <recent name="D:\Code\Javascript\Web\Working_On\excalidraw\frontend\src\components\file\ToolBarActions\compo" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -111,7 +106,8 @@
       <workItem from="1736305396792" duration="4535000" />
       <workItem from="1736336159153" duration="4016000" />
       <workItem from="1736391127731" duration="4359000" />
-      <workItem from="1736428498540" duration="5581000" />
+      <workItem from="1736428498540" duration="5809000" />
+      <workItem from="1736515026748" duration="5013000" />
     </task>
     <servers />
   </component>

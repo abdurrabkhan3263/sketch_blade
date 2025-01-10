@@ -80,7 +80,7 @@ export declare type CollaboratorActions = "edit" | "view";
 
 export declare type StrokeStyle = "SOLID" | "DOTTED" | "DASHED";
 
-export declare type FillStyle = "SOLID" | "CROSSHATCH";
+export declare type FillStyle = "SOLID" | "CROSSHATCH" | "HACHURE";
 
 export declare type EdgeRounded = "SHARP" | "ROUNDED";
 
