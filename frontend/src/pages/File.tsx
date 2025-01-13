@@ -52,7 +52,7 @@ const File = () => {
               "flex w-full flex-col gap-y-3 md:flex-row md:justify-between"
             }
           >
-            <EditFile fileId={fileId} fileName={"fuck"} />
+            <EditFile fileId={fileId as string} fileName={"fuck"} />
             <ToolBar />
             <ShareSection />
           </div>

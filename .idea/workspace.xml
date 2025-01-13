@@ -5,28 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Eraser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Eraser.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/FreeHand.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/PointedArrow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/PointedArrow.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarElements/Text.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Text.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Background.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/ColorContainer.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Container.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Fill.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Opacity.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/Stroke.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeStyle.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/StrokeWidth.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/compo/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/public/assets/icons/add.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/assets/icons/add.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/File.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +66,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.112" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.222" />
       </set>
     </attachedChunks>
   </component>
@@ -107,7 +91,9 @@
       <workItem from="1736336159153" duration="4016000" />
       <workItem from="1736391127731" duration="4359000" />
       <workItem from="1736428498540" duration="5809000" />
-      <workItem from="1736515026748" duration="5013000" />
+      <workItem from="1736515026748" duration="5364000" />
+      <workItem from="1736693475866" duration="15000" />
+      <workItem from="1736774509062" duration="5854000" />
     </task>
     <servers />
   </component>

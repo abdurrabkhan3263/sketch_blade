@@ -1,8 +1,5 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import ToolBarActions from "./const.ts";
-import { EdgeRounded, FillStyle, StrokeWidth as StrokeWidthType } from "../../../../lib/types";
-import { Slider } from "../../../ui/slider.tsx"
-
 
 interface ColorContainerProps {
   color: string;
@@ -15,8 +12,9 @@ interface ContainerProps {
 }
 
 interface IconContainerProps {
-  icon: FillStyle | StrokeWidthType | EdgeRounded;
+  icon: string;
   handleClick: (style: string) => void;
+  value: string;
 }
 
 // Wrapper for color container
@@ -48,13 +46,26 @@ const Container: React.FC<ContainerProps> = ({ children, label }) => {
 const IconContainer: React.FC<IconContainerProps> = ({
   icon,
   handleClick,
-}: IconContainerProps) => (
-  <div className={"flex-center h-6 w-6 rounded-md p-2"}>
-    <span className={"size-full"} onClick={() => handleClick(icon)}>
-      <img src={icon} className={"size-full object-cover"} alt={icon} />
-    </span>
-  </div>
-);
+  value,
+}: IconContainerProps) => {
+  return (
+    <button
+      autoFocus
+      className={
+        "flex-center h-7 w-7 rounded-md bg-tertiary p-1 text-gray-500 outline-white focus:outline-1 active:border"
+      }
+      onClick={() => handleClick(value)}
+    >
+      <span className={"inline-block size-full text-blue-500"}>
+        <img
+          src={icon}
+          className={"size-full fill-blue-500 object-cover"}
+          alt={value}
+        />
+      </span>
+    </button>
+  );
+};
 
 // Components for Background, Fill, StrokeStyle, StrokeWidth
 
@@ -103,8 +114,9 @@ const Fill = () => {
       {ToolBarActions.fillStyles.map((style, index) => (
         <IconContainer
           key={index}
-          icon={style}
+          icon={`/assets/icons/${style.toLowerCase()}.svg`}
           handleClick={(style) => handleFillChange(style)}
+          value={style}
         />
       ))}
     </Container>
@@ -121,8 +133,9 @@ const StrokeStyle = () => {
       {ToolBarActions.strokeStyles.map((style, index) => (
         <IconContainer
           key={index}
-          icon={"CROSSHATCH"}
+          icon={`/assets/icons/${style.toLowerCase()}-line.svg`}
           handleClick={(style) => handleStrokeStyleChange(style)}
+          value={style}
         />
       ))}
     </Container>
@@ -139,8 +152,9 @@ const StrokeWidth = () => {
       {ToolBarActions.strokeWidth.map((width, index) => (
         <IconContainer
           key={index}
-          icon={width}
+          icon={`/assets/icons/${width.toLowerCase() === "thin" ? "solid" : width.toLowerCase()}-line.svg`}
           handleClick={(style) => handleStrokeWidthChange(style)}
+          value={width}
         />
       ))}
     </Container>
@@ -156,18 +170,17 @@ const Opacity: React.FC = () => {
   };
 
   return (
-      <Container label="Opacity">
-        <input
-            type="range"
-            min="0"
-            max="100"
-            value={rangeValue}
-            onChange={handleRangeChange}
-            className={"w-full"}
-            />
-        <span>
-        </span>
-      </Container>
+    <Container label="Opacity">
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={rangeValue}
+        onChange={handleRangeChange}
+        className={"w-full"}
+      />
+      <span></span>
+    </Container>
   );
 };
 
