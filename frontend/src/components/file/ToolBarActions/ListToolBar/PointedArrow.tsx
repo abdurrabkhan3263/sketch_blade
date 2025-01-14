@@ -1,8 +1,20 @@
-import React from 'react'
+import React from "react";
+import Container from "../Container.tsx";
+import {
+  Opacity,
+  Stroke,
+  StrokeStyle,
+  StrokeWidth,
+} from "./ToolBarElements.tsx";
 
 const PointedArrow = () => {
-    return (
-        <div>PointedArrow</div>
-    )
-}
-export default PointedArrow
+  return (
+    <Container>
+      <Stroke />
+      <StrokeStyle />
+      <StrokeWidth />
+      <Opacity />
+    </Container>
+  );
+};
+export default PointedArrow;

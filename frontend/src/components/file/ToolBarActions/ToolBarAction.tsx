@@ -1,19 +1,37 @@
-import {useSelector} from "react-redux";
-import {RootState} from "../../../redux/store.ts";
-import Container from "./Container.tsx";
-import Circle from "./ListToolBar/Circle.tsx";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store.ts";
+import {
+  Circle,
+  Eraser,
+  PointedArrow,
+  FreeHand,
+  Text,
+  Rectangle,
+  Arrow,
+} from "../ToolBarActions/ListToolBar";
 
 const ToolBarAction = () => {
-    const currentTool = useSelector((state:RootState) => state.app.currentToolBar);
+  const { currentToolBar, currentElement } = useSelector(
+    (state: RootState) => state.app,
+  );
 
-    if (currentTool === 'cursor'){
-        return <></>
-    }
-
-    return (
-        <Container>
-            <Circle />
-        </Container>
-    )
-}
-export default ToolBarAction
+  switch (currentToolBar) {
+    case "circle":
+      return <Circle />;
+    case "rectangle":
+      return <Rectangle />;
+    case "text":
+      return <Text />;
+    case "eraser":
+      return <Eraser />;
+    case "free hand":
+      return <FreeHand />;
+    case "point arrow":
+      return <PointedArrow />;
+    case "arrow":
+      return <Arrow />;
+    default:
+      return <></>;
+  }
+};
+export default ToolBarAction;

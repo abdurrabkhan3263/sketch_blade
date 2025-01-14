@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
 import Container from "../Container.tsx";
-import {Opacity, Stroke, StrokeStyle, StrokeWidth} from "./ToolBarElements.tsx";
+import {
+    Opacity,
+    Stroke,
+    StrokeStyle,
+    StrokeWidth,
+} from "./ToolBarElements.tsx";
 
-
-const FreeHand = () => {
+const Arrow = () => {
     return (
         <Container>
             <Stroke />
@@ -11,6 +15,6 @@ const FreeHand = () => {
             <StrokeWidth />
             <Opacity />
         </Container>
-    )
-}
-export default FreeHand
+    );
+};
+export default Arrow;

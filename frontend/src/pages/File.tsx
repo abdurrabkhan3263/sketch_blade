@@ -15,7 +15,12 @@ const File = () => {
   const fileId = useParams().id;
   const navigate = useNavigate();
 
-  const { data, isPending,isError,error }:{data:FileType,isPending:boolean} = useResponse({
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+  }: { data: FileType; isPending: boolean } = useResponse({
     queryKeys: [fileId as string],
     queryFn: async ({ clerkId }) => {
       return axios.get(`/api/file/${fileId}`, {
@@ -27,14 +32,17 @@ const File = () => {
   });
 
   useEffect(() => {
-    if(isError) {
+    if (isError) {
       if (error?.response?.status === 404) {
         navigate("/404");
-      }else if(error?.response?.status == 400 || error?.response?.status === 403){
-        navigate("/")
+      } else if (
+        error?.response?.status == 400 ||
+        error?.response?.status === 403
+      ) {
+        navigate("/");
       }
     }
-  }, [isError,error,data]);
+  }, [isError, error, data]);
 
   if (isPending)
     return (
@@ -57,6 +65,9 @@ const File = () => {
             <ShareSection />
           </div>
         </div>
+        <div className={"size-full flex-1 relative z-10"}>
+          <ToolBarAction />
+        </div>
         <div className={"h-12 w-full"}>
           <div className={"flex size-full items-center justify-end gap-4"}>
             <ZoomBtn />
@@ -64,8 +75,6 @@ const File = () => {
           </div>
         </div>
       </div>
-      <ToolBarAction />
-      <div className={"absolute right-0 top-0 z-10 size-full"}></div>
     </main>
   );
 };

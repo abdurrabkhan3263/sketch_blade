@@ -5,12 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Arrow.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/assets/icons/add.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/assets/icons/add.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/public/assets/icons/curve-edge.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/assets/icons/rounded-edge.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Eraser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Eraser.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/PointedArrow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/PointedArrow.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Text.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Text.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/File.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +107,8 @@
       <workItem from="1736428498540" duration="5809000" />
       <workItem from="1736515026748" duration="5364000" />
       <workItem from="1736693475866" duration="15000" />
-      <workItem from="1736774509062" duration="5854000" />
+      <workItem from="1736774509062" duration="5987000" />
+      <workItem from="1736828934127" duration="9679000" />
     </task>
     <servers />
   </component>

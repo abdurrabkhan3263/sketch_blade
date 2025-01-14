@@ -76,6 +76,10 @@ export declare type CreateFile = {
   description: string;
 };
 
+export declare type CircleSelector = {
+
+}
+
 export declare type CollaboratorActions = "edit" | "view";
 
 export declare type StrokeStyle = "SOLID" | "DOTTED" | "DASHED";
@@ -85,3 +89,7 @@ export declare type FillStyle = "SOLID" | "CROSSHATCH" | "HACHURE";
 export declare type EdgeRounded = "SHARP" | "ROUNDED";
 
 export declare type StrokeWidth = "THIN" | "MEDIUM" | "THICK";
+
+export declare type FontSize = "SMALL" | "MEDIUM" | "LARGE"
+
+export declare type FontFamily = ""

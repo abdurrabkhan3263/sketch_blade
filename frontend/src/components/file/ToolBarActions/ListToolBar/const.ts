@@ -1,6 +1,6 @@
 import {
-    EdgeRounded,
-  FillStyle,
+  EdgeRounded,
+  FillStyle, FontFamily, FontSize,
   StrokeStyle,
   StrokeWidth,
 } from "../../../../lib/types";
@@ -12,6 +12,8 @@ interface IToolBarActions {
   strokeWidth: StrokeWidth[];
   strokeStyles: StrokeStyle[];
   edgeRounded: EdgeRounded[];
+  fontFamily:FontFamily[]
+  fontSize:FontSize[]
 }
 
 const ToolBarActions: IToolBarActions = {
@@ -21,6 +23,8 @@ const ToolBarActions: IToolBarActions = {
   strokeWidth: ["THIN","MEDIUM","THICK"],
   strokeStyles: ["DOTTED","DASHED","SOLID"],
   edgeRounded: ["ROUNDED","SHARP"],
+  fontFamily:[""],
+  fontSize:["SMALL","MEDIUM","LARGE"]
 };
 
 export default ToolBarActions;

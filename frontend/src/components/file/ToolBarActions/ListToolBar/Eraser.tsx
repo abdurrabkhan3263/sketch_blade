@@ -1,8 +1,12 @@
 import React from 'react'
+import Container from "../Container.tsx";
+import {EraserRadius} from "./ToolBarElements.tsx";
 
 const Eraser = () => {
     return (
-        <div>Eraser</div>
+       <Container>
+           <EraserRadius />
+       </Container>
     )
 }
 export default Eraser
