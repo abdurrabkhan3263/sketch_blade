@@ -91,5 +91,3 @@ export declare type EdgeRounded = "SHARP" | "ROUNDED";
 export declare type StrokeWidth = "THIN" | "MEDIUM" | "THICK";
 
 export declare type FontSize = "SMALL" | "MEDIUM" | "LARGE"
-
-export declare type FontFamily = ""

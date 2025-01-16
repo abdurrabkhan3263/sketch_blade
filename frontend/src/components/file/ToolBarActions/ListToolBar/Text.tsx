@@ -6,7 +6,6 @@ const Text = () => {
   return (
     <Container>
       <Stroke />
-      <FontFamily />
       <FontSize />
       <Opacity />
     </Container>

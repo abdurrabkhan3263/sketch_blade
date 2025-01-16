@@ -1,56 +1,14 @@
 import React, { useState } from "react";
 import ToolBarActions from "./const.ts";
-import { EdgeRounded } from "../../../../lib/types";
-import { Toggle } from "../../../ui/toggle.tsx";
-import { BiBold } from "react-icons/bi";
 import { ToggleGroup, ToggleGroupItem } from "../../../ui/toggle-group.tsx";
-import { FaBold } from "react-icons/fa";
-import { GoItalic } from "react-icons/go";
-import { AiOutlineUnderline } from "react-icons/ai";
-import {
-  TbLetterS as SMALL,
-  TbLetterM as MEDIUM,
-  TbLetterL as LARGE,
-} from "react-icons/tb";
-import toolBarAction from "../ToolBarAction.tsx";
-
-interface ColorContainerProps {
-  color: string;
-  isFocused: boolean;
-  handleClick: (color: string) => void;
-}
 
 interface ContainerProps {
   children: React.ReactNode;
   label: string;
 }
 
-interface IconContainerProps {
-  icon: string;
-  handleClick: (style: string) => void;
-  value: string;
-  isFocused: boolean;
-}
-
-interface ToolBars {
-  id?: string;
-  currentStyle?: string;
-}
-
-// Wrapper for color container
-
-const ColorContainer: React.FC<ColorContainerProps> = ({
-  isFocused,
-  color,
-  handleClick,
-}: ColorContainerProps) => {
-  return (
-    <div
-      className={"h-7 w-7 rounded-md"}
-      style={{ backgroundColor: color }}
-      onClick={() => handleClick(color)}
-    />
-  );
+const ColorContainer = ({ color }: { color: string }) => {
+  return <div className={"size-full"} style={{ backgroundColor: color }} />;
 };
 
 const Container: React.FC<ContainerProps> = ({ children, label }) => {
@@ -64,24 +22,8 @@ const Container: React.FC<ContainerProps> = ({ children, label }) => {
   );
 };
 
-const IconContainer: React.FC<IconContainerProps> = ({
-  isFocused,
-  icon,
-  handleClick,
-  value,
-}: IconContainerProps) => {
-  return (
-    <button
-      className={
-        "flex-center h-8 w-8 rounded-md bg-tertiary p-1 text-gray-500 outline-white focus:outline-1 active:border"
-      }
-      onClick={() => handleClick(value)}
-    >
-      <span className={"inline-block size-full text-blue-500"}>
-        <img src={icon} className={"size-full object-cover"} alt={value} />
-      </span>
-    </button>
-  );
+const IconContainer = ({ icon, value }: { icon: string; value: string }) => {
+  return <img src={icon} className={"size-full object-cover"} alt={value} />;
 };
 
 // Components for Background, Fill, StrokeStyle, StrokeWidth
@@ -92,14 +34,18 @@ const Background = () => {
 
   return (
     <Container label={"Background"}>
-      {ToolBarActions.backgroundColors.map((color, index) => (
-        <ColorContainer
-          color={color}
-          key={index}
-          isFocused={true}
-          handleClick={handleChangeBackground}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#3282B8"}>
+        {ToolBarActions.backgroundColors.map((color, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={color}
+            aria-label={`Toggle ${color}`}
+            onClick={handleChangeBackground}
+          >
+            <ColorContainer color={color} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -110,14 +56,18 @@ const Stroke = () => {
   };
   return (
     <Container label={"Stroke"}>
-      {ToolBarActions.strokeColors.map((color, index) => (
-        <ColorContainer
-          color={color}
-          key={index}
-          isFocused={true}
-          handleClick={handleStrokeChange}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#0A1F2C"}>
+        {ToolBarActions.strokeColors.map((color, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={color}
+            aria-label={`Toggle ${color}`}
+            onClick={handleStrokeChange}
+          >
+            <ColorContainer color={color} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -129,15 +79,18 @@ const Fill = () => {
 
   return (
     <Container label={"Fill"}>
-      {ToolBarActions.fillStyles.map((style, index) => (
-        <IconContainer
-          key={index}
-          isFocused={false}
-          icon={`/assets/icons/${style.toLowerCase()}.svg`}
-          handleClick={handleFillChange}
-          value={style}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"SOLID"}>
+        {ToolBarActions.fillStyles.map(({ path, color }, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={color}
+            aria-label={`Toggle ${color}`}
+            onClick={handleFillChange}
+          >
+            <IconContainer icon={path} value={color} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -149,15 +102,18 @@ const StrokeStyle = () => {
 
   return (
     <Container label={"Stroke style"}>
-      {ToolBarActions.strokeStyles.map((style, index) => (
-        <IconContainer
-          key={index}
-          isFocused={false}
-          icon={`/assets/icons/${style.toLowerCase()}-line.svg`}
-          handleClick={handleStrokeStyleChange}
-          value={style}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"SOLID"}>
+        {ToolBarActions.strokeStyles.map(({ style, path }, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={style}
+            aria-label={`Toggle ${style}`}
+            onClick={handleStrokeStyleChange}
+          >
+            <IconContainer icon={path} value={style} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -169,15 +125,18 @@ const StrokeWidth = () => {
 
   return (
     <Container label={"Stroke width"}>
-      {ToolBarActions.strokeWidth.map((width, index) => (
-        <IconContainer
-          key={index}
-          isFocused={false}
-          icon={`/assets/icons/${width.toLowerCase() === "thin" ? "solid" : width.toLowerCase()}-line.svg`}
-          handleClick={handleStrokeWidthChange}
-          value={width}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"THIN"}>
+        {ToolBarActions.strokeWidth.map(({ width, path }, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={width}
+            aria-label={`Toggle ${width}`}
+            onClick={handleStrokeWidthChange}
+          >
+            <IconContainer icon={path} value={width} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -189,15 +148,18 @@ const EdgeStyle = () => {
 
   return (
     <Container label={"Edge Style"}>
-      {ToolBarActions.edgeRounded.map((edgeStyle, index) => (
-        <IconContainer
-          key={index}
-          isFocused={false}
-          value={edgeStyle}
-          icon={`/assets/icons/${edgeStyle.toLowerCase()}-edge.svg`}
-          handleClick={handleEdgeStyleChange}
-        />
-      ))}
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"ROUNDED"}>
+        {ToolBarActions.edgeRounded.map(({ path, style }, index) => (
+          <ToggleGroupItem
+            key={index}
+            value={style}
+            aria-label={`Toggle ${style}`}
+            onClick={handleEdgeStyleChange}
+          >
+            <IconContainer icon={path} value={style} />
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </Container>
   );
 };
@@ -249,47 +211,15 @@ const EraserRadius: React.FC = () => {
 const FontSize: React.FC = () => {
   return (
     <Container label={"Font Size"}>
-
-      <ToggleGroup type="single" className={"gap-2"}>
-        {ToolBarActions.fontSize.map((FontSize) => {
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"MEDIUM"}>
+        {ToolBarActions.fontSize.map(({ Icon, size }) => {
           return (
-              <ToggleGroupItem
-                  value="bold"
-                  aria-label="Toggle bold"
-                  defaultValue={"Toggle bold"}
-              >
-                <FontSize className="size-full object-cover" />
-              </ToggleGroupItem>
+            <ToggleGroupItem value={size} aria-label={`Toggle ${size}`}>
+              <Icon className="size-full object-cover" />
+            </ToggleGroupItem>
           );
         })}
       </ToggleGroup>
-    </Container>
-  );
-};
-
-const FontFamily: React.FC = () => {
-  return (
-    <Container label={"Font Family"}>
-      <>
-        <ToggleGroup type="single" className={"gap-2"}>
-          <ToggleGroupItem
-            value="bold"
-            aria-label="Toggle bold"
-            defaultValue={"Toggle bold"}
-          >
-            <SMALL className="size-full object-cover" />
-          </ToggleGroupItem>
-          <ToggleGroupItem value="italic" aria-label="Toggle italic">
-            <GoItalic className="h-4 w-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="strikethrough"
-            aria-label="Toggle strikethrough"
-          >
-            <AiOutlineUnderline className="h-4 w-4" />
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </>
     </Container>
   );
 };
@@ -304,5 +234,4 @@ export {
   EdgeStyle,
   EraserRadius,
   FontSize,
-  FontFamily,
 };
