@@ -34,13 +34,14 @@ const Background = () => {
 
   return (
     <Container label={"Background"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#3282B8"}>
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#0A1F2C"}>
         {ToolBarActions.backgroundColors.map((color, index) => (
           <ToggleGroupItem
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
             onClick={handleChangeBackground}
+            className={"p-0"}
           >
             <ColorContainer color={color} />
           </ToggleGroupItem>
@@ -56,13 +57,14 @@ const Stroke = () => {
   };
   return (
     <Container label={"Stroke"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#0A1F2C"}>
+      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#3282B8"}>
         {ToolBarActions.strokeColors.map((color, index) => (
           <ToggleGroupItem
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
             onClick={handleStrokeChange}
+            className={"p-0"}
           >
             <ColorContainer color={color} />
           </ToggleGroupItem>
