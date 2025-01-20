@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/lib/const.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Transformer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/EditFile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ShareSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ShareSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/Container.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/ui/toggle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ui/toggle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/File.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/File.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +104,9 @@
       <workItem from="1737038326740" duration="1968000" />
       <workItem from="1737044918967" duration="2372000" />
       <workItem from="1737208271225" duration="3786000" />
-      <workItem from="1737304744305" duration="4664000" />
+      <workItem from="1737304744305" duration="5041000" />
+      <workItem from="1737379172261" duration="6432000" />
+      <workItem from="1737391412491" duration="5559000" />
     </task>
     <servers />
   </component>

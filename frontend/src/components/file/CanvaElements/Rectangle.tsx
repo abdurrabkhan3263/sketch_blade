@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Rect, Transformer } from "react-konva";
-import { MAX_WIDTH, MAX_HEIGHT } from "../../../lib/const.ts";
+import { Rect } from "react-konva";
 
 interface RectangleProps {
   id: string;
@@ -16,72 +15,35 @@ interface RectangleProps {
   strokeWidth: number;
 }
 
-const Rectangle: React.FC<RectangleProps> = ({
-  id,
-  x,
-  y,
-  height,
-  width,
-  fill,
-  draggable,
-  cornerRadius,
-  stroke,
-  strokeWidth,
-}) => {
-  const [selected, setSelected] = React.useState(false);
-  const [isKeepRatio, setIsKeepRatio] = useState(true);
+const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
   const reactRef = React.useRef(null);
-  const trRef = React.useRef(null);
+  const [rotatingSnaps, setRotatingSnaps] = useState([]);
 
-  const handleTransformation = (e) => {};
-
-  const handleSelect = (e) => {
-    if (!trRef.current) return;
-
-    setSelected((prev) => !prev);
-    if (selected) {
-      trRef.current.nodes([]);
-    } else {
-      trRef.current.nodes([reactRef.current]);
+  const handleKeyPress = (e) => {
+    if (e.key === "Control") {
+      setRotatingSnaps([]);
     }
   };
 
-  const handleBoundBox = (oldBox, newBox) => {
-    if (Math.abs(newBox.width) > MAX_WIDTH) {
-      newBox.width = oldBox.width;
+  const handleKeyUp = (e) => {
+    if (e.key === "Control") {
+      setRotatingSnaps([]);
     }
-    if (Math.abs(newBox.height) > MAX_HEIGHT) {
-      newBox.height = oldBox.height;
-    }
-    return newBox;
   };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+      document.addEventListener("keyup", handleKeyUp);
+    };
+  }, []);
 
   return (
     <>
-      <Rect
-        ref={reactRef}
-        id={id}
-        x={x}
-        y={y}
-        height={height}
-        width={width}
-        fill={fill}
-        draggable={draggable}
-        cornerRadius={cornerRadius}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        // All the events
-        onClick={handleSelect}
-        onTransformEnd={handleTransformation}
-      />
-      <Transformer
-        ref={trRef}
-        keepRatio={isKeepRatio}
-        // boundBoxFunc={handleBoundBox}
-        anchorCornerRadius={100}
-        rotateLineVisible={false}
-        rotationSnaps={[0, 10, -10, 20, -20]}
-      />
+      <Rect ref={reactRef} name={"shape"} {...props} />
     </>
   );
 };

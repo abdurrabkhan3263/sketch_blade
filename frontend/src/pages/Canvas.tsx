@@ -1,46 +1,126 @@
-import React from "react";
-import { Layer, Stage, Star, Text } from "react-konva";
+import React, { createRef, useEffect, useRef } from "react";
+import { Layer, Rect, Stage, Ellipse } from "react-konva";
 import Rectangle from "../components/file/CanvaElements/Rectangle.tsx";
-
-function generateShapes() {
-  return [...Array(10)].map((_, i) => ({
-    id: i.toString(),
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    rotation: Math.random() * 180,
-    isDragging: false,
-  }));
-}
-
-const INITIAL_STATE = generateShapes();
+import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx";
+import Konva from "konva";
 
 function Canvas() {
-  const [stars, setStars] = React.useState(INITIAL_STATE);
+  const selectionRect = useRef(null);
+  const stageRef = useRef(null);
+  const transformerRef = createRef();
+  let selecting = false;
+  let x1: number, y1: number, x2: number, y2: number;
 
-  const handleDragStart = (e) => {
-    const id = e.target.id();
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: star.id === id,
-        };
-      }),
-    );
-  };
-  const handleDragEnd = (e) => {
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: false,
-        };
-      }),
-    );
-  };
+  useEffect(() => {
+    if (
+      !stageRef?.current ||
+      !selectionRect?.current ||
+      !transformerRef.current
+    )
+      return;
+    const stage = stageRef.current;
+    const selectionRectangle = selectionRect.current;
+    const tr = transformerRef.current;
+
+    stage.on("mousedown touchstart", (e) => {
+      if (e.target !== stage) {
+        return;
+      }
+
+      e.evt.preventDefault();
+      x1 = stage.getPointerPosition()?.x || 0;
+      y1 = stage.getPointerPosition()?.y || 0;
+      x2 = stage.getPointerPosition()?.x || 0;
+      y2 = stage.getPointerPosition()?.y || 0;
+
+      selectionRectangle.width(0);
+      selectionRectangle.height(0);
+      selecting = true;
+    });
+
+    stage.on("mousemove touchmove", (e) => {
+      if (!selecting) {
+        return;
+      }
+
+      e.evt.preventDefault();
+      x2 = stage.getPointerPosition().x;
+      y2 = stage.getPointerPosition().y;
+
+      selectionRectangle.setAttrs({
+        visible: true,
+        x: Math.min(x1, x2),
+        y: Math.min(y1, y2),
+        width: Math.abs(x2 - x1),
+        height: Math.abs(y2 - y1),
+      });
+    });
+
+    stage.on("mouseup touchend", (e) => {
+      selecting = false;
+
+      if (!selectionRectangle.visible()) {
+        return;
+      }
+
+      e.evt.preventDefault();
+      selectionRectangle.visible(false);
+
+      const shapes = stage.find(".shape");
+      const box = selectionRectangle.getClientRect();
+      const selected = shapes.filter((shape) =>
+        Konva.Util.haveIntersection(box, shape.getClientRect()),
+      );
+
+      tr.nodes(selected);
+    });
+
+    stage.on("click tap", function (e) {
+      if (selectionRectangle.visible()) {
+        return;
+      }
+
+      if (e.target === stage) {
+        tr.nodes([]);
+        return;
+      }
+
+      if (!e.target.hasName("shape")) {
+        return;
+      }
+
+      const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+      const isSelected = tr.nodes().indexOf(e.target) >= 0;
+
+      if (!metaPressed && !isSelected) {
+        tr.nodes([e.target]);
+      } else if (metaPressed && isSelected) {
+        const nodes = tr.nodes().slice();
+        nodes.splice(nodes.indexOf(e.target), 1);
+        tr.nodes(nodes);
+      } else if (metaPressed && !isSelected) {
+        const nodes = tr.nodes().concat([e.target]);
+        tr.nodes(nodes);
+      } else {
+        tr.nodes([]);
+      }
+    });
+
+    return () => {
+      stage.off("mousedown touchstart");
+      stage.off("mousemove touchmove");
+      stage.off("mouseup touchend");
+      stage.off("click tap");
+    };
+  }, [stageRef]);
+
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Stage
+        ref={stageRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
+      >
         <Layer>
           <Rectangle
             id="rect"
@@ -54,26 +134,35 @@ function Canvas() {
             draggable={true}
             cornerRadius={28}
           />
-          <Text text="Try to Hello" fill="#89b717" draggable fillEnabled />
-          {stars.map((star) => (
-            <Star
-              key={star.id}
-              id={star.id}
-              x={star.x}
-              y={star.y}
-              numPoints={5}
-              innerRadius={20}
-              outerRadius={40}
-              fill="#89b717"
-              opacity={0.8}
-              draggable
-              rotation={star.rotation}
-              scaleX={star.isDragging ? 1.2 : 1}
-              scaleY={star.isDragging ? 1.2 : 1}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            />
-          ))}
+          <Rectangle
+            id="rec2"
+            x={20}
+            y={20}
+            height={200}
+            width={500}
+            fill={"#00D2FF"}
+            stroke={"white"}
+            strokeWidth={2.5}
+            draggable={true}
+            cornerRadius={28}
+          />
+          <Ellipse
+            radiusX={50}
+            radiusY={100}
+            fill={"#00D2FF"}
+            draggable
+            name={"shape"}
+          />
+          <Rect
+            ref={selectionRect}
+            fill={"rgba(147,146,146,0.22)"}
+            cornerRadius={8}
+            stroke={"#ffffff"}
+            strokeWidth={1}
+            visible={false}
+            listening={false}
+          />
+          <CanvasTransformer ref={transformerRef} />
         </Layer>
       </Stage>
     </div>
