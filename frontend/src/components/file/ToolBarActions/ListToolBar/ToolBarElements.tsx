@@ -1,6 +1,16 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ToolBarActions from "./const.ts";
 import { ToggleGroup, ToggleGroupItem } from "../../../ui/toggle-group.tsx";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store.ts";
+import { changeToolBarProperties } from "../../../../redux/slices/appSlice.ts";
+import {
+  EdgeStyleType,
+  FillStyle,
+  FontSizeType,
+  StrokeStyleType,
+  StrokeWidthType,
+} from "../../../../lib/types";
 
 interface ContainerProps {
   children: React.ReactNode;
@@ -28,19 +38,33 @@ const IconContainer = ({ icon, value }: { icon: string; value: string }) => {
 
 // Components for Background, Fill, StrokeStyle, StrokeWidth
 const Background = () => {
-  const handleChangeBackground = (color: string) => {
-    console.log(color);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((color: string) => {
+    dispatch(
+      changeToolBarProperties({
+        fillColor: color,
+      }),
+    );
+  });
 
   return (
     <Container label={"Background"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#0A1F2C"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.fillColor}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.backgroundColors.map((color, index) => (
           <ToggleGroupItem
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
-            onClick={handleChangeBackground}
+            // onClick={handleChangeBackground}
             className={"p-0"}
           >
             <ColorContainer color={color} />
@@ -52,18 +76,32 @@ const Background = () => {
 };
 
 const Stroke = () => {
-  const handleStrokeChange = (color: string) => {
-    console.log("Stroke:: ", color);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((color: string) => {
+    dispatch(
+      changeToolBarProperties({
+        strokeColor: color,
+      }),
+    );
+  });
+
   return (
     <Container label={"Stroke"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"#3282B8"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.strokeColor}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.strokeColors.map((color, index) => (
           <ToggleGroupItem
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
-            onClick={handleStrokeChange}
             className={"p-0"}
           >
             <ColorContainer color={color} />
@@ -75,19 +113,32 @@ const Stroke = () => {
 };
 
 const Fill = () => {
-  const handleFillChange = (style: string) => {
-    console.log("Fill:: ", style);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((style: FillStyle) => {
+    dispatch(
+      changeToolBarProperties({
+        fillStyle: style,
+      }),
+    );
+  });
 
   return (
     <Container label={"Fill"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"SOLID"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.fillStyle}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.fillStyles.map(({ path, color }, index) => (
           <ToggleGroupItem
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
-            onClick={handleFillChange}
           >
             <IconContainer icon={path} value={color} />
           </ToggleGroupItem>
@@ -98,19 +149,32 @@ const Fill = () => {
 };
 
 const StrokeStyle = () => {
-  const handleStrokeStyleChange = (style: string) => {
-    console.log("StrokeStyle:: ", style);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((style: StrokeStyleType) => {
+    dispatch(
+      changeToolBarProperties({
+        strokeStyle: style,
+      }),
+    );
+  });
 
   return (
     <Container label={"Stroke style"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"SOLID"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.strokeStyle}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.strokeStyles.map(({ style, path }, index) => (
           <ToggleGroupItem
             key={index}
             value={style}
             aria-label={`Toggle ${style}`}
-            onClick={handleStrokeStyleChange}
           >
             <IconContainer icon={path} value={style} />
           </ToggleGroupItem>
@@ -121,19 +185,32 @@ const StrokeStyle = () => {
 };
 
 const StrokeWidth = () => {
-  const handleStrokeWidthChange = (style: string) => {
-    console.log("StrokeWidth:: ", style);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((width: StrokeWidthType) => {
+    dispatch(
+      changeToolBarProperties({
+        strokeWidth: width,
+      }),
+    );
+  });
 
   return (
     <Container label={"Stroke width"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"THIN"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.strokeWidth}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.strokeWidth.map(({ width, path }, index) => (
           <ToggleGroupItem
             key={index}
             value={width}
             aria-label={`Toggle ${width}`}
-            onClick={handleStrokeWidthChange}
           >
             <IconContainer icon={path} value={width} />
           </ToggleGroupItem>
@@ -144,13 +221,27 @@ const StrokeWidth = () => {
 };
 
 const EdgeStyle = () => {
-  const handleEdgeStyleChange = (style) => {
-    console.log(style);
-  };
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((style: EdgeStyleType) => {
+    dispatch(
+      changeToolBarProperties({
+        edgeStyle: style,
+      }),
+    );
+  });
 
   return (
     <Container label={"Edge Style"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"ROUNDED"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.edgeStyle}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.edgeRounded.map(({ path, style }, index) => (
           <ToggleGroupItem
             key={index}
@@ -167,12 +258,20 @@ const EdgeStyle = () => {
 };
 
 const Opacity: React.FC = () => {
-  const [rangeValue, setRangeValue] = useState<number>(100);
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
 
-  const handleRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10);
-    setRangeValue(newValue);
-  };
+  const handleValueChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch(
+        changeToolBarProperties({
+          opacity: parseInt(e.target.value, 10),
+        }),
+      );
+    },
+  );
 
   return (
     <Container label="Opacity">
@@ -180,8 +279,8 @@ const Opacity: React.FC = () => {
         type="range"
         min="0"
         max="100"
-        value={rangeValue}
-        onChange={handleRangeChange}
+        value={selector.opacity}
+        onChange={handleValueChange}
         className={"w-full"}
       />
     </Container>
@@ -189,12 +288,20 @@ const Opacity: React.FC = () => {
 };
 
 const EraserRadius: React.FC = () => {
-  const [rangeValue, setRangeValue] = useState<number>(100);
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
 
-  const handleRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10);
-    setRangeValue(newValue);
-  };
+  const handleValueChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch(
+        changeToolBarProperties({
+          eraserRadius: parseInt(e.target.value, 10),
+        }),
+      );
+    },
+  );
 
   return (
     <Container label={"Radius"}>
@@ -202,8 +309,8 @@ const EraserRadius: React.FC = () => {
         type="range"
         min="0"
         max="100"
-        value={rangeValue}
-        onChange={handleRangeChange}
+        value={selector.eraserRadius}
+        onChange={handleValueChange}
         className={"w-full"}
       />
     </Container>
@@ -211,9 +318,27 @@ const EraserRadius: React.FC = () => {
 };
 
 const FontSize: React.FC = () => {
+  const selector = useSelector(
+    (state: RootState) => state.app.toolBarProperties,
+  );
+  const dispatch = useDispatch();
+
+  const handleValueChange = useCallback((size: FontSizeType) => {
+    dispatch(
+      changeToolBarProperties({
+        fontSize: size,
+      }),
+    );
+  });
+
   return (
     <Container label={"Font Size"}>
-      <ToggleGroup type="single" className={"gap-2"} defaultValue={"MEDIUM"}>
+      <ToggleGroup
+        type="single"
+        className={"gap-2"}
+        value={selector.fontSize}
+        onValueChange={handleValueChange}
+      >
         {ToolBarActions.fontSize.map(({ Icon, size }) => {
           return (
             <ToggleGroupItem value={size} aria-label={`Toggle ${size}`}>

@@ -1,20 +1,19 @@
 import React from "react";
-import Container from "../Container.tsx";
 import {
-    Opacity,
-    Stroke,
-    StrokeStyle,
-    StrokeWidth,
+  Opacity,
+  Stroke,
+  StrokeStyle,
+  StrokeWidth,
 } from "./ToolBarElements.tsx";
 
 const Arrow = () => {
-    return (
-        <Container>
-            <Stroke />
-            <StrokeStyle />
-            <StrokeWidth />
-            <Opacity />
-        </Container>
-    );
+  return (
+    <>
+      <Stroke />
+      <StrokeStyle />
+      <StrokeWidth />
+      <Opacity />
+    </>
+  );
 };
 export default Arrow;

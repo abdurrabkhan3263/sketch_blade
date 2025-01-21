@@ -1,16 +1,12 @@
 import {
-  EdgeRounded,
+  EdgeStyle,
   FillStyle,
   FontSize,
   StrokeStyle,
   StrokeWidth,
 } from "../../../../lib/types";
-import { IconType } from 'react-icons';
-import {
-  TbLetterS,
-  TbLetterM,
-  TbLetterL,
-} from "react-icons/tb";
+import { IconType } from "react-icons";
+import { TbLetterS, TbLetterM, TbLetterL } from "react-icons/tb";
 
 interface IToolBarActions {
   strokeColors: string[];
@@ -29,7 +25,7 @@ interface IToolBarActions {
   }[];
   edgeRounded: {
     path: string;
-    style: EdgeRounded;
+    style: EdgeStyle;
   }[];
   fontSize: {
     Icon: IconType;
@@ -37,7 +33,7 @@ interface IToolBarActions {
   }[];
 }
 
-const BASE_URL = "/assets/icons/"
+const BASE_URL = "/assets/icons/";
 
 const ToolBarActions: IToolBarActions = {
   strokeColors: ["#BBE1FA", "#3282B8", "#0F8C79", "#F0F0F0", "#FFD700"],
@@ -86,11 +82,11 @@ const ToolBarActions: IToolBarActions = {
   ],
   edgeRounded: [
     {
-      path:BASE_URL +  "rounded-edge.svg",
+      path: BASE_URL + "rounded-edge.svg",
       style: "ROUNDED",
     },
     {
-      path:BASE_URL +  "sharp-edge.svg",
+      path: BASE_URL + "sharp-edge.svg",
       style: "SHARP",
     },
   ],

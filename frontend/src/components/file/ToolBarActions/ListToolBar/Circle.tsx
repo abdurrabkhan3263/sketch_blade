@@ -7,18 +7,18 @@ import {
   StrokeWidth,
   Opacity,
 } from "./ToolBarElements.tsx";
-import Container from "../Container.tsx";
 
 const Circle = () => {
+  const handleValueChange = () => {};
   return (
-    <Container>
+    <>
       <Background />
       <Stroke />
       <Fill />
       <StrokeStyle />
       <StrokeWidth />
       <Opacity />
-    </Container>
+    </>
   );
 };
 export default Circle;

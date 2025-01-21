@@ -9,29 +9,24 @@ import {
   Rectangle,
   Arrow,
 } from "../ToolBarActions/ListToolBar";
+import Container from "./Container.tsx";
 
 const ToolBarAction = () => {
-  const { currentToolBar, currentElement } = useSelector(
-    (state: RootState) => state.app,
-  );
+  const { currentToolBar } = useSelector((state: RootState) => state.app);
 
-  switch (currentToolBar) {
-    case "circle":
-      return <Circle />;
-    case "rectangle":
-      return <Rectangle />;
-    case "text":
-      return <Text />;
-    case "eraser":
-      return <Eraser />;
-    case "free hand":
-      return <FreeHand />;
-    case "point arrow":
-      return <PointedArrow />;
-    case "arrow":
-      return <Arrow />;
-    default:
-      return <></>;
+  if (currentToolBar === "cursor") {
+    return <></>;
   }
+  const toolComponents: { [key: string]: React.ReactNode } = {
+    circle: <Circle />,
+    rectangle: <Rectangle />,
+    text: <Text />,
+    eraser: <Eraser />,
+    "free hand": <FreeHand />,
+    "point arrow": <PointedArrow />,
+    arrow: <Arrow />,
+  };
+
+  return <Container>{toolComponents[currentToolBar] || null}</Container>;
 };
 export default ToolBarAction;

@@ -1,27 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ToolBarElem, ToolBarProperties } from "../../lib/types";
 
 type StateType = {
-  currentToolBar:
-    | "cursor"
-    | "circle"
-    | "rectangle"
-    | "free hand"
-    | "text"
-    | "eraser"
-    | "arrow"
-    | "point arrow"
-    | "upload";
-  currentShape: {
-    properties?: any;
-    ref?: any;
-  };
+  currentToolBar: ToolBarElem;
+  toolBarProperties: ToolBarProperties;
 };
 
 const initialState: StateType = {
   currentToolBar: "cursor",
-  currentShape: {
-    properties: {},
-    ref: null,
+  toolBarProperties: {
+    fillColor: "#0A1F2C",
+    fillStyle: "SOLID",
+    strokeColor: "#3282B8",
+    strokeStyle: "SOLID",
+    strokeWidth: "THIN",
+    edgeStyle: "ROUNDED",
+    opacity: 100,
+    eraserRadius: 10,
+    fontSize: "MEDIUM",
   },
 };
 
@@ -29,18 +25,17 @@ export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    toggleCurrentToolBar: (state, action) => {
+    addToolBarElement: (state, action) => {
       state.currentToolBar = action.payload;
     },
-    changeCurrentShape: (state, action) => {
-      state.currentShape = action.payload;
-    },
-    removeCurrentShape: (state) => {
-      state.currentShape = { properties: null, ref: null };
+    changeToolBarProperties: (state, action) => {
+      state.toolBarProperties = {
+        ...state.toolBarProperties,
+        ...action.payload,
+      };
     },
   },
 });
 
-export const { toggleCurrentToolBar, changeCurrentShape, removeCurrentShape } =
-  appSlice.actions;
+export const { addToolBarElement, changeToolBarProperties } = appSlice.actions;
 export default appSlice.reducer;
