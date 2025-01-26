@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { Transformer } from "react-konva";
 
-const CanvasTransformer = forwardRef((props, ref) => {
+const CanvasTransformer = forwardRef(({ handleBoundBox }, ref) => {
   return (
     <Transformer
       ref={ref}
@@ -32,6 +32,7 @@ const CanvasTransformer = forwardRef((props, ref) => {
           anchor.cornerRadius(8);
         }
       }}
+      onTransformEnd={handleBoundBox}
     />
   );
 });

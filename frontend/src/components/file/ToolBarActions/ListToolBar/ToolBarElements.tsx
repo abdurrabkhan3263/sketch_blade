@@ -1,15 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import ToolBarActions from "./const.ts";
 import { ToggleGroup, ToggleGroupItem } from "../../../ui/toggle-group.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store.ts";
 import { changeToolBarProperties } from "../../../../redux/slices/appSlice.ts";
 import {
-  EdgeStyleType,
-  FillStyle,
-  FontSizeType,
-  StrokeStyleType,
-  StrokeWidthType,
+  EdgeStyle as EdgeStyleType,
+  FillStyle as FillStyleType,
+  FontSize as FontSizeType,
+  StrokeStyle as StrokeStyleType,
+  StrokeWidth as StrokeWidthType,
 } from "../../../../lib/types";
 
 interface ContainerProps {
@@ -37,26 +37,30 @@ const IconContainer = ({ icon, value }: { icon: string; value: string }) => {
 };
 
 // Components for Background, Fill, StrokeStyle, StrokeWidth
-const Background = () => {
+
+const Fill = () => {
   const selector = useSelector(
     (state: RootState) => state.app.toolBarProperties,
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((color: string) => {
-    dispatch(
-      changeToolBarProperties({
-        fillColor: color,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (color: string) => {
+      dispatch(
+        changeToolBarProperties({
+          fill: color,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Background"}>
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.fillColor}
+        value={selector.fill}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.backgroundColors.map((color, index) => (
@@ -81,20 +85,23 @@ const Stroke = () => {
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((color: string) => {
-    dispatch(
-      changeToolBarProperties({
-        strokeColor: color,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (color: string) => {
+      dispatch(
+        changeToolBarProperties({
+          stroke: color,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Stroke"}>
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.strokeColor}
+        value={selector.stroke}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.strokeColors.map((color, index) => (
@@ -112,19 +119,22 @@ const Stroke = () => {
   );
 };
 
-const Fill = () => {
+const FillStyle = () => {
   const selector = useSelector(
     (state: RootState) => state.app.toolBarProperties,
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((style: FillStyle) => {
-    dispatch(
-      changeToolBarProperties({
-        fillStyle: style,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (style: FillStyleType) => {
+      dispatch(
+        changeToolBarProperties({
+          fillStyle: style,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Fill"}>
@@ -154,13 +164,16 @@ const StrokeStyle = () => {
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((style: StrokeStyleType) => {
-    dispatch(
-      changeToolBarProperties({
-        strokeStyle: style,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (style: StrokeStyleType) => {
+      dispatch(
+        changeToolBarProperties({
+          strokeStyle: style,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Stroke style"}>
@@ -190,13 +203,16 @@ const StrokeWidth = () => {
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((width: StrokeWidthType) => {
-    dispatch(
-      changeToolBarProperties({
-        strokeWidth: width,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (width: StrokeWidthType) => {
+      dispatch(
+        changeToolBarProperties({
+          strokeWidth: width,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Stroke width"}>
@@ -226,13 +242,16 @@ const EdgeStyle = () => {
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((style: EdgeStyleType) => {
-    dispatch(
-      changeToolBarProperties({
-        edgeStyle: style,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (style: EdgeStyleType) => {
+      dispatch(
+        changeToolBarProperties({
+          edgeStyle: style,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Edge Style"}>
@@ -247,7 +266,6 @@ const EdgeStyle = () => {
             key={index}
             value={style}
             aria-label={`Toggle ${style}`}
-            onClick={handleEdgeStyleChange}
           >
             <IconContainer icon={path} value={style} />
           </ToggleGroupItem>
@@ -267,10 +285,11 @@ const Opacity: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(
         changeToolBarProperties({
-          opacity: parseInt(e.target.value, 10),
+          opacity: Number.parseFloat(e.target.value),
         }),
       );
     },
+    [dispatch],
   );
 
   return (
@@ -278,7 +297,8 @@ const Opacity: React.FC = () => {
       <input
         type="range"
         min="0"
-        max="100"
+        max="1"
+        step="0.01"
         value={selector.opacity}
         onChange={handleValueChange}
         className={"w-full"}
@@ -301,6 +321,7 @@ const EraserRadius: React.FC = () => {
         }),
       );
     },
+    [dispatch],
   );
 
   return (
@@ -323,13 +344,16 @@ const FontSize: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  const handleValueChange = useCallback((size: FontSizeType) => {
-    dispatch(
-      changeToolBarProperties({
-        fontSize: size,
-      }),
-    );
-  });
+  const handleValueChange = useCallback(
+    (size: FontSizeType) => {
+      dispatch(
+        changeToolBarProperties({
+          fontSize: size,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   return (
     <Container label={"Font Size"}>
@@ -352,8 +376,8 @@ const FontSize: React.FC = () => {
 };
 
 export {
-  Background,
   Fill,
+  FillStyle,
   StrokeStyle,
   StrokeWidth,
   Stroke,

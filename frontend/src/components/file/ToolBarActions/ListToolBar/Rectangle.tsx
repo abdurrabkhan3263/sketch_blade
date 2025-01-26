@@ -1,20 +1,20 @@
 import React from "react";
 import {
-  Background,
   Fill,
   Opacity,
   Stroke,
   StrokeStyle,
   StrokeWidth,
   EdgeStyle,
+  FillStyle,
 } from "./ToolBarElements.tsx";
 
 const Rectangle = () => {
   return (
     <>
-      <Background />
-      <Stroke />
       <Fill />
+      <Stroke />
+      <FillStyle />
       <StrokeStyle />
       <StrokeWidth />
       <EdgeStyle />

@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../../lib/utils.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store.ts";
-import { addToolBarElement } from "../../redux/slices/appSlice.ts";
-import { useEffect } from "react";
+import { changeCurrentToolBar } from "../../redux/slices/appSlice.ts";
 
 const ToolBar = () => {
   const selectedTooBar = useSelector(
@@ -12,17 +11,9 @@ const ToolBar = () => {
   );
   const dispatch = useDispatch();
 
-  const handleToolBarClick = (toolBar) => {
-    dispatch(addToolBarElement(toolBar));
+  const handleToolBarClick = (toolBar: string) => {
+    dispatch(changeCurrentToolBar(toolBar));
   };
-
-  const toolBarProperties = useSelector(
-    (state: RootState) => state.app.toolBarProperties,
-  );
-
-  useEffect(() => {
-    console.log(toolBarProperties);
-  }, [toolBarProperties]);
 
   return (
     <div

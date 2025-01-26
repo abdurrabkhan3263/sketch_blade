@@ -77,15 +77,22 @@ export declare type CreateFile = {
 };
 
 export declare type ToolBarProperties = {
-  fillColor: string;
+  fill: string;
   fillStyle: FillStyle;
-  strokeColor: string;
+  stroke: string;
   strokeStyle: StrokeStyle;
   strokeWidth: StrokeWidth;
   edgeStyle: EdgeStyle;
   opacity: number;
   eraserRadius: number;
   fontSize: FontSize;
+};
+
+export declare type Coordinates = {
+  x: number;
+  x2: number;
+  y: number;
+  y2: number;
 };
 
 export declare type CollaboratorActions = "edit" | "view";

@@ -4,7 +4,7 @@ import { PiRectangle } from "react-icons/pi";
 import { FaEraser, FaPencilAlt } from "react-icons/fa";
 import { RiText } from "react-icons/ri";
 import { BsArrow90DegDown } from "react-icons/bs";
-import Rectangle from "../components/file/CanvaElements/Rectangle.tsx";
+import { Rectangle, Circle } from "../components/file/CanvaElements";
 
 const ToolBarElem = [
   {
@@ -41,8 +41,14 @@ const ToolBarElem = [
   },
 ];
 
-const ListComponents = {
-  rectangle: <Rectangle />,
+const ListComponent = {
+  rectangle: Rectangle,
+  circle: Circle,
 };
 
-export { ToolBarElem, ListComponents };
+const GetDynamicShape = ({ ...props }): ReactNode => {
+  const Component: React.ReactElement = ListComponent[props.type];
+  return Component ? <Component {...props} /> : <></>;
+};
+
+export { ToolBarElem, GetDynamicShape };

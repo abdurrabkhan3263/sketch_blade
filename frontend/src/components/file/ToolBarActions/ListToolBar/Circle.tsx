@@ -1,20 +1,19 @@
 import React from "react";
 import {
-  Background,
   Fill,
   Stroke,
   StrokeStyle,
   StrokeWidth,
   Opacity,
+  FillStyle,
 } from "./ToolBarElements.tsx";
 
 const Circle = () => {
-  const handleValueChange = () => {};
   return (
     <>
-      <Background />
-      <Stroke />
       <Fill />
+      <Stroke />
+      <FillStyle />
       <StrokeStyle />
       <StrokeWidth />
       <Opacity />

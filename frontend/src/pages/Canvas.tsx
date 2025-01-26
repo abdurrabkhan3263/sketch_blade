@@ -4,35 +4,68 @@ import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx"
 import Konva from "konva";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
-import { v4 as uuidv4 } from "uuid";
-import { ListComponents } from "../lib/const.tsx";
 import { ToolBarArr } from "../lib/const.ts";
+import { getShapeUpdatedValue } from "../lib/utils.ts";
+import { Coordinates, ToolBarElem } from "../lib/types";
+import { GetDynamicShape } from "../lib/const.tsx";
+import useShapeProperties from "../hooks/useShapeProperties.ts";
+import { v4 as uuid } from "uuid";
 
 function Canvas() {
-  const [canvasElement, setCanvasElement] = useState([]);
-  const selectionRect = useRef(null);
-  const stageRef = useRef(null);
-  const transformerRef = createRef();
-  let selecting = false;
-  let x1: number, y1: number, x2: number, y2: number;
+  const [shapes, setShapesElement] = useState([]);
+  const [currentShape, setCurrentShape] = useState();
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [startingMousePos, setStartingMousePos] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [selectedId, setSelectedId] = useState("");
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
+  const selectionRect = useRef(null);
+  const transformerRef = createRef();
+  const stageRef = useRef();
+  const shapeProperties = useShapeProperties();
 
-  const addElement = (element) => {
-    const { x1, x2, y1, y2 } = element;
-    const newElement = {
-      id: uuidv4(),
-      type: currentSelector,
-      x: Math.min(x1, x2),
-      y: Math.min(y1, y2),
-      width: Math.abs(x2 - x1),
-      height: Math.abs(y2 - y1),
-    };
-    setCanvasElement((prev) => [...prev, newElement]);
+  const startDrawing = (properites) => {
+    setCurrentShape({
+      id: uuid(),
+      ...properites,
+      isAddable: false,
+    });
   };
 
-  useEffect(() => {
+  const updateShape = (type: ToolBarElem, coordinates: Coordinates) => {
+    const updatedValue = getShapeUpdatedValue(type, coordinates);
+    setCurrentShape((prev) => ({
+      ...prev,
+      ...updatedValue,
+    }));
+  };
+
+  const addShape = () => {
+    if (!currentShape || (currentShape && !currentShape?.isAddable)) {
+      return;
+    }
+
+    let isAlreadyExits = shapes.some((items) => items.id === currentShape.id);
+
+    if (isAlreadyExits) {
+      setShapesElement((prevShapes) =>
+        prevShapes.map((shape) =>
+          shape.id === currentShape.id ? currentShape : shapes,
+        ),
+      );
+    } else {
+      const { isAddable, ...properties } = currentShape;
+      setShapesElement((prev) => [...prev, properties]);
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    e.evt.preventDefault();
+
     if (
       !stageRef?.current ||
       !selectionRect?.current ||
@@ -42,44 +75,77 @@ function Canvas() {
 
     const stage = stageRef.current;
     const selectionRectangle = selectionRect.current;
-    const tr = transformerRef.current;
 
-    stage.on("mousedown touchstart", (e) => {
-      if (e.target !== stage) {
-        return;
-      }
+    if (e.target !== stage) return;
 
-      e.evt.preventDefault();
+    const pointerPos = stage.getPointerPosition();
 
-      x1 = stage.getPointerPosition()?.x || 0;
-      y1 = stage.getPointerPosition()?.y || 0;
-      x2 = stage.getPointerPosition()?.x || 0;
-      y2 = stage.getPointerPosition()?.y || 0;
-
-      selecting = true;
-
+    if (pointerPos) {
       if (currentSelector === "cursor") {
         selectionRectangle.width(0);
         selectionRectangle.height(0);
+      } else if (ToolBarArr.includes(currentSelector)) {
+        startDrawing({
+          ...shapeProperties,
+          x: pointerPos.x,
+          y: pointerPos.y,
+        });
       }
-    });
+      setStartingMousePos({
+        x: pointerPos.x,
+        y: pointerPos.y,
+      });
+    }
+    setIsDrawing(true);
+  };
 
-    stage.on("mousemove touchmove", (e) => {
-      if (!selecting) {
-        return;
-      }
+  const handleMouseUp = (e) => {
+    e.evt.preventDefault();
 
-      e.evt.preventDefault();
-      x2 = stage.getPointerPosition().x;
-      y2 = stage.getPointerPosition().y;
+    if (!isDrawing) {
+      return;
+    }
 
-      if (selecting && currentSelector === "cursor") {
+    if (selectionRect.current && selectionRect.current.visible()) {
+      selectionRect.current.visible(false);
+    }
+    if (ToolBarArr.includes(currentSelector) && currentShape) {
+      addShape();
+    }
+    setCurrentShape();
+    setStartingMousePos({ x: 0, y: 0 });
+    setIsDrawing(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (
+      !selectionRect?.current ||
+      !stageRef.current ||
+      !transformerRef.current
+    ) {
+      return;
+    }
+
+    const stage = stageRef.current;
+    const selectionRectangle = selectionRect.current;
+    const tr = transformerRef.current;
+
+    e.evt.preventDefault();
+
+    if (!isDrawing) {
+      return;
+    }
+
+    const pointerPos = stage.getPointerPosition();
+
+    if (pointerPos) {
+      if (currentSelector === "cursor") {
         selectionRectangle.setAttrs({
           visible: true,
-          x: Math.min(x1, x2),
-          y: Math.min(y1, y2),
-          width: Math.abs(x2 - x1),
-          height: Math.abs(y2 - y1),
+          x: Math.min(startingMousePos.x, pointerPos.x),
+          y: Math.min(startingMousePos.y, pointerPos.y),
+          width: Math.abs(pointerPos.x - startingMousePos.x),
+          height: Math.abs(pointerPos.y - startingMousePos.y),
         });
 
         const shapes = stage.find(".shape");
@@ -89,61 +155,56 @@ function Canvas() {
         );
         tr.nodes(selected);
       } else if (ToolBarArr.includes(currentSelector)) {
+        updateShape(currentSelector, {
+          ...startingMousePos,
+          x2: pointerPos.x,
+          y2: pointerPos.y,
+        });
       }
-    });
+    }
+  };
 
-    stage.on("mouseup touchend", (e) => {
-      if (!selecting) {
-        return;
-      }
-      if (selectionRectangle.visible()) {
-        selectionRectangle.visible(false);
-      }
-      selecting = false;
-    });
+  const handleStageClick = (e) => {
+    if (!transformerRef.current || !selectionRect.current || !stageRef.current)
+      return;
 
-    stage.on("click tap", function (e) {
-      if (selectionRectangle.visible()) {
-        return;
-      }
+    const selectionRectangle = selectionRect.current;
+    const tr = transformerRef.current;
+    const stage = stageRef.current;
 
-      if (e.target === stage) {
-        tr.nodes([]);
-        return;
-      }
+    if (selectionRectangle.visible()) {
+      return;
+    }
 
-      if (!e.target.hasName("shape")) {
-        return;
-      }
+    if (e.target === stage) {
+      tr.nodes([]);
+      return;
+    }
 
-      const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-      const isSelected = tr.nodes().indexOf(e.target) >= 0;
+    if (!e.target.hasName("shape")) {
+      return;
+    }
 
-      if (!metaPressed && !isSelected) {
-        tr.nodes([e.target]);
-      } else if (metaPressed && isSelected) {
-        const nodes = tr.nodes().slice();
-        nodes.splice(nodes.indexOf(e.target), 1);
-        tr.nodes(nodes);
-      } else if (metaPressed && !isSelected) {
-        const nodes = tr.nodes().concat([e.target]);
-        tr.nodes(nodes);
-      } else {
-        tr.nodes([]);
-      }
-    });
+    const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+    const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
-    return () => {
-      stage.off("mousedown touchstart");
-      stage.off("mousemove touchmove");
-      stage.off("mouseup touchend");
-      stage.off("click tap");
-    };
-  }, [stageRef, currentSelector]);
+    if (!metaPressed && !isSelected) {
+      tr.nodes([e.target]);
+    } else if (metaPressed && isSelected) {
+      const nodes = tr.nodes().slice();
+      nodes.splice(nodes.indexOf(e.target), 1);
+      tr.nodes(nodes);
+    } else if (metaPressed && !isSelected) {
+      const nodes = tr.nodes().concat([e.target]);
+      tr.nodes(nodes);
+    } else {
+      tr.nodes([]);
+    }
+  };
 
-  useEffect(() => {
-    console.log(canvasElement);
-  }, [canvasElement]);
+  const handleBoundBox = (e) => {
+    console.log(e);
+  };
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
@@ -151,14 +212,17 @@ function Canvas() {
         ref={stageRef}
         width={window.innerWidth}
         height={window.innerHeight}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onClick={handleStageClick}
       >
         <Layer>
-          {/*{canvasElement.length > 0 &&*/}
-          {/*  canvasElement.map((element) => {*/}
-          {/*    const { type, ...props } = element;*/}
-          {/*    const Component = ListComponents[type];*/}
-          {/*    return <Component {...props} />;*/}
-          {/*  })}*/}
+          {shapes.length > 0 &&
+            shapes.map((element, index) => (
+              <GetDynamicShape key={index} {...element} />
+            ))}
+          {currentShape && <GetDynamicShape {...currentShape} />}
           <Rect
             ref={selectionRect}
             fill={"rgba(147,146,146,0.22)"}
@@ -168,7 +232,10 @@ function Canvas() {
             visible={false}
             listening={false}
           />
-          <CanvasTransformer ref={transformerRef} />
+          <CanvasTransformer
+            ref={transformerRef}
+            handleBoundBox={handleBoundBox}
+          />
         </Layer>
       </Stage>
     </div>

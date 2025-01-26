@@ -44,7 +44,7 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
 
   return (
     <>
-      <Rect ref={reactRef} name={"shape"} {...props} />
+      <Rect ref={reactRef} {...props} name={"shape"} />
       <Text
         text={props.text}
         name={"shape"}
