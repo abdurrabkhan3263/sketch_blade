@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Transformer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Transformer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Circle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/FreeHand.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/Rectangle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/const.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/const.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
-    </list>
+    <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -124,7 +109,7 @@
       <workItem from="1737734687761" duration="302000" />
       <workItem from="1737786123353" duration="3885000" />
       <workItem from="1737822625266" duration="6244000" />
-      <workItem from="1737906791674" duration="6425000" />
+      <workItem from="1737906791674" duration="6582000" />
     </task>
     <servers />
   </component>
