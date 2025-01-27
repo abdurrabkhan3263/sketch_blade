@@ -1,5 +1,5 @@
 import React from "react";
-import { Circle as CanvasCircle } from "react-konva";
+import { Ellipse } from "react-konva";
 
 interface CircleInterface {
   id: string;
@@ -17,6 +17,6 @@ interface CircleInterface {
 }
 
 const Circle: React.FC<CircleInterface> = ({ ...props }) => {
-  return <CanvasCircle {...props} name={"shape"} />;
+  return <Ellipse {...props} strokeScaleEnabled={false} name={"shape"} />;
 };
 export default Circle;

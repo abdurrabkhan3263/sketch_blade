@@ -62,8 +62,8 @@ export function getShapeUpdatedValue(
 
   switch (type) {
     case "rectangle": {
-      const height = Math.abs(x2 - x);
-      const width = Math.abs(y2 - y);
+      const width = Math.abs(x2 - x);
+      const height = Math.abs(y2 - y);
 
       if (height <= 3 || width <= 3) {
         return {
@@ -79,6 +79,8 @@ export function getShapeUpdatedValue(
     }
     case "circle": {
       const radius = Math.hypot(x2 - x, y2 - y);
+      const width = Math.abs(x2 - x);
+      const height = Math.abs(y2 - y);
 
       if (radius <= 5) {
         return {
@@ -86,7 +88,8 @@ export function getShapeUpdatedValue(
         };
       } else {
         return {
-          radius,
+          width,
+          height,
           isAddable: true,
         };
       }
