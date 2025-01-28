@@ -3,21 +3,11 @@ import { Transformer } from "react-konva";
 
 interface CanvasTransformerProps {
   handleTransformation: (e: any) => void;
-  handleTransformationStart: (e: any) => void;
-  handleTransformationEnd: (e: any) => void;
   handleDragMove: (e: any) => void;
 }
 
 const CanvasTransformer = forwardRef(
-  (
-    {
-      handleTransformationEnd,
-      handleTransformation,
-      handleTransformationStart,
-      handleDragMove,
-    }: CanvasTransformerProps,
-    ref,
-  ) => {
+  ({ handleTransformation, handleDragMove }: CanvasTransformerProps, ref) => {
     return (
       <Transformer
         ref={ref}
@@ -50,8 +40,6 @@ const CanvasTransformer = forwardRef(
           }
         }}
         onTransform={handleTransformation}
-        onTransformStart={handleTransformationStart}
-        onTransformEnd={handleTransformationEnd}
         onDragMove={handleDragMove}
       />
     );

@@ -108,6 +108,7 @@ export declare type StrokeWidth = "THIN" | "MEDIUM" | "THICK";
 export declare type FontSize = "SMALL" | "MEDIUM" | "LARGE";
 
 export declare type ToolBarElem =
+  | "hand"
   | "cursor"
   | "circle"
   | "rectangle"

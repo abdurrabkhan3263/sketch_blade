@@ -14,7 +14,7 @@ import Container from "./Container.tsx";
 const ToolBarAction = () => {
   const { currentToolBar } = useSelector((state: RootState) => state.app);
 
-  if (currentToolBar === "cursor") {
+  if (currentToolBar === "cursor" || currentToolBar === "hand") {
     return <></>;
   }
   const toolComponents: { [key: string]: React.ReactNode } = {

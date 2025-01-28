@@ -19,7 +19,6 @@ function Canvas() {
     x: 0,
     y: 0,
   });
-  const [selectedId, setSelectedId] = useState("");
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
@@ -76,9 +75,11 @@ function Canvas() {
     const stage = stageRef.current;
     const selectionRectangle = selectionRect.current;
     const tr = transformerRef.current;
+    const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 
     if (e.target === stage) {
       const pointerPos = stage.getPointerPosition();
+      const isNodesTheir = tr.nodes().length > 0;
 
       if (pointerPos) {
         if (currentSelector === "cursor") {
@@ -97,10 +98,12 @@ function Canvas() {
         });
       }
 
-      // SELECTING THE SHAPE
+      if (isNodesTheir && !metaPressed) {
+        tr.nodes([]);
+      }
+
       setIsDrawing(true);
     } else if (e.target.hasName("shape")) {
-      const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
       const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
       if (!metaPressed && !isSelected) {
@@ -112,8 +115,6 @@ function Canvas() {
       } else if (metaPressed && !isSelected) {
         const nodes = tr.nodes().concat([e.target]);
         tr.nodes(nodes);
-      } else {
-        tr.nodes([]);
       }
     }
   };
@@ -183,10 +184,7 @@ function Canvas() {
     }
   };
 
-  const handleStartTrans = () => {};
-
   const handleTrans = (e) => {
-    console.log(e);
     if (!e.currentTarget) return;
     const nodes = e.currentTarget.nodes();
 
@@ -211,25 +209,23 @@ function Canvas() {
     });
   };
 
-  const handleEndTrans = (e) => {
-    if (!e.target) return;
-    const nodes = e.currentTarget?._nodes;
-
-    if (nodes.length <= 0) return;
-
-    nodes.forEach((node) => {
-      node.scaleX(1);
-      node.scaleY(1);
-    });
-  };
-
   const handleDrag = (e) => {
-    console.log(e);
+    const nodes = e.target.nodes();
+    if (nodes.length > 0) {
+      nodes.forEach((node) => {
+        const attrs = node?.attrs;
+        if (attrs) {
+          setShapesElement((prev) =>
+            prev.map((shape) =>
+              shape.id === attrs.id
+                ? { ...shape, x: attrs.x, y: attrs.y }
+                : shape,
+            ),
+          );
+        }
+      });
+    }
   };
-
-  useEffect(() => {
-    console.log(shapes);
-  }, [shapes]);
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
@@ -240,7 +236,7 @@ function Canvas() {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        // draggable={currentSelector === "cursor"}
+        draggable={currentSelector === "hand"}
       >
         <Layer>
           <Group>
@@ -261,9 +257,7 @@ function Canvas() {
           />
           <CanvasTransformer
             ref={transformerRef}
-            handleTransformationStart={handleStartTrans}
             handleTransformation={handleTrans}
-            handleTransformationEnd={handleEndTrans}
             handleDragMove={handleDrag}
           />
         </Layer>

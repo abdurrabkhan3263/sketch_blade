@@ -5,8 +5,13 @@ import { FaEraser, FaPencilAlt } from "react-icons/fa";
 import { RiText } from "react-icons/ri";
 import { BsArrow90DegDown } from "react-icons/bs";
 import { Rectangle, Circle } from "../components/file/CanvaElements";
+import { FaHand } from "react-icons/fa6";
 
 const ToolBarElem = [
+  {
+    name: "hand",
+    icon: <FaHand />,
+  },
   {
     name: "cursor",
     icon: <GrCursor />,
