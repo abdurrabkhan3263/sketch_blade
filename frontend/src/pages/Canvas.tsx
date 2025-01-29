@@ -5,7 +5,7 @@ import Konva from "konva";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
 import { ToolBarArr } from "../lib/const.ts";
-import { getShapeUpdatedValue } from "../lib/utils.ts";
+import { cn, getShapeUpdatedValue } from "../lib/utils.ts";
 import { Coordinates, ToolBarElem } from "../lib/types";
 import { GetDynamicShape } from "../lib/const.tsx";
 import useShapeProperties from "../hooks/useShapeProperties.ts";
@@ -14,6 +14,7 @@ import { v4 as uuid } from "uuid";
 function Canvas() {
   const [shapes, setShapesElement] = useState([]);
   const [currentShape, setCurrentShape] = useState();
+  const [selectedShapesId, setSelectedShapesId] = useState<string[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startingMousePos, setStartingMousePos] = useState({
     x: 0,
@@ -100,6 +101,7 @@ function Canvas() {
 
       if (isNodesTheir && !metaPressed) {
         tr.nodes([]);
+        setSelectedShapesId([]);
       }
 
       setIsDrawing(true);
@@ -116,15 +118,26 @@ function Canvas() {
         const nodes = tr.nodes().concat([e.target]);
         tr.nodes(nodes);
       }
+
+      if (tr.nodes().length > 0) {
+        const ids = tr.nodes().map((shape) => shape.attrs?.id);
+        setSelectedShapesId(ids);
+      } else {
+        setSelectedShapesId([]);
+      }
     }
   };
 
   const handleMouseUp = (e) => {
     e.evt.preventDefault();
 
-    if (!isDrawing) {
+    const tr = transformerRef.current;
+
+    if (!isDrawing || !tr) {
       return;
     }
+
+    const nodes = tr.nodes();
 
     if (selectionRect.current && selectionRect.current.visible()) {
       selectionRect.current.visible(false);
@@ -132,6 +145,7 @@ function Canvas() {
     if (ToolBarArr.includes(currentSelector) && currentShape) {
       addShape();
     }
+
     setCurrentShape();
     setStartingMousePos({ x: 0, y: 0 });
     setIsDrawing(false);
@@ -173,7 +187,12 @@ function Canvas() {
         const selected = shapes.filter((shape) =>
           Konva.Util.haveIntersection(box, shape.getClientRect()),
         );
-        tr.nodes(selected);
+
+        if (selected.length > 0) {
+          const ids = tr.nodes().map((shape) => shape.attrs?.id);
+          tr.nodes(selected);
+          setSelectedShapesId(ids);
+        }
       } else if (ToolBarArr.includes(currentSelector)) {
         updateShape(currentSelector, {
           ...startingMousePos,
@@ -227,6 +246,35 @@ function Canvas() {
     }
   };
 
+  const handleDeleteShape = () => {
+    const ids = selectedShapesId;
+
+    const filteredShape = shapes?.filter(
+      (shape) => ids.indexOf(shape.id) === -1,
+    );
+
+    setShapesElement(filteredShape);
+  };
+
+  useEffect(() => {
+    const handleShapeDelete = (e) => {
+      if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
+      const tr = transformerRef.current;
+
+      handleDeleteShape();
+
+      if (tr) {
+        tr.nodes([]);
+      }
+    };
+
+    document.addEventListener("keydown", handleShapeDelete);
+
+    return () => {
+      document.removeEventListener("keydown", handleShapeDelete);
+    };
+  }, [selectedShapesId, transformerRef]);
+
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
       <Stage
@@ -237,6 +285,12 @@ function Canvas() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         draggable={currentSelector === "hand"}
+        className={cn(
+          currentSelector === "hand" && "cursor-grab",
+          ["circle", "rectangle"].indexOf(currentSelector) !== -1 &&
+            selectedShapesId.length <= 0 &&
+            "cursor-crosshair",
+        )}
       >
         <Layer>
           <Group>

@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Transformer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Transformer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/const.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/const.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +66,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.222" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-WS-243.23654.157" />
       </set>
     </attachedChunks>
   </component>
@@ -121,7 +117,8 @@
       <workItem from="1737984318657" duration="5986000" />
       <workItem from="1737995141676" duration="6458000" />
       <workItem from="1738056014656" duration="12000" />
-      <workItem from="1738071299244" duration="4597000" />
+      <workItem from="1738071299244" duration="4926000" />
+      <workItem from="1738167338373" duration="6523000" />
     </task>
     <servers />
   </component>
