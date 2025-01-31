@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +121,9 @@
       <workItem from="1737995141676" duration="6458000" />
       <workItem from="1738056014656" duration="12000" />
       <workItem from="1738071299244" duration="4926000" />
-      <workItem from="1738167338373" duration="6523000" />
+      <workItem from="1738167338373" duration="6736000" />
+      <workItem from="1738245231595" duration="1576000" />
+      <workItem from="1738330114611" duration="5437000" />
     </task>
     <servers />
   </component>

@@ -16,6 +16,7 @@ function Canvas() {
   const [currentShape, setCurrentShape] = useState();
   const [selectedShapesId, setSelectedShapesId] = useState<string[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [startingMousePos, setStartingMousePos] = useState({
     x: 0,
     y: 0,
@@ -166,6 +167,12 @@ function Canvas() {
 
     e.evt.preventDefault();
 
+    if (e.target.hasName("shape")) {
+      setIsHovered(true);
+    } else if (!e.target.hasName("shape") && isHovered) {
+      setIsHovered(false);
+    }
+
     if (!isDrawing) {
       return;
     }
@@ -290,6 +297,7 @@ function Canvas() {
           ["circle", "rectangle"].indexOf(currentSelector) !== -1 &&
             selectedShapesId.length <= 0 &&
             "cursor-crosshair",
+          isHovered && "cursor-move",
         )}
       >
         <Layer>

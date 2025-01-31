@@ -20,13 +20,13 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
   const reactRef = React.useRef(null);
   const [rotatingSnaps, setRotatingSnaps] = useState([]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Control") {
       setRotatingSnaps([]);
     }
   };
 
-  const handleKeyUp = (e) => {
+  const handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === "Control") {
       setRotatingSnaps([]);
     }
@@ -38,7 +38,7 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
 
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
-      document.addEventListener("keyup", handleKeyUp);
+      document.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -60,4 +60,5 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
     </>
   );
 };
+
 export default Rectangle;

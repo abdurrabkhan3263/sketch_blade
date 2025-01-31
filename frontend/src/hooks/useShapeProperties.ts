@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
-import { getPropertiesInNumber } from "../lib/utils.ts";
+import { getProperties } from "../lib/utils.ts";
 
 const useShapeProperties = () => {
   const [toolBarProperties, setToolBarProperties] = useState(null);
@@ -10,6 +10,11 @@ const useShapeProperties = () => {
   );
 
   useEffect(() => {
+    const commonProperties = {
+      strokeWidth: getProperties("strokeWidth", properties),
+      dash: getProperties("strokeStyle", properties),
+      lineCap: "round",
+    };
     switch (currentToolBar) {
       case "cursor": {
         setToolBarProperties(null);
@@ -20,8 +25,8 @@ const useShapeProperties = () => {
           ...properties,
           type: "rectangle",
           draggable: true,
-          strokeWidth: getPropertiesInNumber("strokeWidth", properties),
-          cornerRadius: getPropertiesInNumber("edgeStyle", properties),
+          cornerRadius: getProperties("edgeStyle", properties),
+          ...commonProperties,
         });
         break;
       }
@@ -30,7 +35,7 @@ const useShapeProperties = () => {
           ...properties,
           type: "circle",
           draggable: true,
-          strokeWidth: getPropertiesInNumber("strokeWidth", properties),
+          ...commonProperties,
         });
         break;
       }

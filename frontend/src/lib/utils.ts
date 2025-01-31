@@ -25,7 +25,7 @@ export function timeAgo(date: string) {
   }
 }
 
-export function getPropertiesInNumber(
+export function getProperties(
   type: string,
   toolBarProperties: ToolBarProperties,
 ) {
@@ -44,11 +44,21 @@ export function getPropertiesInNumber(
       if (property === "THIN") {
         return 3;
       } else if (property === "MEDIUM") {
-        return 6;
+        return 4;
       } else if (property === "THICK") {
-        return 8;
+        return 5;
       }
       break;
+    }
+    case "strokeStyle": {
+      const property = toolBarProperties.strokeStyle;
+      if (property === "SOLID") {
+        return [0];
+      } else if (property === "DASHED") {
+        return [8, 10];
+      } else {
+        return [0, 10];
+      }
     }
   }
 }
