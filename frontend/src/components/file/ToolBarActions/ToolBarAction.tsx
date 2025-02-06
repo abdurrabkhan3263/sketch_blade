@@ -1,32 +1,41 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store.ts";
 import {
-  Circle,
-  Eraser,
-  PointedArrow,
-  FreeHand,
-  Text,
-  Rectangle,
-  Arrow,
-} from "../ToolBarActions/ListToolBar";
+  Fill,
+  StrokeStyle,
+  EdgeStyle,
+  Stroke,
+  StrokeWidth,
+  FillStyle,
+  FontSize,
+  Opacity,
+  EraserRadius,
+} from "./ListToolBar/ToolBarElements.tsx";
 import Container from "./Container.tsx";
 
 const ToolBarAction = () => {
-  const { currentToolBar } = useSelector((state: RootState) => state.app);
+  const { toolBarProperties } = useSelector((state: RootState) => state.app);
 
-  if (currentToolBar === "cursor" || currentToolBar === "hand") {
-    return <></>;
-  }
-  const toolComponents: { [key: string]: React.ReactNode } = {
-    circle: <Circle />,
-    rectangle: <Rectangle />,
-    text: <Text />,
-    eraser: <Eraser />,
-    "free hand": <FreeHand />,
-    "point arrow": <PointedArrow />,
-    arrow: <Arrow />,
+  if (!toolBarProperties) return <></>;
+
+  const properties = {
+    fill: <Fill />,
+    stroke: <Stroke />,
+    fillStyle: <FillStyle />,
+    strokeStyle: <StrokeStyle />,
+    strokeWidth: <StrokeWidth />,
+    edgeStyle: <EdgeStyle />,
+    fontSize: <FontSize />,
+    eraserRadius: <EraserRadius />,
+    opacity: <Opacity />,
   };
 
-  return <Container>{toolComponents[currentToolBar] || null}</Container>;
+  return (
+    <Container>
+      {Object.keys(properties).map((key) =>
+        toolBarProperties[key] ? properties[key] : <></>,
+      )}
+    </Container>
+  );
 };
 export default ToolBarAction;

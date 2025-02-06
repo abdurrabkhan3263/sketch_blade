@@ -52,7 +52,6 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
       />
       <Text
         text={props.text}
-        name={"shape"}
         height={props.height}
         width={props.width}
         draggable={props.draggable}

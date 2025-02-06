@@ -2,7 +2,7 @@ import React, { createRef, useEffect, useRef, useState } from "react";
 import { Group, Layer, Rect, Stage } from "react-konva";
 import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx";
 import Konva from "konva";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
 import { ToolBarArr } from "../lib/const.ts";
 import { cn, getShapeUpdatedValue } from "../lib/utils.ts";
@@ -28,21 +28,40 @@ function Canvas() {
   const transformerRef = createRef();
   const stageRef = useRef();
   const shapeProperties = useShapeProperties();
+  const dispatch = useDispatch();
 
   const startDrawing = (properites) => {
+    const id = uuid();
     setCurrentShape({
-      id: uuid(),
+      id,
       ...properites,
       isAddable: false,
     });
   };
 
-  const updateShape = (type: ToolBarElem, coordinates: Coordinates) => {
-    const updatedValue = getShapeUpdatedValue(type, coordinates);
-    setCurrentShape((prev) => ({
-      ...prev,
-      ...updatedValue,
-    }));
+  const updateShape = (
+    type: ToolBarElem,
+    coordinates: Coordinates,
+    shapeId?: string,
+  ) => {
+    if (shapeId) {
+      setShapesElement((prev) =>
+        prev.map((shape) =>
+          shape.id === shapeId ? { ...shape, ...coordinates } : shape,
+        ),
+      );
+      localStorage.setItem("shapes", JSON.stringify(shapes));
+    } else {
+      const updatedValue = getShapeUpdatedValue(type, coordinates);
+      setCurrentShape((prev) => ({
+        ...prev,
+        ...updatedValue,
+      }));
+      localStorage.setItem(
+        "shapes",
+        JSON.stringify([...shapes, { ...updatedValue, ...currentShape }]),
+      );
+    }
   };
 
   const addShape = () => {
@@ -121,10 +140,14 @@ function Canvas() {
       }
 
       if (tr.nodes().length > 0) {
-        const ids = tr.nodes().map((shape) => shape.attrs?.id);
+        const nodesAttr = tr.nodes().map((shape) => shape.attrs);
+        const ids = nodesAttr.map((attr) => attr.id);
         setSelectedShapesId(ids);
+        console.log(nodesAttr);
+        // dispatch(changeCurrentToolBar(nodesAttr));
       } else {
         setSelectedShapesId([]);
+        // dispatch(changeCurrentToolBar("cursor"));
       }
     }
   };
@@ -197,8 +220,10 @@ function Canvas() {
 
         if (selected.length > 0) {
           const ids = tr.nodes().map((shape) => shape.attrs?.id);
+          const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
           setSelectedShapesId(ids);
+          // dispatch(changeCurrentToolBar(selectedShapes));
         }
       } else if (ToolBarArr.includes(currentSelector)) {
         updateShape(currentSelector, {
@@ -218,20 +243,19 @@ function Canvas() {
 
     nodes.forEach((node) => {
       const attrs = node.attrs;
-      setShapesElement((prev) =>
-        prev.map((shape) =>
-          shape.id === attrs.id
-            ? {
-                ...shape,
-                rotation: attrs.rotation,
-                scaleX: attrs.scaleX,
-                scaleY: attrs.scaleY,
-                x: attrs.x,
-                y: attrs.y,
-              }
-            : shape,
-        ),
-      );
+      if (attrs) {
+        updateShape(
+          currentSelector,
+          {
+            rotation: attrs.rotation,
+            scaleX: attrs.scaleX,
+            scaleY: attrs.scaleY,
+            x: attrs.x,
+            y: attrs.y,
+          },
+          attrs.id,
+        );
+      }
     });
   };
 
@@ -241,13 +265,7 @@ function Canvas() {
       nodes.forEach((node) => {
         const attrs = node?.attrs;
         if (attrs) {
-          setShapesElement((prev) =>
-            prev.map((shape) =>
-              shape.id === attrs.id
-                ? { ...shape, x: attrs.x, y: attrs.y }
-                : shape,
-            ),
-          );
+          updateShape(currentSelector, { x: attrs.x, y: attrs.y }, attrs.id);
         }
       });
     }
@@ -261,6 +279,7 @@ function Canvas() {
     );
 
     setShapesElement(filteredShape);
+    localStorage.setItem("shapes", JSON.stringify(filteredShape));
   };
 
   useEffect(() => {
@@ -281,6 +300,16 @@ function Canvas() {
       document.removeEventListener("keydown", handleShapeDelete);
     };
   }, [selectedShapesId, transformerRef]);
+
+  useEffect(() => {
+    const getShapesFromLocalStorage = JSON.parse(
+      localStorage.getItem("shapes"),
+    );
+
+    if (getShapesFromLocalStorage && getShapesFromLocalStorage.length > 0) {
+      setShapesElement(getShapesFromLocalStorage);
+    }
+  }, []);
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">

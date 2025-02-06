@@ -10,6 +10,8 @@ const useShapeProperties = () => {
   );
 
   useEffect(() => {
+    if (!properties) return;
+
     const commonProperties = {
       strokeWidth: getProperties("strokeWidth", properties),
       dash: getProperties("strokeStyle", properties),

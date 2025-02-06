@@ -1,24 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ToolBarElem, ToolBarProperties } from "../../lib/types";
+import { toolBarProperties } from "../../lib/const.ts";
 
 type StateType = {
   currentToolBar: ToolBarElem;
-  toolBarProperties: ToolBarProperties;
+  toolBarProperties: ToolBarProperties | null;
 };
 
 const initialState: StateType = {
   currentToolBar: "cursor",
-  toolBarProperties: {
-    fill: "#0A1F2C",
-    fillStyle: "SOLID",
-    stroke: "#3282B8",
-    strokeStyle: "SOLID",
-    strokeWidth: "THIN",
-    edgeStyle: "ROUNDED",
-    opacity: 1,
-    eraserRadius: 10,
-    fontSize: "MEDIUM",
-  },
+  toolBarProperties: null,
 };
 
 export const appSlice = createSlice({
@@ -26,7 +17,14 @@ export const appSlice = createSlice({
   initialState,
   reducers: {
     changeCurrentToolBar: (state, action) => {
+      const payload: ToolBarElem = action.payload;
       state.currentToolBar = action.payload;
+
+      if (payload === "cursor" || payload === "free hand") {
+        state.toolBarProperties = null;
+      } else {
+        state.toolBarProperties = toolBarProperties[payload];
+      }
     },
     changeToolBarProperties: (state, action) => {
       state.toolBarProperties = {

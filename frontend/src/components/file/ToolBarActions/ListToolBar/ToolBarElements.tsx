@@ -219,7 +219,7 @@ const StrokeWidth = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.strokeWidth}
+        value={selector?.strokeWidth || ""}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.strokeWidth.map(({ width, path }, index) => (

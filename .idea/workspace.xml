@@ -7,9 +7,12 @@
     <list default="true" id="a065c8b7-2cf5-4690-a28f-a249c5327a03" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/CanvaElements/Rectangle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ListToolBar/ToolBarElements.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/const.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +126,15 @@
       <workItem from="1738071299244" duration="4926000" />
       <workItem from="1738167338373" duration="6736000" />
       <workItem from="1738245231595" duration="1576000" />
-      <workItem from="1738330114611" duration="5437000" />
+      <workItem from="1738330114611" duration="5724000" />
+      <workItem from="1738503330862" duration="3000" />
+      <workItem from="1738506143734" duration="593000" />
+      <workItem from="1738589462045" duration="5368000" />
+      <workItem from="1738597058749" duration="1628000" />
+      <workItem from="1738762374798" duration="5771000" />
+      <workItem from="1738771164371" duration="1246000" />
+      <workItem from="1738849934861" duration="4524000" />
+      <workItem from="1738856281210" duration="938000" />
     </task>
     <servers />
   </component>
