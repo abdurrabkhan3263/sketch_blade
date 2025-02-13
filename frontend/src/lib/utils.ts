@@ -1,6 +1,12 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Coordinates, ToolBarElem, ToolBarProperties } from "./types";
+import { FourCoordinates, ToolBarElem, ToolBarProperties } from "./types";
+
+type ShapeUpdatedValue = {
+  height?: number;
+  width?: number;
+  isAddable: boolean;
+};
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,10 +32,10 @@ export function timeAgo(date: string) {
 }
 
 export function getProperties(
-  type: string,
+  key: string,
   toolBarProperties: ToolBarProperties,
 ) {
-  switch (type) {
+  switch (key) {
     case "edgeStyle": {
       const property = toolBarProperties.edgeStyle;
       if (property === "SHARP") {
@@ -60,14 +66,17 @@ export function getProperties(
         return [0, 10];
       }
     }
+    default: {
+      return toolBarProperties[key as keyof ToolBarProperties];
+    }
   }
 }
 
 export function getShapeUpdatedValue(
   type: ToolBarElem,
-  coordinates: Coordinates,
-) {
-  if (type === "cursor") return {};
+  coordinates: FourCoordinates,
+): ShapeUpdatedValue | undefined {
+  if (type === "cursor") return;
   const { x, y2, y, x2 } = coordinates;
 
   switch (type) {

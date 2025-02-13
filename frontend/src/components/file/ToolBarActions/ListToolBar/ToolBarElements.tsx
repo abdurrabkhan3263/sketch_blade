@@ -3,7 +3,7 @@ import ToolBarActions from "./const.ts";
 import { ToggleGroup, ToggleGroupItem } from "../../../ui/toggle-group.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store.ts";
-import { changeToolBarProperties } from "../../../../redux/slices/appSlice.ts";
+import { changeToolBarPropertiesValue } from "../../../../redux/slices/appSlice.ts";
 import {
   EdgeStyle as EdgeStyleType,
   FillStyle as FillStyleType,
@@ -47,7 +47,7 @@ const Fill = () => {
   const handleValueChange = useCallback(
     (color: string) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           fill: color,
         }),
       );
@@ -88,7 +88,7 @@ const Stroke = () => {
   const handleValueChange = useCallback(
     (color: string) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           stroke: color,
         }),
       );
@@ -128,7 +128,7 @@ const FillStyle = () => {
   const handleValueChange = useCallback(
     (style: FillStyleType) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           fillStyle: style,
         }),
       );
@@ -167,7 +167,7 @@ const StrokeStyle = () => {
   const handleValueChange = useCallback(
     (style: StrokeStyleType) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           strokeStyle: style,
         }),
       );
@@ -206,7 +206,7 @@ const StrokeWidth = () => {
   const handleValueChange = useCallback(
     (width: StrokeWidthType) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           strokeWidth: width,
         }),
       );
@@ -245,7 +245,7 @@ const EdgeStyle = () => {
   const handleValueChange = useCallback(
     (style: EdgeStyleType) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           edgeStyle: style,
         }),
       );
@@ -284,7 +284,7 @@ const Opacity: React.FC = () => {
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           opacity: Number.parseFloat(e.target.value),
         }),
       );
@@ -316,7 +316,7 @@ const EraserRadius: React.FC = () => {
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           eraserRadius: parseInt(e.target.value, 10),
         }),
       );
@@ -347,7 +347,7 @@ const FontSize: React.FC = () => {
   const handleValueChange = useCallback(
     (size: FontSizeType) => {
       dispatch(
-        changeToolBarProperties({
+        changeToolBarPropertiesValue({
           fontSize: size,
         }),
       );

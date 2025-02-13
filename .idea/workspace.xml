@@ -11,6 +11,8 @@
       <change beforePath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/file/ToolBarActions/ToolBarAction.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/useShapeProperties.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/lib/const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Canvas.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/redux/slices/appSlice.ts" afterDir="false" />
     </list>
@@ -135,6 +137,13 @@
       <workItem from="1738771164371" duration="1246000" />
       <workItem from="1738849934861" duration="4524000" />
       <workItem from="1738856281210" duration="938000" />
+      <workItem from="1738857274448" duration="28000" />
+      <workItem from="1738935750308" duration="4696000" />
+      <workItem from="1739022363113" duration="4840000" />
+      <workItem from="1739031266124" duration="810000" />
+      <workItem from="1739099680164" duration="4598000" />
+      <workItem from="1739107854673" duration="2328000" />
+      <workItem from="1739194969577" duration="2561000" />
     </task>
     <servers />
   </component>

@@ -1,4 +1,4 @@
-import { ToolBarElem, ToolBarProperties as Type } from "./types";
+import { ToolBarElem } from "./types";
 
 export const MAX_WIDTH = 500;
 export const MAX_HEIGHT = 250;
@@ -11,26 +11,28 @@ export const ToolBarArr: ToolBarElem[] = [
   "point arrow",
   "free hand",
   "eraser",
+  "cursor",
 ];
 
-const commonProperties: Type = {
-  stroke: "",
+const commonProperties = {
+  stroke: "#3282B8",
   strokeStyle: "SOLID",
   strokeWidth: "THIN",
   opacity: 1,
 };
 
-export const toolBarProperties = {
+export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
+  cursor: null,
+  "free hand": null,
+  hand: null,
   circle: {
     fill: "#0A1F2C",
     fillStyle: "SOLID",
-    opacity: 1,
     ...commonProperties,
   },
   rectangle: {
     fill: "#0A1F2C",
     fillStyle: "SOLID",
-    opacity: 1,
     edgeStyle: "ROUNDED",
     ...commonProperties,
   },

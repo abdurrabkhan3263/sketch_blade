@@ -76,6 +76,19 @@ export declare type CreateFile = {
   description: string;
 };
 
+export declare type UseShapeProperties = {
+  type: ToolBarElem;
+  fill: string;
+  fillStyle: FillStyle;
+  stroke: string;
+  strokeWidth: number;
+  dash: number[];
+  lineCap: string;
+  draggable: boolean;
+  cornerRadius?: number;
+  customProperties: ToolBarProperties;
+};
+
 export declare type ToolBarProperties = {
   fill: string;
   fillStyle: FillStyle;
@@ -90,8 +103,13 @@ export declare type ToolBarProperties = {
 
 export declare type Coordinates = {
   x: number;
-  x2: number;
   y: number;
+};
+
+export declare type FourCoordinates = {
+  x: number;
+  y: number;
+  x2: number;
   y2: number;
 };
 
@@ -118,3 +136,48 @@ export declare type ToolBarElem =
   | "arrow"
   | "point arrow"
   | "upload";
+
+/*
+  The following types are for the CanvaElements.tsx file
+ */
+
+export declare type Rectangle = {
+  id: string;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+  fill: string;
+  stroke: string;
+  cornerRadius: number;
+  draggable: boolean;
+  type: ToolBarElem;
+  strokeWidth: number;
+  text?: string;
+  fillPatternImage?: string;
+  customProperties: ToolBarProperties;
+  dash: number[];
+  lineCap: EdgeStyle;
+  isAddable?: boolean;
+};
+
+export declare type Circle = {
+  id: string;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: string;
+  text?: string;
+  fillPatternImage?: string;
+  stroke: string;
+  draggable: boolean;
+  strokeWidth: number;
+  type: ToolBarElem;
+  customProperties: ToolBarProperties;
+  lineCap: EdgeStyle;
+  dash: number[];
+  isAddable?: boolean;
+};
+
+export declare type Shape = Rectangle | Circle;

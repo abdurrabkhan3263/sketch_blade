@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Rect, Text } from "react-konva";
+import { current } from "@reduxjs/toolkit";
 
 interface RectangleProps {
   id: string;

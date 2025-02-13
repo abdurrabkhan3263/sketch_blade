@@ -32,8 +32,10 @@ const ToolBarAction = () => {
 
   return (
     <Container>
-      {Object.keys(properties).map((key) =>
-        toolBarProperties[key] ? properties[key] : <></>,
+      {Object.keys(properties).map((key, index) =>
+        toolBarProperties[key] ? (
+          <span key={index}>{properties[key]}</span>
+        ) : null,
       )}
     </Container>
   );

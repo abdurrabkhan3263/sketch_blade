@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import { Group, Layer, Rect, Stage } from "react-konva";
 import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx";
 import Konva from "konva";
@@ -6,61 +6,84 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
 import { ToolBarArr } from "../lib/const.ts";
 import { cn, getShapeUpdatedValue } from "../lib/utils.ts";
-import { Coordinates, ToolBarElem } from "../lib/types";
+import { Coordinates, FourCoordinates, Shape, ToolBarElem } from "../lib/types";
 import { GetDynamicShape } from "../lib/const.tsx";
 import useShapeProperties from "../hooks/useShapeProperties.ts";
 import { v4 as uuid } from "uuid";
+import {
+  changeCurrentToolBar,
+  changeToolBarProperties,
+  addShapes,
+  deleteShapes,
+  updateShapes,
+  handleSelectedIds,
+} from "../redux/slices/appSlice.ts";
+import { KonvaEventObject } from "konva/lib/Node";
 
 function Canvas() {
-  const [shapes, setShapesElement] = useState([]);
-  const [currentShape, setCurrentShape] = useState();
-  const [selectedShapesId, setSelectedShapesId] = useState<string[]>([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [startingMousePos, setStartingMousePos] = useState({
+  const shapes = useSelector(
+    (state: RootState) => state.app.shapes as Shape[] | [],
+  );
+  const selectedShapesId = useSelector(
+    (state: RootState) => state.app.selectedShapesId,
+  );
+  const [currentShape, setCurrentShape] = useState<Shape>();
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [startingMousePos, setStartingMousePos] = useState<Coordinates>({
     x: 0,
     y: 0,
   });
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const selectionRect = useRef(null);
-  const transformerRef = createRef();
-  const stageRef = useRef();
+  const selectionRect = useRef<Konva.Rect>(null);
+  const transformerRef = createRef<Konva.Transformer>();
+  const stageRef = useRef<Konva.Stage>(null);
   const shapeProperties = useShapeProperties();
   const dispatch = useDispatch();
 
-  const startDrawing = (properites) => {
+  const addShapeIntoTheDb = (currentShape: Shape) => {
+    localStorage.setItem(
+      "shapes",
+      JSON.stringify([...shapes, { ...currentShape }]),
+    );
+  };
+
+  const initializeShape = (properties: any) => {
     const id = uuid();
     setCurrentShape({
       id,
-      ...properites,
+      ...properties,
       isAddable: false,
-    });
+    } as Shape);
   };
 
   const updateShape = (
     type: ToolBarElem,
-    coordinates: Coordinates,
+    coordinates: { x2?: number; y2?: number; x?: number; y?: number },
     shapeId?: string,
   ) => {
-    if (shapeId) {
-      setShapesElement((prev) =>
-        prev.map((shape) =>
-          shape.id === shapeId ? { ...shape, ...coordinates } : shape,
-        ),
+    coordinates = { ...startingMousePos, ...coordinates };
+
+    if (!shapeId) {
+      const updatedValue = getShapeUpdatedValue(
+        type,
+        coordinates as FourCoordinates,
       );
-      localStorage.setItem("shapes", JSON.stringify(shapes));
+      if (updatedValue && updatedValue.isAddable) {
+        setCurrentShape(
+          (prev) =>
+            ({
+              ...prev,
+              ...updatedValue,
+            }) as Shape,
+        );
+      }
+      addShapeIntoTheDb(currentShape as Shape);
     } else {
-      const updatedValue = getShapeUpdatedValue(type, coordinates);
-      setCurrentShape((prev) => ({
-        ...prev,
-        ...updatedValue,
-      }));
-      localStorage.setItem(
-        "shapes",
-        JSON.stringify([...shapes, { ...updatedValue, ...currentShape }]),
-      );
+      dispatch(updateShapes({ type, coordinates, shapeId }));
+      localStorage.setItem("shapes", JSON.stringify(shapes));
     }
   };
 
@@ -69,21 +92,12 @@ function Canvas() {
       return;
     }
 
-    let isAlreadyExits = shapes.some((items) => items.id === currentShape.id);
+    dispatch(addShapes(currentShape));
 
-    if (isAlreadyExits) {
-      setShapesElement((prevShapes) =>
-        prevShapes.map((shape) =>
-          shape.id === currentShape.id ? currentShape : shapes,
-        ),
-      );
-    } else {
-      const { isAddable, ...properties } = currentShape;
-      setShapesElement((prev) => [...prev, properties]);
-    }
+    setCurrentShape(undefined);
   };
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
 
     if (
@@ -107,10 +121,10 @@ function Canvas() {
           selectionRectangle.width(0);
           selectionRectangle.height(0);
         } else if (ToolBarArr.includes(currentSelector)) {
-          startDrawing({
+          initializeShape({
             ...shapeProperties,
-            x: pointerPos.x,
-            y: pointerPos.y,
+            x: Number(pointerPos.x),
+            y: Number(pointerPos.y),
           });
         }
         setStartingMousePos({
@@ -121,7 +135,8 @@ function Canvas() {
 
       if (isNodesTheir && !metaPressed) {
         tr.nodes([]);
-        setSelectedShapesId([]);
+        dispatch(handleSelectedIds([]));
+        dispatch(changeToolBarProperties(null));
       }
 
       setIsDrawing(true);
@@ -139,20 +154,20 @@ function Canvas() {
         tr.nodes(nodes);
       }
 
-      if (tr.nodes().length > 0) {
+      if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
         const nodesAttr = tr.nodes().map((shape) => shape.attrs);
         const ids = nodesAttr.map((attr) => attr.id);
         setSelectedShapesId(ids);
-        console.log(nodesAttr);
-        // dispatch(changeCurrentToolBar(nodesAttr));
-      } else {
-        setSelectedShapesId([]);
-        // dispatch(changeCurrentToolBar("cursor"));
+        dispatch(changeToolBarProperties(nodesAttr));
+      }
+
+      if (currentSelector !== "cursor") {
+        dispatch(changeCurrentToolBar("cursor"));
       }
     }
   };
 
-  const handleMouseUp = (e) => {
+  const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
 
     const tr = transformerRef.current;
@@ -160,8 +175,6 @@ function Canvas() {
     if (!isDrawing || !tr) {
       return;
     }
-
-    const nodes = tr.nodes();
 
     if (selectionRect.current && selectionRect.current.visible()) {
       selectionRect.current.visible(false);
@@ -175,7 +188,7 @@ function Canvas() {
     setIsDrawing(false);
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     if (
       !selectionRect?.current ||
       !stageRef.current ||
@@ -190,7 +203,7 @@ function Canvas() {
 
     e.evt.preventDefault();
 
-    if (e.target.hasName("shape")) {
+    if (e.target.hasName("shape") && !isDrawing) {
       setIsHovered(true);
     } else if (!e.target.hasName("shape") && isHovered) {
       setIsHovered(false);
@@ -222,12 +235,15 @@ function Canvas() {
           const ids = tr.nodes().map((shape) => shape.attrs?.id);
           const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
-          setSelectedShapesId(ids);
-          // dispatch(changeCurrentToolBar(selectedShapes));
+          dispatch(handleSelectedIds(ids));
+          dispatch(changeToolBarProperties(selectedShapes));
+        } else if (selected.length === 0) {
+          tr.nodes([]);
+          dispatch(handleSelectedIds([]));
+          dispatch(changeToolBarProperties(null));
         }
       } else if (ToolBarArr.includes(currentSelector)) {
         updateShape(currentSelector, {
-          ...startingMousePos,
           x2: pointerPos.x,
           y2: pointerPos.y,
         });
@@ -235,7 +251,7 @@ function Canvas() {
     }
   };
 
-  const handleTrans = (e) => {
+  const handleTrans = (e: KonvaEventObject<MouseEvent>) => {
     if (!e.currentTarget) return;
     const nodes = e.currentTarget.nodes();
 
@@ -259,8 +275,11 @@ function Canvas() {
     });
   };
 
-  const handleDrag = (e) => {
-    const nodes = e.target.nodes();
+  const handleDrag = (e: KonvaEventObject<MouseEvent>) => {
+    if (!(e.target instanceof Konva.Transformer)) return;
+
+    const transformer = e.target;
+    const nodes = transformer.nodes();
     if (nodes.length > 0) {
       nodes.forEach((node) => {
         const attrs = node?.attrs;
@@ -278,12 +297,13 @@ function Canvas() {
       (shape) => ids.indexOf(shape.id) === -1,
     );
 
-    setShapesElement(filteredShape);
+    dispatch(deleteShapes(filteredShape));
+
     localStorage.setItem("shapes", JSON.stringify(filteredShape));
   };
 
   useEffect(() => {
-    const handleShapeDelete = (e) => {
+    const handleShapeDelete = (e: KeyboardEvent) => {
       if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
       const tr = transformerRef.current;
 
@@ -303,13 +323,14 @@ function Canvas() {
 
   useEffect(() => {
     const getShapesFromLocalStorage = JSON.parse(
-      localStorage.getItem("shapes"),
+      localStorage.getItem("shapes") || "[]",
     );
 
     if (getShapesFromLocalStorage && getShapesFromLocalStorage.length > 0) {
-      setShapesElement(getShapesFromLocalStorage);
+      console.log(getShapesFromLocalStorage);
+      dispatch(addShapes(getShapesFromLocalStorage));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
@@ -340,8 +361,7 @@ function Canvas() {
           <Rect
             ref={selectionRect}
             fill={"rgba(147,146,146,0.22)"}
-            cornerRadius={8}
-            stroke={"#ffffff"}
+            stroke={"#bdbcf4"}
             strokeWidth={1}
             visible={false}
             listening={false}
