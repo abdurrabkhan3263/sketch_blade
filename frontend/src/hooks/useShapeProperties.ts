@@ -18,8 +18,6 @@ const useShapeProperties = (): UseShapeProperties | null => {
       fill: properties["fill"],
       fillStyle: properties["fillStyle"],
       stroke: properties["stroke"],
-      strokeWidth: getProperties("strokeWidth", properties),
-      dash: getProperties("strokeStyle", properties),
       lineCap: "round",
       draggable: true,
     };
@@ -30,20 +28,31 @@ const useShapeProperties = (): UseShapeProperties | null => {
         break;
       }
       case "rectangle": {
+        const otherProperties = getProperties(
+          ["strokeWidth", "strokeStyle", "edgeStyle"],
+          properties,
+        );
+
         setToolBarProperties({
           type: "rectangle",
-          cornerRadius: getProperties("edgeStyle", properties),
           customProperties: properties,
           ...commonProperties,
-        });
+          ...otherProperties,
+        } as UseShapeProperties);
+
         break;
       }
       case "circle": {
+        const otherProperties = getProperties(
+          ["strokeWidth", "strokeStyle"],
+          properties,
+        );
         setToolBarProperties({
           type: "circle",
           customProperties: properties,
+          ...otherProperties,
           ...commonProperties,
-        });
+        } as UseShapeProperties);
         break;
       }
     }

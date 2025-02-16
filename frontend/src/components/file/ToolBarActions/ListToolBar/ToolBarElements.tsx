@@ -283,9 +283,13 @@ const Opacity: React.FC = () => {
 
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const opacityValue = Number.parseFloat(e.target.value);
+
+      if (opacityValue <= 0.15 || opacityValue > 1) return;
+
       dispatch(
         changeToolBarPropertiesValue({
-          opacity: Number.parseFloat(e.target.value),
+          opacity: opacityValue,
         }),
       );
     },
@@ -296,10 +300,10 @@ const Opacity: React.FC = () => {
     <Container label="Opacity">
       <input
         type="range"
-        min="0"
+        min="0.15"
         max="1"
         step="0.01"
-        value={selector.opacity}
+        value={selector?.opacity || 0}
         onChange={handleValueChange}
         className={"w-full"}
       />

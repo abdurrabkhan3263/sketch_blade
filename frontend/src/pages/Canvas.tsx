@@ -1,4 +1,4 @@
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Layer, Rect, Stage } from "react-konva";
 import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx";
 import Konva from "konva";
@@ -61,7 +61,15 @@ function Canvas() {
 
   const updateShape = (
     type: ToolBarElem,
-    coordinates: { x2?: number; y2?: number; x?: number; y?: number },
+    coordinates: {
+      x2?: number;
+      y2?: number;
+      x?: number;
+      y?: number;
+      rotation?: number;
+      scaleX?: number;
+      scaleY?: number;
+    },
     shapeId?: string,
   ) => {
     coordinates = { ...startingMousePos, ...coordinates };
@@ -113,23 +121,28 @@ function Canvas() {
     const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 
     if (e.target === stage) {
-      const pointerPos = stage.getPointerPosition();
+      const pos = stage.getPointerPosition();
+
+      const transform = stage.getAbsoluteTransform().copy();
+
+      const invertedTransform = transform.invert();
+      const transformedPos = pos ? invertedTransform.point(pos) : null;
       const isNodesTheir = tr.nodes().length > 0;
 
-      if (pointerPos) {
+      if (transformedPos) {
         if (currentSelector === "cursor") {
           selectionRectangle.width(0);
           selectionRectangle.height(0);
         } else if (ToolBarArr.includes(currentSelector)) {
           initializeShape({
             ...shapeProperties,
-            x: Number(pointerPos.x),
-            y: Number(pointerPos.y),
+            x: Number(transformedPos.x),
+            y: Number(transformedPos.y),
           });
         }
         setStartingMousePos({
-          x: pointerPos.x,
-          y: pointerPos.y,
+          x: transformedPos.x,
+          y: transformedPos.y,
         });
       }
 
@@ -157,7 +170,8 @@ function Canvas() {
       if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
         const nodesAttr = tr.nodes().map((shape) => shape.attrs);
         const ids = nodesAttr.map((attr) => attr.id);
-        setSelectedShapesId(ids);
+
+        dispatch(handleSelectedIds(ids));
         dispatch(changeToolBarProperties(nodesAttr));
       }
 
@@ -183,7 +197,7 @@ function Canvas() {
       addShape();
     }
 
-    setCurrentShape();
+    setCurrentShape(undefined);
     setStartingMousePos({ x: 0, y: 0 });
     setIsDrawing(false);
   };
@@ -213,16 +227,22 @@ function Canvas() {
       return;
     }
 
-    const pointerPos = stage.getPointerPosition();
+    const pos = stage.getPointerPosition();
 
-    if (pointerPos) {
+    const transform = stage.getAbsoluteTransform().copy();
+
+    const invertedTransform = transform.invert();
+    const transformedPos = pos ? invertedTransform.point(pos) : null;
+
+    if (transformedPos) {
       if (currentSelector === "cursor") {
+        /* Here we implement the selection functionality */
         selectionRectangle.setAttrs({
           visible: true,
-          x: Math.min(startingMousePos.x, pointerPos.x),
-          y: Math.min(startingMousePos.y, pointerPos.y),
-          width: Math.abs(pointerPos.x - startingMousePos.x),
-          height: Math.abs(pointerPos.y - startingMousePos.y),
+          x: Math.min(startingMousePos.x, transformedPos.x),
+          y: Math.min(startingMousePos.y, transformedPos.y),
+          width: Math.abs(transformedPos.x - startingMousePos.x),
+          height: Math.abs(transformedPos.y - startingMousePos.y),
         });
 
         const shapes = stage.find(".shape");
@@ -231,7 +251,11 @@ function Canvas() {
           Konva.Util.haveIntersection(box, shape.getClientRect()),
         );
 
-        if (selected.length > 0) {
+        if (
+          selected.length > 0 &&
+          selected.length !== selectedShapesId.length
+        ) {
+          /* In here we add and remove the selected nodes */
           const ids = tr.nodes().map((shape) => shape.attrs?.id);
           const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
@@ -243,9 +267,10 @@ function Canvas() {
           dispatch(changeToolBarProperties(null));
         }
       } else if (ToolBarArr.includes(currentSelector)) {
+        /* this function is call when we are going to add new shape */
         updateShape(currentSelector, {
-          x2: pointerPos.x,
-          y2: pointerPos.y,
+          x2: transformedPos.x,
+          y2: transformedPos.y,
         });
       }
     }
@@ -253,7 +278,7 @@ function Canvas() {
 
   const handleTrans = (e: KonvaEventObject<MouseEvent>) => {
     if (!e.currentTarget) return;
-    const nodes = e.currentTarget.nodes();
+    const nodes = (e.currentTarget as Konva.Transformer).nodes();
 
     if (nodes.length === 0) return;
 
@@ -290,7 +315,7 @@ function Canvas() {
     }
   };
 
-  const handleDeleteShape = () => {
+  const handleDeleteShape = useCallback(() => {
     const ids = selectedShapesId;
 
     const filteredShape = shapes?.filter(
@@ -300,10 +325,10 @@ function Canvas() {
     dispatch(deleteShapes(filteredShape));
 
     localStorage.setItem("shapes", JSON.stringify(filteredShape));
-  };
+  }, [dispatch, selectedShapesId, shapes]);
 
   useEffect(() => {
-    const handleShapeDelete = (e: KeyboardEvent) => {
+    const handleshapedelete = (e: KeyboardEvent) => {
       if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
       const tr = transformerRef.current;
 
@@ -314,12 +339,12 @@ function Canvas() {
       }
     };
 
-    document.addEventListener("keydown", handleShapeDelete);
+    document.addEventListener("keydown", handleshapedelete);
 
     return () => {
-      document.removeEventListener("keydown", handleShapeDelete);
+      document.removeEventListener("keydown", handleshapedelete);
     };
-  }, [selectedShapesId, transformerRef]);
+  }, [handleDeleteShape, selectedShapesId, transformerRef]);
 
   useEffect(() => {
     const getShapesFromLocalStorage = JSON.parse(
@@ -327,7 +352,6 @@ function Canvas() {
     );
 
     if (getShapesFromLocalStorage && getShapesFromLocalStorage.length > 0) {
-      console.log(getShapesFromLocalStorage);
       dispatch(addShapes(getShapesFromLocalStorage));
     }
   }, [dispatch]);

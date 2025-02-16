@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ToolBarProperties, ToolBarElem, Shape } from "../../lib/types";
+import {
+  ToolBarProperties,
+  ToolBarElem,
+  Shape,
+  ToolBarPropertyKeys,
+} from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
 import { getProperties } from "../../lib/utils.ts";
 
@@ -25,7 +30,11 @@ export const appSlice = createSlice({
       const payload: ToolBarElem = action.payload;
       state.currentToolBar = action.payload;
 
-      if (payload === "cursor" || payload === "free hand") {
+      if (
+        (payload === "cursor" || payload === "free hand") &&
+        state.selectedShapesId.length <= 0
+      ) {
+        console.log("hello going to null ", state.selectedShapesId.length);
         state.toolBarProperties = null;
       } else {
         state.toolBarProperties = toolBarProperties[payload];
@@ -37,20 +46,29 @@ export const appSlice = createSlice({
         ...action.payload,
       };
 
-      if (!state.shapes || !state.selectedShapesId.length) return;
+      if (!state.shapes || !state.selectedShapesId.length || !action.payload)
+        return;
 
       state.selectedShapesId.forEach((id) => {
         const shapeIndex =
           state.shapes.findIndex((shape) => shape.id === id) ?? -1;
 
         if (shapeIndex !== -1) {
-          const propertyKey = Object.keys(action.payload)[0];
-          const updatedProperties = {
-            [propertyKey]: getProperties(propertyKey, action.payload),
-          };
+          const propertyKey: ToolBarPropertyKeys = Object.keys(
+            action.payload,
+          )[0] as ToolBarPropertyKeys;
+
+          const updatedProperties = getProperties(
+            [propertyKey],
+            action.payload,
+          );
 
           state.shapes[shapeIndex] = {
             ...state.shapes[shapeIndex],
+            customProperties: {
+              ...state.shapes[shapeIndex].customProperties,
+              ...action.payload,
+            },
             ...updatedProperties,
           };
         }

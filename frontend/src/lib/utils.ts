@@ -32,44 +32,60 @@ export function timeAgo(date: string) {
 }
 
 export function getProperties(
-  key: string,
+  key: (keyof ToolBarProperties)[],
   toolBarProperties: ToolBarProperties,
 ) {
-  switch (key) {
-    case "edgeStyle": {
-      const property = toolBarProperties.edgeStyle;
-      if (property === "SHARP") {
-        return 0;
-      } else if (property === "ROUNDED") {
-        return 32;
+  if (key.length <= 0 || !Array.isArray(key)) return {};
+
+  let properties = {};
+
+  key.forEach((key) => {
+    switch (key) {
+      case "edgeStyle": {
+        const property = toolBarProperties.edgeStyle;
+        properties = {
+          ...properties,
+          cornerRadius: property === "SHARP" ? 0 : 32,
+        };
+        break;
       }
-      break;
-    }
-    case "strokeWidth": {
-      const property = toolBarProperties.strokeWidth;
-      if (property === "THIN") {
-        return 3;
-      } else if (property === "MEDIUM") {
-        return 4;
-      } else if (property === "THICK") {
-        return 5;
+      case "strokeWidth": {
+        const property = toolBarProperties.strokeWidth;
+        let strokeWidth;
+
+        if (property === "THIN") {
+          strokeWidth = 3;
+        } else if (property === "MEDIUM") {
+          strokeWidth = 4;
+        } else if (property === "THICK") {
+          strokeWidth = 5;
+        }
+        properties = { ...properties, strokeWidth };
+        break;
       }
-      break;
-    }
-    case "strokeStyle": {
-      const property = toolBarProperties.strokeStyle;
-      if (property === "SOLID") {
-        return [0];
-      } else if (property === "DASHED") {
-        return [8, 10];
-      } else {
-        return [0, 10];
+      case "strokeStyle": {
+        const property = toolBarProperties.strokeStyle;
+        let dash;
+        if (property === "SOLID") {
+          dash = [0];
+        } else if (property === "DASHED") {
+          dash = [8, 10];
+        } else {
+          dash = [0, 10];
+        }
+        properties = { ...properties, dash };
+        break;
+      }
+      default: {
+        properties = {
+          ...properties,
+          [key]: toolBarProperties[key as keyof ToolBarProperties],
+        };
       }
     }
-    default: {
-      return toolBarProperties[key as keyof ToolBarProperties];
-    }
-  }
+  });
+
+  return properties;
 }
 
 export function getShapeUpdatedValue(

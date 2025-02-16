@@ -12,13 +12,18 @@ import {
   EraserRadius,
 } from "./ListToolBar/ToolBarElements.tsx";
 import Container from "./Container.tsx";
+import { ToolBarProperties } from "../../../lib/types/index.ts";
 
 const ToolBarAction = () => {
-  const { toolBarProperties } = useSelector((state: RootState) => state.app);
+  const { toolBarProperties } = useSelector(
+    (state: RootState) => state.app as { toolBarProperties: ToolBarProperties },
+  );
+
+  console.log(toolBarProperties);
 
   if (!toolBarProperties) return <></>;
 
-  const properties = {
+  const propertiesElement = {
     fill: <Fill />,
     stroke: <Stroke />,
     fillStyle: <FillStyle />,
@@ -32,9 +37,15 @@ const ToolBarAction = () => {
 
   return (
     <Container>
-      {Object.keys(properties).map((key, index) =>
-        toolBarProperties[key] ? (
-          <span key={index}>{properties[key]}</span>
+      {Object.keys(propertiesElement).map((key, index) =>
+        toolBarProperties[key as keyof ToolBarProperties] ? (
+          <span key={index}>
+            {
+              propertiesElement[
+                key as keyof typeof propertiesElement
+              ] as React.ReactNode
+            }
+          </span>
         ) : null,
       )}
     </Container>
