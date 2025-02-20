@@ -4,8 +4,14 @@ import { PiRectangle } from "react-icons/pi";
 import { FaEraser, FaPencilAlt } from "react-icons/fa";
 import { RiText } from "react-icons/ri";
 import { BsArrow90DegDown } from "react-icons/bs";
-import { Rectangle, Circle } from "../components/file/CanvaElements";
+import {
+  Rectangle,
+  Circle,
+  FreeHand,
+} from "../components/file/ShapesComponets";
 import { FaHand } from "react-icons/fa6";
+import { Shape, ShapesElements } from "./types";
+import { ReactNode } from "react";
 
 const ToolBarElem = [
   {
@@ -46,13 +52,18 @@ const ToolBarElem = [
   },
 ];
 
-const ListComponent = {
+const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
   rectangle: Rectangle,
   circle: Circle,
+  "free hand": FreeHand,
+  // "point arrow": Circle,
+  // arrow: Circle,
+  // text: Circle,
+  // upload: Circle,
 };
 
-const GetDynamicShape = ({ ...props }): ReactNode => {
-  const Component: React.ReactElement = ListComponent[props.type];
+const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
+  const Component = ListComponent[props.type];
   return Component ? <Component {...props} /> : <></>;
 };
 

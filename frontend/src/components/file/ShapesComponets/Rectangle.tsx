@@ -1,23 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Rect, Text } from "react-konva";
-import { current } from "@reduxjs/toolkit";
+import { Shape } from "../../../lib/types";
 
-interface RectangleProps {
-  id: string;
-  x: number;
-  y: number;
-  height: number;
-  width: number;
-  fill: string;
-  draggable: boolean;
-  cornerRadius: number;
-  fillPatternImage?: string;
-  stroke: string;
-  strokeWidth: number;
-  text?: string;
-}
-
-const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
+const Rectangle: React.FC<Shape> = ({ ...props }) => {
   const reactRef = React.useRef(null);
   const [rotatingSnaps, setRotatingSnaps] = useState([]);
 
@@ -51,12 +36,15 @@ const Rectangle: React.FC<RectangleProps> = ({ ...props }) => {
         strokeScaleEnabled={false}
         name={"shape"}
       />
-      <Text
-        text={props.text}
+      {/* <Text
+        text={"hello world"}
         height={props.height}
         width={props.width}
-        draggable={props.draggable}
-      />
+        fontSize={50}
+        draggable={true}
+        x={props.x / 2}
+        y={props.y / 2}
+      /> */}
     </>
   );
 };

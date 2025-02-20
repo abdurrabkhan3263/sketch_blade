@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import EditFile from "../components/file/EditFile.tsx";
 import ToolBar from "../components/file/ToolBar.tsx";
 import ShareSection from "../components/file/ShareSection.tsx";
@@ -18,11 +18,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../components/ui/popover";
-import Canvas from "./Canvas.tsx";
+import Canvas from "../components/file/CanvasCompo.tsx";
+import Konva from "konva";
 
 const File = () => {
   const fileId = useParams().id;
   const navigate = useNavigate();
+  const transformerRef = useRef<Konva.Transformer>(null);
+  const stageRef = useRef<Konva.Stage>(null);
 
   const {
     data,
@@ -51,7 +54,7 @@ const File = () => {
         navigate("/");
       }
     }
-  }, [isError, error, data]);
+  }, [isError, error, data, navigate]);
 
   if (isPending)
     return (
@@ -74,13 +77,13 @@ const File = () => {
             }
           >
             <EditFile fileId={fileId as string} fileName={"fuck"} />
-            <ToolBar />
+            <ToolBar transformerRef={transformerRef} />
             <ShareSection />
           </div>
         </div>
         <div className={"relative size-full flex-1"}>
           <ToolBarAction />
-          <Canvas />
+          <Canvas transformerRef={transformerRef} stageRef={stageRef} />
         </div>
         <div className={"relative z-50 h-12 w-full"}>
           <div

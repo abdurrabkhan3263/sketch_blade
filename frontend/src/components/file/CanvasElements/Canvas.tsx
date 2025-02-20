@@ -1,53 +1,72 @@
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
-import { Group, Layer, Rect, Stage } from "react-konva";
-import CanvasTransformer from "../components/file/CanvaElements/Transformer.tsx";
+import React, { useState } from "react";
+import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
+import { KonvaEventObject } from "konva/lib/Node";
+import { CanvasTransformer } from "../ShapesComponets";
+import { Coordinates, FourCoordinates, ToolBarElem } from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store.ts";
-import { ToolBarArr } from "../lib/const.ts";
-import { cn, getShapeUpdatedValue } from "../lib/utils.ts";
-import { Coordinates, FourCoordinates, Shape, ToolBarElem } from "../lib/types";
-import { GetDynamicShape } from "../lib/const.tsx";
-import useShapeProperties from "../hooks/useShapeProperties.ts";
+import { RootState } from "../../../redux/store";
+import useShapeProperties from "../../../hooks/useShapeProperties";
+import { cn, getShapeUpdatedValue } from "../../../lib/utils";
+import { ToolBarArr } from "../../../lib/const";
+import { Shape } from "../../../lib/types";
 import { v4 as uuid } from "uuid";
 import {
+  addShapes,
   changeCurrentToolBar,
   changeToolBarProperties,
-  addShapes,
-  deleteShapes,
-  updateShapes,
   handleSelectedIds,
-} from "../redux/slices/appSlice.ts";
-import { KonvaEventObject } from "konva/lib/Node";
+  updateShapes,
+} from "../../../redux/slices/appSlice";
 
-function Canvas() {
-  const shapes = useSelector(
-    (state: RootState) => state.app.shapes as Shape[] | [],
-  );
-  const selectedShapesId = useSelector(
-    (state: RootState) => state.app.selectedShapesId,
-  );
-  const [currentShape, setCurrentShape] = useState<Shape>();
+interface StageProps {
+  children: React.ReactNode;
+  stageRef: React.RefObject<Konva.Stage>;
+  transformerRef: React.RefObject<Konva.Transformer>;
+  selectionRect: React.RefObject<Konva.Rect>;
+  currentShape: Shape | undefined;
+  setCurrentShape: React.Dispatch<React.SetStateAction<Shape | undefined>>;
+}
+
+const Canvas: React.FC<StageProps> = ({
+  children,
+  stageRef,
+  transformerRef,
+  selectionRect,
+  currentShape,
+  setCurrentShape,
+}) => {
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [startingMousePos, setStartingMousePos] = useState<Coordinates>({
     x: 0,
     y: 0,
   });
+  const shapeProperties = useShapeProperties();
+  const dispatch = useDispatch();
+  const selectedShapesId = useSelector(
+    (state: RootState) => state.app.selectedShapesId,
+  );
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const selectionRect = useRef<Konva.Rect>(null);
-  const transformerRef = createRef<Konva.Transformer>();
-  const stageRef = useRef<Konva.Stage>(null);
-  const shapeProperties = useShapeProperties();
-  const dispatch = useDispatch();
+  const shapes = useSelector((state: RootState) => state.app.shapes);
 
   const addShapeIntoTheDb = (currentShape: Shape) => {
     localStorage.setItem(
       "shapes",
       JSON.stringify([...shapes, { ...currentShape }]),
     );
+  };
+
+  const addShape = () => {
+    if (!currentShape || (currentShape && !currentShape?.isAddable)) {
+      return;
+    }
+
+    dispatch(addShapes(currentShape));
+
+    setCurrentShape(undefined);
   };
 
   const initializeShape = (properties: any) => {
@@ -79,6 +98,19 @@ function Canvas() {
         type,
         coordinates as FourCoordinates,
       );
+
+      if (currentSelector === "free hand" && updatedValue?.isAddable) {
+        setCurrentShape(
+          (prev) =>
+            ({
+              ...prev,
+              points: [...(prev?.points || []), ...(updatedValue.points || [])],
+              isAddable: true,
+            }) as Shape,
+        );
+        return;
+      }
+
       if (updatedValue && updatedValue.isAddable) {
         setCurrentShape(
           (prev) =>
@@ -93,16 +125,6 @@ function Canvas() {
       dispatch(updateShapes({ type, coordinates, shapeId }));
       localStorage.setItem("shapes", JSON.stringify(shapes));
     }
-  };
-
-  const addShape = () => {
-    if (!currentShape || (currentShape && !currentShape?.isAddable)) {
-      return;
-    }
-
-    dispatch(addShapes(currentShape));
-
-    setCurrentShape(undefined);
   };
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
@@ -140,6 +162,7 @@ function Canvas() {
             y: Number(transformedPos.y),
           });
         }
+
         setStartingMousePos({
           x: transformedPos.x,
           y: transformedPos.y,
@@ -170,7 +193,6 @@ function Canvas() {
       if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
         const nodesAttr = tr.nodes().map((shape) => shape.attrs);
         const ids = nodesAttr.map((attr) => attr.id);
-
         dispatch(handleSelectedIds(ids));
         dispatch(changeToolBarProperties(nodesAttr));
       }
@@ -276,129 +298,38 @@ function Canvas() {
     }
   };
 
-  const handleTrans = (e: KonvaEventObject<MouseEvent>) => {
-    if (!e.currentTarget) return;
-    const nodes = (e.currentTarget as Konva.Transformer).nodes();
-
-    if (nodes.length === 0) return;
-
-    nodes.forEach((node) => {
-      const attrs = node.attrs;
-      if (attrs) {
-        updateShape(
-          currentSelector,
-          {
-            rotation: attrs.rotation,
-            scaleX: attrs.scaleX,
-            scaleY: attrs.scaleY,
-            x: attrs.x,
-            y: attrs.y,
-          },
-          attrs.id,
-        );
-      }
-    });
-  };
-
-  const handleDrag = (e: KonvaEventObject<MouseEvent>) => {
-    if (!(e.target instanceof Konva.Transformer)) return;
-
-    const transformer = e.target;
-    const nodes = transformer.nodes();
-    if (nodes.length > 0) {
-      nodes.forEach((node) => {
-        const attrs = node?.attrs;
-        if (attrs) {
-          updateShape(currentSelector, { x: attrs.x, y: attrs.y }, attrs.id);
-        }
-      });
-    }
-  };
-
-  const handleDeleteShape = useCallback(() => {
-    const ids = selectedShapesId;
-
-    const filteredShape = shapes?.filter(
-      (shape) => ids.indexOf(shape.id) === -1,
-    );
-
-    dispatch(deleteShapes(filteredShape));
-
-    localStorage.setItem("shapes", JSON.stringify(filteredShape));
-  }, [dispatch, selectedShapesId, shapes]);
-
-  useEffect(() => {
-    const handleshapedelete = (e: KeyboardEvent) => {
-      if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
-      const tr = transformerRef.current;
-
-      handleDeleteShape();
-
-      if (tr) {
-        tr.nodes([]);
-      }
-    };
-
-    document.addEventListener("keydown", handleshapedelete);
-
-    return () => {
-      document.removeEventListener("keydown", handleshapedelete);
-    };
-  }, [handleDeleteShape, selectedShapesId, transformerRef]);
-
-  useEffect(() => {
-    const getShapesFromLocalStorage = JSON.parse(
-      localStorage.getItem("shapes") || "[]",
-    );
-
-    if (getShapesFromLocalStorage && getShapesFromLocalStorage.length > 0) {
-      dispatch(addShapes(getShapesFromLocalStorage));
-    }
-  }, [dispatch]);
-
   return (
-    <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">
-      <Stage
-        ref={stageRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        draggable={currentSelector === "hand"}
-        className={cn(
-          currentSelector === "hand" && "cursor-grab",
-          ["circle", "rectangle"].indexOf(currentSelector) !== -1 &&
-            selectedShapesId.length <= 0 &&
-            "cursor-crosshair",
-          isHovered && "cursor-move",
-        )}
-      >
-        <Layer>
-          <Group>
-            {shapes.length > 0 &&
-              shapes.map((element, index) => (
-                <GetDynamicShape key={index} {...element} />
-              ))}
-            {currentShape && <GetDynamicShape {...currentShape} />}
-          </Group>
-          <Rect
-            ref={selectionRect}
-            fill={"rgba(147,146,146,0.22)"}
-            stroke={"#bdbcf4"}
-            strokeWidth={1}
-            visible={false}
-            listening={false}
-          />
-          <CanvasTransformer
-            ref={transformerRef}
-            handleTransformation={handleTrans}
-            handleDragMove={handleDrag}
-          />
-        </Layer>
-      </Stage>
-    </div>
+    <Stage
+      ref={stageRef}
+      width={window.innerWidth}
+      height={window.innerHeight}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      draggable={currentSelector === "hand"}
+      className={cn(
+        currentSelector === "hand" && "cursor-grab",
+        ["circle", "rectangle", "free hand"].indexOf(currentSelector) !== -1 &&
+          selectedShapesId.length <= 0 &&
+          "cursor-crosshair",
+        isHovered && "cursor-move",
+      )}
+    >
+      <Layer>
+        {children}
+        <Rect
+          ref={selectionRect}
+          fill={"rgba(147,146,146,0.22)"}
+          stroke={"#bdbcf4"}
+          strokeWidth={1}
+          visible={false}
+          listening={false}
+        />
+
+        <CanvasTransformer ref={transformerRef} updateShape={updateShape} />
+      </Layer>
+    </Stage>
   );
-}
+};
 
 export default Canvas;

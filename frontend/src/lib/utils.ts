@@ -92,8 +92,10 @@ export function getShapeUpdatedValue(
   type: ToolBarElem,
   coordinates: FourCoordinates,
 ): ShapeUpdatedValue | undefined {
-  if (type === "cursor") return;
+  if (type === "cursor" || type === "hand") return;
+
   const { x, y2, y, x2 } = coordinates;
+  let points: number[];
 
   switch (type) {
     case "rectangle": {
@@ -128,6 +130,20 @@ export function getShapeUpdatedValue(
           isAddable: true,
         };
       }
+    }
+
+    case "free hand": {
+      if (!points) {
+        points = [x2, y2];
+      } else {
+        points.append(x2);
+        points.append(y2);
+      }
+
+      return {
+        points,
+        isAddable: true,
+      };
     }
   }
 }

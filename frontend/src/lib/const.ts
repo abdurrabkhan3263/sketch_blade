@@ -23,7 +23,9 @@ const commonProperties = {
 
 export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
   cursor: null,
-  "free hand": null,
+  "free hand": {
+    ...commonProperties,
+  },
   hand: null,
   circle: {
     fill: "#0A1F2C",
@@ -48,15 +50,3 @@ export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
   "point arrow": commonProperties,
   upload: null,
 };
-
-// {
-//   fill: "#0A1F2C",
-//     fillStyle: "SOLID",
-//   stroke: "#3282B8",
-//   strokeStyle: "SOLID",
-//   strokeWidth: "THIN",
-//   edgeStyle: "ROUNDED",
-//   opacity: 1,
-//   eraserRadius: 10,
-//   fontSize: "MEDIUM",
-// },

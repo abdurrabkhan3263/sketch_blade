@@ -3,15 +3,27 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../../lib/utils.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store.ts";
-import { changeCurrentToolBar } from "../../redux/slices/appSlice.ts";
+import {
+  changeCurrentToolBar,
+  handleSelectedIds,
+} from "../../redux/slices/appSlice.ts";
+import Konva from "konva";
 
-const ToolBar = () => {
+interface ToolBarProps {
+  transformerRef: React.RefObject<Konva.Transformer>;
+}
+
+const ToolBar: React.FC<ToolBarProps> = ({ transformerRef }) => {
   const selectedTooBar = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
   const dispatch = useDispatch();
 
   const handleToolBarClick = (toolBar: string) => {
+    if (transformerRef?.current && transformerRef.current.nodes().length > 0) {
+      transformerRef.current.nodes([]);
+      dispatch(handleSelectedIds([]));
+    }
     dispatch(changeCurrentToolBar(toolBar));
   };
 

@@ -4,7 +4,7 @@ import {
   FontSize,
   StrokeStyle,
   StrokeWidth,
-} from "../../../../lib/types";
+} from "../../../lib/types";
 import { IconType } from "react-icons";
 import { TbLetterS, TbLetterM, TbLetterL } from "react-icons/tb";
 

@@ -10,7 +10,7 @@ import {
   FontSize,
   Opacity,
   EraserRadius,
-} from "./ListToolBar/ToolBarElements.tsx";
+} from "./ToolBarElements.tsx";
 import Container from "./Container.tsx";
 import { ToolBarProperties } from "../../../lib/types/index.ts";
 
@@ -18,8 +18,6 @@ const ToolBarAction = () => {
   const { toolBarProperties } = useSelector(
     (state: RootState) => state.app as { toolBarProperties: ToolBarProperties },
   );
-
-  console.log(toolBarProperties);
 
   if (!toolBarProperties) return <></>;
 

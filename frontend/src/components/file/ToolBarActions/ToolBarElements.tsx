@@ -1,16 +1,16 @@
 import React, { useCallback } from "react";
 import ToolBarActions from "./const.ts";
-import { ToggleGroup, ToggleGroupItem } from "../../../ui/toggle-group.tsx";
+import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group.tsx";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store.ts";
-import { changeToolBarPropertiesValue } from "../../../../redux/slices/appSlice.ts";
+import { RootState } from "../../../redux/store.ts";
+import { changeToolBarPropertiesValue } from "../../../redux/slices/appSlice.ts";
 import {
   EdgeStyle as EdgeStyleType,
   FillStyle as FillStyleType,
   FontSize as FontSizeType,
   StrokeStyle as StrokeStyleType,
   StrokeWidth as StrokeWidthType,
-} from "../../../../lib/types";
+} from "../../../lib/types/index.ts";
 
 interface ContainerProps {
   children: React.ReactNode;

@@ -23,10 +23,6 @@ const useShapeProperties = (): UseShapeProperties | null => {
     };
 
     switch (currentToolBar) {
-      case "cursor": {
-        setToolBarProperties(null);
-        break;
-      }
       case "rectangle": {
         const otherProperties = getProperties(
           ["strokeWidth", "strokeStyle", "edgeStyle"],
@@ -53,7 +49,27 @@ const useShapeProperties = (): UseShapeProperties | null => {
           ...otherProperties,
           ...commonProperties,
         } as UseShapeProperties);
+
         break;
+      }
+      case "free hand": {
+        const otherProperties = getProperties(
+          ["strokeWidth", "strokeStyle"],
+          properties,
+        );
+
+        setToolBarProperties({
+          type: "free hand",
+          stroke: properties["stroke"],
+          customProperties: properties,
+          opacity: properties["opacity"],
+          ...otherProperties,
+        } as UseShapeProperties);
+
+        break;
+      }
+      default: {
+        setToolBarProperties(null);
       }
     }
   }, [currentToolBar, properties]);

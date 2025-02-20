@@ -1,3 +1,5 @@
+import React from "react";
+
 export declare type User = {
   _id: string;
   clerkId: string;
@@ -86,6 +88,7 @@ export declare type UseShapeProperties = {
   lineCap: string;
   draggable: boolean;
   cornerRadius?: number;
+  opacity: number;
   customProperties: ToolBarProperties;
 };
 
@@ -137,6 +140,16 @@ export declare type ToolBarElem =
   | "point arrow"
   | "upload";
 
+export declare enum ShapesElements {
+  FreeHand = "free hand",
+  Rectangle = "rectangle",
+  Circle = "circle",
+  Text = "text",
+  Arrow = "arrow",
+  PointArrow = "point arrow",
+  Upload = "upload",
+}
+
 /*
   The following types are for the CanvaElements.tsx file
  */
@@ -151,7 +164,7 @@ export declare type Rectangle = {
   stroke: string;
   cornerRadius: number;
   draggable: boolean;
-  type: ToolBarElem;
+  type: ShapesElements;
   strokeWidth: number;
   text?: string;
   fillPatternImage?: string;
@@ -173,11 +186,24 @@ export declare type Circle = {
   stroke: string;
   draggable: boolean;
   strokeWidth: number;
-  type: ToolBarElem;
+  type: ShapesElements;
   customProperties: ToolBarProperties;
   lineCap: EdgeStyle;
   dash: number[];
   isAddable?: boolean;
 };
 
-export declare type Shape = Rectangle | Circle;
+export declare type FreeHand = {
+  id: string;
+  x: number;
+  y: number;
+  dash: number[];
+  stroke: string;
+  points: number[];
+  strokeWidth: number;
+  type: ShapesElements;
+};
+
+export declare type Shape = Rectangle | Circle | FreeHand;
+
+// FUNCTIONS ARGS TYPES

@@ -1,10 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  ToolBarProperties,
-  ToolBarElem,
-  Shape,
-  ToolBarPropertyKeys,
-} from "../../lib/types";
+import { ToolBarProperties, ToolBarElem, Shape } from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
 import { getProperties } from "../../lib/utils.ts";
 
@@ -30,11 +25,9 @@ export const appSlice = createSlice({
       const payload: ToolBarElem = action.payload;
       state.currentToolBar = action.payload;
 
-      if (
-        (payload === "cursor" || payload === "free hand") &&
-        state.selectedShapesId.length <= 0
-      ) {
-        console.log("hello going to null ", state.selectedShapesId.length);
+      if (state.selectedShapesId.length > 0) return;
+
+      if (payload === "cursor" || payload === "hand") {
         state.toolBarProperties = null;
       } else {
         state.toolBarProperties = toolBarProperties[payload];
