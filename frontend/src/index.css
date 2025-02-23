@@ -2,50 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --radius: 0.5rem;
-    --primary: #1B262C;
-    --secondary: #0F4C75;
-    --tertiary: #3282B8;
-    --quaternary: #BBE1FA;
-    --dark-secondary: #0F4C75;
-    --btn: #1571AE;
-    --line: #B8A5A5;
+    --primary: #1b262c;
+    --secondary: #0f4c75;
+    --tertiary: #3282b8;
+    --quaternary: #bbe1fa;
+    --dark-secondary: #0f4c75;
+    --btn: #1571ae;
+    --line: #b8a5a5;
   }
 }
 
-@layer utilities{
-  .size-screen{
-    @apply w-screen h-screen;
+@layer utilities {
+  .size-screen {
+    @apply h-screen w-screen;
   }
-  .size-full{
-    @apply w-full h-full;
+  .size-full {
+    @apply h-full w-full;
   }
-  .flex-center{
-    @apply flex justify-center items-center;
+  .flex-center {
+    @apply flex items-center justify-center;
   }
-  .flex-start{
-    @apply flex justify-start items-center;
+  .flex-start {
+    @apply flex items-center justify-start;
   }
-  .main-container{
-    @apply xl:w-[1300px] lg:w-[1000px] md:w-[750px] sm:w-[600px] w-full;
+  .main-container {
+    @apply w-full sm:w-[600px] md:w-[750px] lg:w-[1000px] xl:w-[1300px];
   }
-  .size-icon{
-    @apply w-12 h-12;
-  }
-
-  .dark-container{
-    @apply bg-gray-800 text-quaternary border-quaternary select-none ;
+  .size-icon {
+    @apply h-12 w-12;
   }
 
-  .dark-input{
-    @apply bg-secondary text-quaternary border-quaternary transition-all !placeholder-quaternary focus:!placeholder-gray-400;
+  .dark-container {
+    @apply select-none border-quaternary bg-gray-800 text-quaternary;
+  }
+
+  .dark-input {
+    @apply border-quaternary bg-secondary text-quaternary !placeholder-quaternary transition-all focus:!placeholder-gray-400;
   }
 }
 
-.tool__bar{
+.tool__bar {
   display: grid;
   grid-template-columns: auto;
   grid-auto-flow: column;

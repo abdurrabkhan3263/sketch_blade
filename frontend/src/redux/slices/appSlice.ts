@@ -15,6 +15,7 @@ const initialState: StateType = {
   toolBarProperties: null,
   shapes: [],
   selectedShapesId: [],
+  selectedToDelete: [],
 };
 
 export const appSlice = createSlice({

@@ -364,12 +364,16 @@ const FontSize: React.FC = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.fontSize}
+        value={selector?.fontSize || ""}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.fontSize.map(({ Icon, size }) => {
           return (
-            <ToggleGroupItem value={size} aria-label={`Toggle ${size}`}>
+            <ToggleGroupItem
+              key={size}
+              value={size}
+              aria-label={`Toggle ${size}`}
+            >
               <Icon className="size-full object-cover" />
             </ToggleGroupItem>
           );

@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
-import { CanvasTransformer } from "../ShapesComponets";
+import { CanvasTransformer, Text } from "../ShapesComponets";
 import { Coordinates, FourCoordinates, ToolBarElem } from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useShapeProperties from "../../../hooks/useShapeProperties";
-import { cn, getShapeUpdatedValue } from "../../../lib/utils";
+import { cn, getCustomCursor, getShapeUpdatedValue } from "../../../lib/utils";
 import { ToolBarArr } from "../../../lib/const";
 import { Shape } from "../../../lib/types";
 import { v4 as uuid } from "uuid";
@@ -18,6 +18,8 @@ import {
   handleSelectedIds,
   updateShapes,
 } from "../../../redux/slices/appSlice";
+import Eraser from "./Eraser";
+import useMouseValue from "../../../hooks/useMouseValue";
 
 interface StageProps {
   children: React.ReactNode;
@@ -51,6 +53,7 @@ const Canvas: React.FC<StageProps> = ({
     (state: RootState) => state.app.currentToolBar,
   );
   const shapes = useSelector((state: RootState) => state.app.shapes);
+  const mouseMovementValue = useMouseValue();
 
   const addShapeIntoTheDb = (currentShape: Shape) => {
     localStorage.setItem(
@@ -65,11 +68,12 @@ const Canvas: React.FC<StageProps> = ({
     }
 
     dispatch(addShapes(currentShape));
-
     setCurrentShape(undefined);
   };
 
-  const initializeShape = (properties: any) => {
+  const initializeShape = (
+    properties: Record<string, string | number | any>,
+  ) => {
     const id = uuid();
     setCurrentShape({
       id,
@@ -119,8 +123,8 @@ const Canvas: React.FC<StageProps> = ({
               ...updatedValue,
             }) as Shape,
         );
+        addShapeIntoTheDb(currentShape as Shape);
       }
-      addShapeIntoTheDb(currentShape as Shape);
     } else {
       dispatch(updateShapes({ type, coordinates, shapeId }));
       localStorage.setItem("shapes", JSON.stringify(shapes));
@@ -156,11 +160,19 @@ const Canvas: React.FC<StageProps> = ({
           selectionRectangle.width(0);
           selectionRectangle.height(0);
         } else if (ToolBarArr.includes(currentSelector)) {
-          initializeShape({
-            ...shapeProperties,
-            x: Number(transformedPos.x),
-            y: Number(transformedPos.y),
-          });
+          if (currentSelector === "free hand") {
+            initializeShape({
+              ...shapeProperties,
+              // x: Number(transformedPos.x),
+              // y: Number(transformedPos.y),
+            });
+          } else {
+            initializeShape({
+              ...shapeProperties,
+              x: Number(transformedPos.x),
+              y: Number(transformedPos.y),
+            });
+          }
         }
 
         setStartingMousePos({
@@ -176,7 +188,7 @@ const Canvas: React.FC<StageProps> = ({
       }
 
       setIsDrawing(true);
-    } else if (e.target.hasName("shape")) {
+    } else if (e.target.hasName("shape") && currentSelector !== "eraser") {
       const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
       if (!metaPressed && !isSelected) {
@@ -307,13 +319,7 @@ const Canvas: React.FC<StageProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       draggable={currentSelector === "hand"}
-      className={cn(
-        currentSelector === "hand" && "cursor-grab",
-        ["circle", "rectangle", "free hand"].indexOf(currentSelector) !== -1 &&
-          selectedShapesId.length <= 0 &&
-          "cursor-crosshair",
-        isHovered && "cursor-move",
-      )}
+      className={cn(getCustomCursor(currentSelector, isHovered))}
     >
       <Layer>
         {children}
@@ -327,6 +333,9 @@ const Canvas: React.FC<StageProps> = ({
         />
 
         <CanvasTransformer ref={transformerRef} updateShape={updateShape} />
+        {mouseMovementValue && currentSelector === "eraser" && (
+          <Eraser movementValue={mouseMovementValue} stageRef={stageRef} />
+        )}
       </Layer>
     </Stage>
   );

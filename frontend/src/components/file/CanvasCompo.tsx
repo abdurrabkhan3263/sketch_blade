@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store.ts";
 import { Shape } from "../../lib/types/index.ts";
 import { GetDynamicShape } from "../../lib/const.tsx";
-import { addShapes, deleteShapes } from "../../redux/slices/appSlice.ts";
+import {
+  addShapes,
+  changeToolBarProperties,
+  deleteShapes,
+  handleSelectedIds,
+} from "../../redux/slices/appSlice.ts";
 import Canvas from "./CanvasElements/Canvas.tsx";
 
 interface CanvasProps {
@@ -43,9 +48,9 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
 
       handleDeleteShape();
 
-      if (tr) {
-        tr.nodes([]);
-      }
+      tr?.nodes([]);
+      dispatch(handleSelectedIds([]));
+      dispatch(changeToolBarProperties(null));
     };
 
     document.addEventListener("keydown", handleshapedelete);
@@ -53,7 +58,7 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
     return () => {
       document.removeEventListener("keydown", handleshapedelete);
     };
-  }, [handleDeleteShape, selectedShapesId, transformerRef]);
+  }, [dispatch, handleDeleteShape, selectedShapesId, transformerRef]);
 
   useEffect(() => {
     const getShapesFromLocalStorage = JSON.parse(
@@ -64,6 +69,8 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
       dispatch(addShapes(getShapesFromLocalStorage));
     }
   }, [dispatch]);
+
+  // TODO : SO I WANT TO USE INDEX DB WHEN THE USE DOES NOT LOGGED IN AND WHEN USER FINALLY WANT TO LOGGED IN AND MAKE SOME FILE THEN WE CAN SHOW ALL THE ELEMENTS WHICH USER MAKE WHEN THEY DOES NOT LOGGED IN. WE SHOW POP UP AND SAY IT DO YOU WANT TO MERGE IT. IF YES CAN WE CAN MERGE PREVIOUS ONE DATA.
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">

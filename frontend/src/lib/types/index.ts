@@ -202,6 +202,21 @@ export declare type FreeHand = {
   points: number[];
   strokeWidth: number;
   type: ShapesElements;
+  isAddable?: boolean;
+  draggable: boolean;
+};
+
+export declare type Text = {
+  id: string;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  stroke: string;
+  opacity: number;
+  fontSize: FontSize;
+  isAddable?: boolean;
+  draggable: boolean;
 };
 
 export declare type Shape = Rectangle | Circle | FreeHand;

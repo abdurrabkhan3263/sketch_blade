@@ -147,3 +147,26 @@ export function getShapeUpdatedValue(
     }
   }
 }
+
+export function getCustomCursor(
+  currentToolBar: ToolBarElem,
+  isHovered: boolean,
+) {
+  if (!currentToolBar) return;
+
+  if (isHovered && currentToolBar !== "eraser") {
+    return "cursor-move";
+  }
+
+  if (["rectangle", "circle", "free hand"].includes(currentToolBar)) {
+    return "cursor-crosshair";
+  } else if (currentToolBar === "text") {
+    return "cursor-text";
+  } else if (currentToolBar === "hand") {
+    return "cursor-grab";
+  } else if (currentToolBar === "eraser") {
+    return "cursor-none";
+  } else {
+    return "cursor-default";
+  }
+}

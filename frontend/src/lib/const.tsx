@@ -12,6 +12,8 @@ import {
 import { FaHand } from "react-icons/fa6";
 import { Shape, ShapesElements } from "./types";
 import { ReactNode } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const ToolBarElem = [
   {
@@ -63,7 +65,13 @@ const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
 };
 
 const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
+  const currentSelector = useSelector(
+    (state: RootState) => state.app.currentToolBar,
+  );
   const Component = ListComponent[props.type];
+  props["draggable"] =
+    currentSelector !== "eraser" ? props["draggable"] : false;
+
   return Component ? <Component {...props} /> : <></>;
 };
 
