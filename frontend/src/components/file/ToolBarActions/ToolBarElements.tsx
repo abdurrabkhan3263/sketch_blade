@@ -319,6 +319,10 @@ const EraserRadius: React.FC = () => {
 
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const num = Number(e.target.value);
+
+      if (num <= 10 || num > 50) return;
+
       dispatch(
         changeToolBarPropertiesValue({
           eraserRadius: parseInt(e.target.value, 10),
@@ -332,9 +336,9 @@ const EraserRadius: React.FC = () => {
     <Container label={"Radius"}>
       <input
         type="range"
-        min="0"
+        min="10"
         max="100"
-        value={selector.eraserRadius}
+        value={selector?.eraserRadius}
         onChange={handleValueChange}
         className={"w-full"}
       />

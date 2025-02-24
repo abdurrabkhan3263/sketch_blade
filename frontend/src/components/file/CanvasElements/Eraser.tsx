@@ -1,6 +1,12 @@
 import Konva from "konva";
 import React, { useEffect, useRef, useState } from "react";
 import { Rect } from "react-konva";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import {
+  deleteShapes,
+  handleSelectedIds,
+} from "../../../redux/slices/appSlice";
 
 type MouseValue = {
   movementValue: {
@@ -13,10 +19,16 @@ type MouseValue = {
 const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
   const [isPressed, setIsPressed] = useState(false);
   const eraserRef = useRef<Konva.Rect>(null);
-  const [selectedToDelete, setSelectedToDelete] = useState<string[]>([]);
+  const selectedIds = useSelector(
+    (state: RootState) => state.app.selectedShapesId,
+  );
+  const dispatch = useDispatch();
+  const eraserProperties = useSelector(
+    (state: RootState) => state.app.toolBarProperties?.eraserRadius,
+  );
 
   useEffect(() => {
-    const handleEraser = (e: MouseEvent) => {
+    const handleEraser = () => {
       const stage = stageRef.current;
       const eraser = eraserRef.current;
 
@@ -31,12 +43,11 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
       );
 
       if (selected && selected.length > 0) {
-        const selectedShapeSet = new Set(selectedToDelete);
         const selectedId = selected[selected.length - 1].attrs.id;
 
-        if (selectedShapeSet.has(selectedId)) return;
+        if (selectedIds.includes(selectedId)) return;
 
-        setSelectedToDelete((prev) => [...prev, selectedId]);
+        dispatch(handleSelectedIds(selectedId));
       }
     };
 
@@ -48,14 +59,8 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
-      if (!e?.target) return;
-
-      if (selectedToDelete.length) {
-        console.log("hello", selectedToDelete);
-        setSelectedToDelete([]);
-      }
-
+    const handleMouseUp = () => {
+      dispatch(deleteShapes());
       setIsPressed(false);
     };
 
@@ -68,17 +73,13 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [stageRef, isPressed, selectedToDelete]);
-
-  useEffect(() => {
-    console.log(selectedToDelete);
-  }, [selectedToDelete]);
+  }, [stageRef, isPressed, selectedIds, dispatch]);
 
   return (
     <Rect
       ref={eraserRef}
-      height={15}
-      width={15}
+      height={eraserProperties}
+      width={eraserProperties}
       fill={"#0a1f2c"}
       stroke={"#3282B8"}
       strokeWidth={1}

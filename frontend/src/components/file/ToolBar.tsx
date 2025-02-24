@@ -3,11 +3,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../../lib/utils.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store.ts";
-import {
-  changeCurrentToolBar,
-  handleSelectedIds,
-} from "../../redux/slices/appSlice.ts";
+import { changeCurrentToolBar } from "../../redux/slices/appSlice.ts";
 import Konva from "konva";
+import { useEffect } from "react";
 
 interface ToolBarProps {
   transformerRef: React.RefObject<Konva.Transformer>;
@@ -22,10 +20,32 @@ const ToolBar: React.FC<ToolBarProps> = ({ transformerRef }) => {
   const handleToolBarClick = (toolBar: string) => {
     if (transformerRef?.current && transformerRef.current.nodes().length > 0) {
       transformerRef.current.nodes([]);
-      dispatch(handleSelectedIds([]));
     }
     dispatch(changeCurrentToolBar(toolBar));
   };
+
+  useEffect(() => {
+    const clickNumericalBtn = (e: globalThis.KeyboardEvent) => {
+      if (!e.code.startsWith("Digit") && !e.code.startsWith("Numpad")) return;
+
+      const num = Number(e.key);
+
+      if (num <= 0 || !transformerRef.current) return;
+
+      const toolBarName = ToolBarElem[num - 1].name;
+
+      if (toolBarName === selectedTooBar) return;
+
+      dispatch(changeCurrentToolBar(toolBarName));
+      transformerRef.current?.nodes([]);
+    };
+
+    document.addEventListener("keypress", clickNumericalBtn);
+
+    return () => {
+      document.removeEventListener("keypress", clickNumericalBtn);
+    };
+  }, [dispatch, selectedTooBar, transformerRef]);
 
   return (
     <div
@@ -37,12 +57,13 @@ const ToolBar: React.FC<ToolBarProps> = ({ transformerRef }) => {
         {ToolBarElem.map((elem, index) => (
           <div
             key={index}
+            data-index={index + 1}
             className={
-              "relative flex items-center justify-center gap-1.5 rounded-md bg-secondary p-2 text-quaternary transition-all hover:bg-teal-950/30"
+              "bg-teal-500/ relative flex items-center justify-center gap-1.5 rounded-md p-2 text-quaternary transition-all before:absolute before:bottom-0 before:right-1 before:z-50 before:flex before:items-center before:justify-center before:text-[10px] before:content-[attr(data-index)] hover:bg-teal-950/30"
             }
             onClick={() => handleToolBarClick(elem.name)}
           >
-            <span className={"relative z-10"}>{elem.icon}</span>
+            <span className={"relative z-10 text-lg"}>{elem.icon}</span>
             <AnimatePresence mode={"wait"}>
               {selectedTooBar === elem.name && (
                 <motion.span

@@ -29,24 +29,14 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
   const selectionRect = useRef<Konva.Rect>(null);
   const dispatch = useDispatch();
 
-  const handleDeleteShape = useCallback(() => {
-    const ids = selectedShapesId;
-
-    const filteredShape = shapes?.filter(
-      (shape) => ids.indexOf(shape.id) === -1,
-    );
-
-    dispatch(deleteShapes(filteredShape));
-
-    localStorage.setItem("shapes", JSON.stringify(filteredShape));
-  }, [dispatch, selectedShapesId, shapes]);
-
   useEffect(() => {
     const handleshapedelete = (e: KeyboardEvent) => {
       if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
       const tr = transformerRef.current;
 
-      handleDeleteShape();
+      dispatch(deleteShapes());
+
+      localStorage.setItem("shapes", JSON.stringify(shapes));
 
       tr?.nodes([]);
       dispatch(handleSelectedIds([]));
@@ -58,7 +48,7 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
     return () => {
       document.removeEventListener("keydown", handleshapedelete);
     };
-  }, [dispatch, handleDeleteShape, selectedShapesId, transformerRef]);
+  }, [dispatch, selectedShapesId, shapes, transformerRef]);
 
   useEffect(() => {
     const getShapesFromLocalStorage = JSON.parse(

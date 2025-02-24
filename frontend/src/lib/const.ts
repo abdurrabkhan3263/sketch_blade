@@ -44,7 +44,7 @@ export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
     opacity: 1,
   },
   eraser: {
-    eraserRadius: 10,
+    eraserRadius: 15,
   },
   arrow: commonProperties,
   "point arrow": commonProperties,

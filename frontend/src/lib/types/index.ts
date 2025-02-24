@@ -170,6 +170,7 @@ export declare type Rectangle = {
   fillPatternImage?: string;
   customProperties: ToolBarProperties;
   dash: number[];
+  opacity: number;
   lineCap: EdgeStyle;
   isAddable?: boolean;
 };
@@ -184,6 +185,7 @@ export declare type Circle = {
   text?: string;
   fillPatternImage?: string;
   stroke: string;
+  opacity: number;
   draggable: boolean;
   strokeWidth: number;
   type: ShapesElements;
@@ -200,6 +202,7 @@ export declare type FreeHand = {
   dash: number[];
   stroke: string;
   points: number[];
+  opacity: number;
   strokeWidth: number;
   type: ShapesElements;
   isAddable?: boolean;

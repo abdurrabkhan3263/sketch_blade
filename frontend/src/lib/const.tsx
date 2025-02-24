@@ -65,12 +65,15 @@ const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
 };
 
 const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
-  const currentSelector = useSelector(
-    (state: RootState) => state.app.currentToolBar,
+  const { currentToolBar, selectedShapesId } = useSelector(
+    (state: RootState) => state.app,
   );
   const Component = ListComponent[props.type];
-  props["draggable"] =
-    currentSelector !== "eraser" ? props["draggable"] : false;
+  props["draggable"] = currentToolBar !== "eraser" ? props["draggable"] : false;
+  props["opacity"] =
+    selectedShapesId.length > 0
+      ? (selectedShapesId.includes(props["id"]) && 0.5) || props["opacity"]
+      : props["opacity"];
 
   return Component ? <Component {...props} /> : <></>;
 };

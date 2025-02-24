@@ -15,7 +15,6 @@ const initialState: StateType = {
   toolBarProperties: null,
   shapes: [],
   selectedShapesId: [],
-  selectedToDelete: [],
 };
 
 export const appSlice = createSlice({
@@ -26,7 +25,10 @@ export const appSlice = createSlice({
       const payload: ToolBarElem = action.payload;
       state.currentToolBar = action.payload;
 
-      if (state.selectedShapesId.length > 0) return;
+      if (state.selectedShapesId.length > 0) {
+        state.selectedShapesId = [];
+        return;
+      }
 
       if (payload === "cursor" || payload === "hand") {
         state.toolBarProperties = null;
@@ -127,11 +129,32 @@ export const appSlice = createSlice({
         ...coordinates,
       });
     },
-    deleteShapes: (state, action) => {
-      state.shapes = action.payload;
+    deleteShapes: (state) => {
+      const selectedShapes = state.selectedShapesId;
+
+      if (!Array.isArray(selectedShapes) || selectedShapes.length <= 0) return;
+
+      const filteredShapes =
+        state?.shapes &&
+        state.shapes.filter((shape) => !selectedShapes.includes(shape.id));
+
+      state.shapes = filteredShapes;
+      state.selectedShapesId = [];
     },
     handleSelectedIds: (state, action) => {
-      state.selectedShapesId = action.payload;
+      const id = action.payload;
+      const previousIds = state.selectedShapesId;
+
+      if (Array.isArray(id) && Array.length > 0) {
+        state.selectedShapesId = id;
+        return;
+      }
+
+      state.selectedShapesId = !id
+        ? []
+        : previousIds.length <= 0
+          ? [id]
+          : [...previousIds, id];
     },
   },
 });
@@ -142,7 +165,7 @@ export const {
   changeToolBarProperties,
   addShapes,
   updateShapes,
-  deleteShapes,
   handleSelectedIds,
+  deleteShapes,
 } = appSlice.actions;
 export default appSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
@@ -183,7 +183,7 @@ const Canvas: React.FC<StageProps> = ({
 
       if (isNodesTheir && !metaPressed) {
         tr.nodes([]);
-        dispatch(handleSelectedIds([]));
+        dispatch(handleSelectedIds(null));
         dispatch(changeToolBarProperties(null));
       }
 
@@ -290,14 +290,15 @@ const Canvas: React.FC<StageProps> = ({
           selected.length !== selectedShapesId.length
         ) {
           /* In here we add and remove the selected nodes */
-          const ids = tr.nodes().map((shape) => shape.attrs?.id);
+          const ids = selected.map((shape) => shape.attrs.id);
           const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
+
           dispatch(handleSelectedIds(ids));
           dispatch(changeToolBarProperties(selectedShapes));
         } else if (selected.length === 0) {
           tr.nodes([]);
-          dispatch(handleSelectedIds([]));
+          dispatch(handleSelectedIds(null));
           dispatch(changeToolBarProperties(null));
         }
       } else if (ToolBarArr.includes(currentSelector)) {

@@ -15,8 +15,6 @@ const useMouseValue = (): MouseValue | null => {
 
   useEffect(() => {
     if (currentSelector !== "eraser") return;
-    console.log("working....");
-
     const handleMouseMove = (e: MouseEvent) => {
       if (!e.target || (e.target as HTMLElement)?.tagName !== "CANVAS") return;
 
