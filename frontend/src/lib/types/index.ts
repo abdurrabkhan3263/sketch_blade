@@ -222,6 +222,6 @@ export declare type Text = {
   draggable: boolean;
 };
 
-export declare type Shape = Rectangle | Circle | FreeHand;
+export declare type Shape = Rectangle | Circle | FreeHand | Text;
 
 // FUNCTIONS ARGS TYPES

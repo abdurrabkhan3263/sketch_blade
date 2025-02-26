@@ -2,6 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { ToolBarProperties, ToolBarElem, Shape } from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
 import { getProperties } from "../../lib/utils.ts";
+import {
+  createNewShape,
+  deleteShape,
+  updateShape,
+} from "../../lib/action/shape.action.ts";
 
 type StateType = {
   currentToolBar: ToolBarElem;
@@ -106,16 +111,16 @@ export const appSlice = createSlice({
       state.toolBarProperties = allProperties;
     },
     addShapes: (state, action) => {
-      const shapes: Shape[] | Shape = action.payload;
+      const shapes: Shape = action.payload;
 
       if (shapes) {
         if (Array.isArray(shapes)) {
           state.shapes = shapes;
         } else {
           state.shapes.push(shapes);
+          createNewShape(shapes);
         }
       }
-      // Database call to save the change in the shape
     },
     updateShapes: (state, action) => {
       const { coordinates, shapeId } = action.payload;
@@ -128,6 +133,8 @@ export const appSlice = createSlice({
         ...state.shapes[shapeIndex],
         ...coordinates,
       });
+
+      updateShape(shapeId, coordinates);
     },
     deleteShapes: (state) => {
       const selectedShapes = state.selectedShapesId;
@@ -137,6 +144,8 @@ export const appSlice = createSlice({
       const filteredShapes =
         state?.shapes &&
         state.shapes.filter((shape) => !selectedShapes.includes(shape.id));
+
+      deleteShape(state.selectedShapesId);
 
       state.shapes = filteredShapes;
       state.selectedShapesId = [];

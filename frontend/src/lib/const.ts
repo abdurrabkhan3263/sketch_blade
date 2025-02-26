@@ -50,3 +50,5 @@ export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
   "point arrow": commonProperties,
   upload: null,
 };
+
+export const LOCALSTORAGE_KEY = "canvas_all_shapes";

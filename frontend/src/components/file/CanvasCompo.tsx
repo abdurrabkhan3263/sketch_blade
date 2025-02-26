@@ -12,6 +12,7 @@ import {
   handleSelectedIds,
 } from "../../redux/slices/appSlice.ts";
 import Canvas from "./CanvasElements/Canvas.tsx";
+import { getAllShapes } from "../../lib/action/shape.action.ts";
 
 interface CanvasProps {
   transformerRef: React.RefObject<Konva.Transformer>;
@@ -36,8 +37,6 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
 
       dispatch(deleteShapes());
 
-      localStorage.setItem("shapes", JSON.stringify(shapes));
-
       tr?.nodes([]);
       dispatch(handleSelectedIds([]));
       dispatch(changeToolBarProperties(null));
@@ -51,16 +50,16 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
   }, [dispatch, selectedShapesId, shapes, transformerRef]);
 
   useEffect(() => {
-    const getShapesFromLocalStorage = JSON.parse(
-      localStorage.getItem("shapes") || "[]",
-    );
+    const allShapes = getAllShapes();
 
-    if (getShapesFromLocalStorage && getShapesFromLocalStorage.length > 0) {
-      dispatch(addShapes(getShapesFromLocalStorage));
+    if (Array.isArray(allShapes) && allShapes.length > 0) {
+      dispatch(addShapes(allShapes));
     }
   }, [dispatch]);
 
   // TODO : SO I WANT TO USE INDEX DB WHEN THE USE DOES NOT LOGGED IN AND WHEN USER FINALLY WANT TO LOGGED IN AND MAKE SOME FILE THEN WE CAN SHOW ALL THE ELEMENTS WHICH USER MAKE WHEN THEY DOES NOT LOGGED IN. WE SHOW POP UP AND SAY IT DO YOU WANT TO MERGE IT. IF YES CAN WE CAN MERGE PREVIOUS ONE DATA.
+
+  // TODO: IMPLEMENT : ALSO IMPLEMENT ARROW.
 
   return (
     <div className="fixed right-1/2 top-0 z-20 size-full translate-x-1/2">

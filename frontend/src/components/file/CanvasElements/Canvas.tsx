@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
-import { CanvasTransformer, Text } from "../ShapesComponets";
+import { CanvasTransformer } from "../ShapesComponets";
 import { Coordinates, FourCoordinates, ToolBarElem } from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
@@ -52,15 +52,7 @@ const Canvas: React.FC<StageProps> = ({
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const shapes = useSelector((state: RootState) => state.app.shapes);
   const mouseMovementValue = useMouseValue();
-
-  const addShapeIntoTheDb = (currentShape: Shape) => {
-    localStorage.setItem(
-      "shapes",
-      JSON.stringify([...shapes, { ...currentShape }]),
-    );
-  };
 
   const addShape = () => {
     if (!currentShape || (currentShape && !currentShape?.isAddable)) {
@@ -123,11 +115,10 @@ const Canvas: React.FC<StageProps> = ({
               ...updatedValue,
             }) as Shape,
         );
-        addShapeIntoTheDb(currentShape as Shape);
+        // addShapeIntoTheDb(currentShape as Shape);
       }
     } else {
       dispatch(updateShapes({ type, coordinates, shapeId }));
-      localStorage.setItem("shapes", JSON.stringify(shapes));
     }
   };
 
@@ -227,6 +218,7 @@ const Canvas: React.FC<StageProps> = ({
     if (selectionRect.current && selectionRect.current.visible()) {
       selectionRect.current.visible(false);
     }
+
     if (ToolBarArr.includes(currentSelector) && currentShape) {
       addShape();
     }
