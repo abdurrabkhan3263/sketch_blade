@@ -207,6 +207,7 @@ export declare type FreeHand = {
   type: ShapesElements;
   isAddable?: boolean;
   draggable: boolean;
+  customProperties: Partial<ToolBarProperties>;
 };
 
 export declare type Text = {
@@ -220,6 +221,7 @@ export declare type Text = {
   fontSize: FontSize;
   isAddable?: boolean;
   draggable: boolean;
+  customProperties: Partial<ToolBarProperties>;
 };
 
 export declare type Shape = Rectangle | Circle | FreeHand | Text;

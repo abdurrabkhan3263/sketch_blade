@@ -32,13 +32,17 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
 
   useEffect(() => {
     const handleshapedelete = (e: KeyboardEvent) => {
-      if (selectedShapesId.length <= 0 || e.key !== "Delete") return;
+      if (
+        (selectedShapesId && selectedShapesId?.id.length <= 0) ||
+        e.key !== "Delete"
+      )
+        return;
       const tr = transformerRef.current;
 
       dispatch(deleteShapes());
 
       tr?.nodes([]);
-      dispatch(handleSelectedIds([]));
+      dispatch(handleSelectedIds(null));
       dispatch(changeToolBarProperties(null));
     };
 

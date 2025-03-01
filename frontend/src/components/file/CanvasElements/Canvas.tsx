@@ -196,7 +196,7 @@ const Canvas: React.FC<StageProps> = ({
       if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
         const nodesAttr = tr.nodes().map((shape) => shape.attrs);
         const ids = nodesAttr.map((attr) => attr.id);
-        dispatch(handleSelectedIds(ids));
+        dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
         dispatch(changeToolBarProperties(nodesAttr));
       }
 
@@ -279,14 +279,14 @@ const Canvas: React.FC<StageProps> = ({
 
         if (
           selected.length > 0 &&
-          selected.length !== selectedShapesId.length
+          selected.length !== selectedShapesId?.id.length
         ) {
           /* In here we add and remove the selected nodes */
           const ids = selected.map((shape) => shape.attrs.id);
           const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
 
-          dispatch(handleSelectedIds(ids));
+          dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
           dispatch(changeToolBarProperties(selectedShapes));
         } else if (selected.length === 0) {
           tr.nodes([]);
