@@ -14,6 +14,7 @@ import { Shape, ShapesElements } from "./types";
 import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import Arrow from "../components/file/ShapesComponets/Arrow";
 
 const ToolBarElem = [
   {
@@ -59,7 +60,7 @@ const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
   circle: Circle,
   "free hand": FreeHand,
   "point arrow": Circle,
-  arrow: Circle,
+  arrow: Arrow,
   text: Circle,
   upload: Circle,
 };

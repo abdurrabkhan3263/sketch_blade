@@ -224,6 +224,23 @@ export declare type Text = {
   customProperties: Partial<ToolBarProperties>;
 };
 
-export declare type Shape = Rectangle | Circle | FreeHand | Text;
+export declare type Arrow = {
+  id: string;
+  x: number;
+  y: number;
+  points: number[];
+  pointerLength: number;
+  pointerWidth: number;
+  fill: string;
+  stroke: string;
+  strokeWidth: number;
+  dash: number[];
+  opacity: number;
+  isAddable?: boolean;
+  draggle: boolean;
+  customProperties: Partial<ToolBarProperties>;
+};
+
+export declare type Shape = Rectangle | Circle | FreeHand | Text | Arrow;
 
 // FUNCTIONS ARGS TYPES

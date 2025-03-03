@@ -46,7 +46,10 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
 
       if (selected.length <= 0) return;
 
-      if (!Array.isArray(selectedIds?.id)) {
+      if (
+        !Array.isArray(selectedIds?.id) ||
+        !selectedIds.id.includes(selected[0].id())
+      ) {
         dispatch(
           handleSelectedIds({
             id: selected[0].id(),
@@ -54,9 +57,14 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
           }),
         );
         return;
+      } else if (!selectedIds.id.includes(selected[selected.length - 1].id())) {
+        dispatch(
+          handleSelectedIds({
+            id: selected[selected.length - 1].id(),
+            purpose: "FOR_DELETING",
+          }),
+        );
       }
-
-      console.log("Pahle se hai");
     };
 
     const handleMouseDown = (e: MouseEvent) => {
@@ -82,10 +90,6 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [stageRef, isPressed, selectedIds, dispatch]);
-
-  useEffect(() => {
-    console.log(selectedIds);
-  }, [selectedIds]);
 
   return (
     <Rect

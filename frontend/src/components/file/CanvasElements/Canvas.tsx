@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Arrow } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { CanvasTransformer } from "../ShapesComponets";
@@ -52,7 +52,7 @@ const Canvas: React.FC<StageProps> = ({
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const mouseMovementValue = useMouseValue();
+  const mouseMovementValue = useMouseValue({ stageRef });
 
   const addShape = () => {
     if (!currentShape || (currentShape && !currentShape?.isAddable)) {
@@ -95,7 +95,10 @@ const Canvas: React.FC<StageProps> = ({
         coordinates as FourCoordinates,
       );
 
-      if (currentSelector === "free hand" && updatedValue?.isAddable) {
+      if (
+        (currentSelector === "free hand" || currentSelector === "arrow") &&
+        updatedValue?.isAddable
+      ) {
         setCurrentShape(
           (prev) =>
             ({
@@ -104,6 +107,7 @@ const Canvas: React.FC<StageProps> = ({
               isAddable: true,
             }) as Shape,
         );
+        console.log(currentShape);
         return;
       }
 

@@ -10,7 +10,7 @@ import {
 
 type SelectedShapesId = {
   purpose: "FOR_EDITING" | "FOR_DELETING";
-  id: string[] | string;
+  id: string[];
 };
 
 type StateType = {
@@ -55,8 +55,6 @@ export const appSlice = createSlice({
         ...state.toolBarProperties,
         ...payload,
       };
-
-      console.log(state.selectedShapesId);
 
       if (!state.shapes || !state.selectedShapesId?.id.length) return;
 
@@ -161,7 +159,7 @@ export const appSlice = createSlice({
         state?.shapes &&
         state.shapes.filter((shape) => !selectedShapes.includes(shape.id));
 
-      deleteShape(state.selectedShapesId?.id ?? []);
+      deleteShape(state.selectedShapesId?.id as string[]);
 
       state.shapes = filteredShapes;
       state.selectedShapesId = null;

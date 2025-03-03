@@ -132,7 +132,8 @@ export function getShapeUpdatedValue(
       }
     }
 
-    case "free hand": {
+    case "free hand":
+    case "arrow": {
       if (!points) {
         points = [x2, y2];
       } else {
