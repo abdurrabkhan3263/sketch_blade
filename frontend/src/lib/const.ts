@@ -19,6 +19,7 @@ const commonProperties = {
   strokeStyle: "SOLID",
   strokeWidth: "THIN",
   opacity: 1,
+  draggable: true,
 };
 
 export const toolBarProperties: { [key in ToolBarElem]: any | null } = {

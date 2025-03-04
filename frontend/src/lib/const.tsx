@@ -59,7 +59,7 @@ const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
   rectangle: Rectangle,
   circle: Circle,
   "free hand": FreeHand,
-  "point arrow": Circle,
+  "point arrow": Arrow,
   arrow: Arrow,
   text: Circle,
   upload: Circle,
@@ -70,6 +70,7 @@ const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
     (state: RootState) => state.app,
   );
   const Component = ListComponent[props.type];
+
   props["draggable"] = currentToolBar !== "eraser" ? props["draggable"] : false;
   props["opacity"] =
     selectedShapesId?.purpose === "FOR_DELETING" &&

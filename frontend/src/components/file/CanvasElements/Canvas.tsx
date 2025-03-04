@@ -1,9 +1,15 @@
-import React, { useState } from "react";
-import { Stage, Layer, Rect, Arrow } from "react-konva";
+import React, { useEffect, useState } from "react";
+import { Stage, Layer, Rect, Arrow as CanvasArrow } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { CanvasTransformer } from "../ShapesComponets";
-import { Coordinates, FourCoordinates, ToolBarElem } from "../../../lib/types";
+import {
+  Arrow,
+  Coordinates,
+  FourCoordinates,
+  FreeHand,
+  ToolBarElem,
+} from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useShapeProperties from "../../../hooks/useShapeProperties";
@@ -103,11 +109,19 @@ const Canvas: React.FC<StageProps> = ({
           (prev) =>
             ({
               ...prev,
-              points: [...(prev?.points || []), ...(updatedValue.points || [])],
+              points:
+                currentSelector === "free hand"
+                  ? [
+                      ...((prev as Arrow | FreeHand)?.points || []),
+                      ...(updatedValue.points || []),
+                    ]
+                  : [
+                      ...((prev as Arrow)?.points?.slice(0, 2) || []),
+                      ...(updatedValue.points || []),
+                    ],
               isAddable: true,
             }) as Shape,
         );
-        console.log(currentShape);
         return;
       }
 
@@ -155,11 +169,9 @@ const Canvas: React.FC<StageProps> = ({
           selectionRectangle.width(0);
           selectionRectangle.height(0);
         } else if (ToolBarArr.includes(currentSelector)) {
-          if (currentSelector === "free hand") {
+          if (currentSelector === "free hand" || currentSelector === "arrow") {
             initializeShape({
               ...shapeProperties,
-              // x: Number(transformedPos.x),
-              // y: Number(transformedPos.y),
             });
           } else {
             initializeShape({
@@ -208,6 +220,10 @@ const Canvas: React.FC<StageProps> = ({
         dispatch(changeCurrentToolBar("cursor"));
       }
     }
+
+    if (isDrawing) {
+      console.log("Drawing ho rahi hai");
+    }
   };
 
   const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
@@ -229,7 +245,7 @@ const Canvas: React.FC<StageProps> = ({
 
     setCurrentShape(undefined);
     setStartingMousePos({ x: 0, y: 0 });
-    setIsDrawing(false);
+    if (currentSelector !== "point arrow") setIsDrawing(false);
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
@@ -307,6 +323,23 @@ const Canvas: React.FC<StageProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (!isDrawing || currentSelector !== "point arrow") return;
+
+    const handleMouseEnter = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+
+      setIsDrawing(false);
+      setCurrentShape(undefined);
+    };
+
+    document.addEventListener("keydown", handleMouseEnter);
+
+    return () => {
+      document.removeEventListener("keydown", handleMouseEnter);
+    };
+  }, [isDrawing, currentSelector, setCurrentShape]);
+
   return (
     <Stage
       ref={stageRef}
@@ -333,6 +366,16 @@ const Canvas: React.FC<StageProps> = ({
         {mouseMovementValue && currentSelector === "eraser" && (
           <Eraser movementValue={mouseMovementValue} stageRef={stageRef} />
         )}
+        {/* <CanvasArrow
+          points={[10, 457, 11, 485]}
+          stroke={"black"}
+          strokeWidth={10}
+          lineJoin="round" // Types of Arrow
+          lineCap="round"
+          tension={0.1} // Tension on the line Arrow
+          dash={[10, 15]}
+          draggable
+        /> */}
       </Layer>
     </Stage>
   );

@@ -37,7 +37,7 @@ function getAllShapes(): Shape[] | null {
 
   if (!shapes) return null;
 
-  return JSON.parse(shapes) as Shape[];
+  return JSON.parse(shapes || "[]") as Shape[];
 }
 
 function deleteShape(ids: string[]) {

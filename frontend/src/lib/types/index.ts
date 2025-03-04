@@ -214,6 +214,7 @@ export declare type Text = {
   id: string;
   x: number;
   y: number;
+  type: ShapesElements;
   height: number;
   width: number;
   stroke: string;
@@ -228,16 +229,15 @@ export declare type Arrow = {
   id: string;
   x: number;
   y: number;
+  type: ShapesElements;
   points: number[];
-  pointerLength: number;
-  pointerWidth: number;
-  fill: string;
   stroke: string;
   strokeWidth: number;
   dash: number[];
   opacity: number;
+  tension: number;
   isAddable?: boolean;
-  draggle: boolean;
+  draggable: boolean;
   customProperties: Partial<ToolBarProperties>;
 };
 
