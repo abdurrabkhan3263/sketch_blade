@@ -6,6 +6,7 @@ import { RootState } from "../../redux/store.ts";
 import { changeCurrentToolBar } from "../../redux/slices/appSlice.ts";
 import Konva from "konva";
 import { useEffect } from "react";
+import { ToolBarElem as ToolBarTypes } from "../../lib/types/index.ts";
 
 interface ToolBarProps {
   transformerRef: React.RefObject<Konva.Transformer>;
@@ -21,7 +22,13 @@ const ToolBar: React.FC<ToolBarProps> = ({ transformerRef }) => {
     if (transformerRef?.current && transformerRef.current.nodes().length > 0) {
       transformerRef.current.nodes([]);
     }
-    dispatch(changeCurrentToolBar(toolBar));
+
+    dispatch(
+      changeCurrentToolBar({
+        toolBar: toolBar as ToolBarTypes,
+        isClicked: true,
+      }),
+    );
   };
 
   useEffect(() => {
@@ -32,11 +39,16 @@ const ToolBar: React.FC<ToolBarProps> = ({ transformerRef }) => {
 
       if (num <= 0 || !transformerRef.current) return;
 
-      const toolBarName = ToolBarElem[num - 1].name;
+      const toolBar = ToolBarElem[num - 1].name;
 
-      if (toolBarName === selectedTooBar) return;
+      if (toolBar === selectedTooBar) return;
 
-      dispatch(changeCurrentToolBar(toolBarName));
+      dispatch(
+        changeCurrentToolBar({
+          toolBar: toolBar as ToolBarTypes,
+          isClicked: true,
+        }),
+      );
       transformerRef.current?.nodes([]);
     };
 

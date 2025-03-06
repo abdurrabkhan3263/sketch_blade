@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Stage, Layer, Rect, Arrow as CanvasArrow } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
@@ -60,14 +60,14 @@ const Canvas: React.FC<StageProps> = ({
   );
   const mouseMovementValue = useMouseValue({ stageRef });
 
-  const addShape = () => {
+  const addShape = useCallback(() => {
     if (!currentShape || (currentShape && !currentShape?.isAddable)) {
       return;
     }
 
     dispatch(addShapes(currentShape));
     setCurrentShape(undefined);
-  };
+  }, [currentShape, dispatch, setCurrentShape]);
 
   const initializeShape = (
     properties: Record<string, string | number | any>,
@@ -102,9 +102,33 @@ const Canvas: React.FC<StageProps> = ({
       );
 
       if (
-        (currentSelector === "free hand" || currentSelector === "arrow") &&
+        (currentSelector === "free hand" ||
+          currentSelector === "arrow" ||
+          currentSelector === "point arrow") &&
         updatedValue?.isAddable
       ) {
+        if (
+          (currentSelector === "arrow" || currentSelector === "point arrow") &&
+          (currentShape as Arrow)?.points?.length > 3
+        ) {
+          const updatedPoints = [...((currentShape as Arrow)?.points || [])];
+
+          updatedPoints.splice(
+            updatedPoints.length - 2,
+            2,
+            ...(updatedValue?.points?.slice(0, 2) || []),
+          );
+
+          setCurrentShape(
+            (prev) =>
+              ({
+                ...prev,
+                points: updatedPoints,
+              }) as Shape,
+          );
+          return;
+        }
+
         setCurrentShape(
           (prev) =>
             ({
@@ -115,13 +139,11 @@ const Canvas: React.FC<StageProps> = ({
                       ...((prev as Arrow | FreeHand)?.points || []),
                       ...(updatedValue.points || []),
                     ]
-                  : [
-                      ...((prev as Arrow)?.points?.slice(0, 2) || []),
-                      ...(updatedValue.points || []),
-                    ],
+                  : [...(updatedValue?.points || [])],
               isAddable: true,
             }) as Shape,
         );
+
         return;
       }
 
@@ -155,13 +177,14 @@ const Canvas: React.FC<StageProps> = ({
     const tr = transformerRef.current;
     const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 
-    if (e.target === stage) {
-      const pos = stage.getPointerPosition();
+    const pos = stage.getPointerPosition();
 
-      const transform = stage.getAbsoluteTransform().copy();
+    const transform = stage.getAbsoluteTransform().copy();
 
-      const invertedTransform = transform.invert();
-      const transformedPos = pos ? invertedTransform.point(pos) : null;
+    const invertedTransform = transform.invert();
+    const transformedPos = pos ? invertedTransform.point(pos) : null;
+
+    if (e.target === stage && !isDrawing) {
       const isNodesTheir = tr.nodes().length > 0;
 
       if (transformedPos) {
@@ -217,18 +240,17 @@ const Canvas: React.FC<StageProps> = ({
       }
 
       if (currentSelector !== "cursor") {
-        dispatch(changeCurrentToolBar("cursor"));
+        dispatch(changeCurrentToolBar({ toolBar: "cursor", isClicked: false }));
       }
     }
 
-    if (isDrawing) {
-      console.log("Drawing ho rahi hai");
+    if (isDrawing && currentSelector === "point arrow" && transformedPos) {
+      (currentShape as Arrow)?.points?.push(...Object.values(transformedPos));
     }
   };
 
   const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
-
     const tr = transformerRef.current;
 
     if (!isDrawing || !tr) {
@@ -239,13 +261,19 @@ const Canvas: React.FC<StageProps> = ({
       selectionRect.current.visible(false);
     }
 
-    if (ToolBarArr.includes(currentSelector) && currentShape) {
+    if (
+      ToolBarArr.includes(currentSelector) &&
+      currentSelector !== "point arrow" &&
+      currentShape
+    ) {
       addShape();
     }
 
-    setCurrentShape(undefined);
-    setStartingMousePos({ x: 0, y: 0 });
-    if (currentSelector !== "point arrow") setIsDrawing(false);
+    if (currentSelector !== "point arrow") {
+      setIsDrawing(false);
+      setCurrentShape(undefined);
+      setStartingMousePos({ x: 0, y: 0 });
+    }
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
@@ -329,8 +357,27 @@ const Canvas: React.FC<StageProps> = ({
     const handleMouseEnter = (e: KeyboardEvent) => {
       if (e.key !== "Enter") return;
 
+      const points = (currentShape as Arrow)?.points || [];
+      const slicedPoints = points?.slice(0, points?.length - 2);
+
+      console.log("POINTS BEFORE SLICED:: ", points);
+      console.log("POINTS AFTER SLICING:: ", slicedPoints);
+
+      if (slicedPoints.length > 2) {
+        setCurrentShape(
+          (prev) =>
+            ({
+              ...prev,
+              points: slicedPoints,
+            }) as Shape,
+        );
+
+        addShape();
+      }
+
       setIsDrawing(false);
       setCurrentShape(undefined);
+      setStartingMousePos({ x: 0, y: 0 });
     };
 
     document.addEventListener("keydown", handleMouseEnter);
@@ -338,7 +385,7 @@ const Canvas: React.FC<StageProps> = ({
     return () => {
       document.removeEventListener("keydown", handleMouseEnter);
     };
-  }, [isDrawing, currentSelector, setCurrentShape]);
+  }, [isDrawing, currentSelector, setCurrentShape, addShape, currentShape]);
 
   return (
     <Stage

@@ -133,12 +133,14 @@ export function getShapeUpdatedValue(
       }
     }
     case "free hand":
+    case "point arrow":
     case "arrow": {
-      if (type === "arrow") {
-        points.push(x2, y2, x2, y2);
-      } else {
+      if (type === "free hand") {
         points.push(x2, y2);
+      } else {
+        points.push(x2, y2, x2, y2);
       }
+
       return {
         points,
         isAddable: true,

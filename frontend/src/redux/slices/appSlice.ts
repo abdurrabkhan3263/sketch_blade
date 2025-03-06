@@ -31,19 +31,33 @@ export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    changeCurrentToolBar: (state, action) => {
-      const payload: ToolBarElem = action.payload;
-      state.currentToolBar = action.payload;
+    changeCurrentToolBar: (
+      state,
+      action: {
+        payload: {
+          isClicked: boolean;
+          toolBar: StateType["currentToolBar"];
+        };
+      },
+    ) => {
+      const { isClicked, toolBar } = action.payload;
+      state.currentToolBar = action.payload.toolBar;
 
-      if (state.selectedShapesId && state.selectedShapesId.id.length > 0) {
+      if (
+        state.selectedShapesId &&
+        state.selectedShapesId.id.length > 0 &&
+        isClicked
+      ) {
         state.selectedShapesId = null;
         return;
       }
 
-      if (payload === "cursor" || payload === "hand") {
-        state.toolBarProperties = null;
+      if (toolBar === "cursor" || toolBar === "hand") {
+        if (isClicked) {
+          state.toolBarProperties = null;
+        }
       } else {
-        state.toolBarProperties = toolBarProperties[payload];
+        state.toolBarProperties = toolBarProperties[toolBar];
       }
     },
     changeToolBarPropertiesValue: (state, action) => {

@@ -6,7 +6,7 @@ import { Shape } from "../../../lib/types";
 const FreeHand: React.FC<Shape> = ({ ...props }) => {
   const lineRef = useRef<Konva.Line>(null);
 
-  return <Line ref={lineRef} {...props} name="shape" draggable />;
+  return <Line ref={lineRef} {...props} tension={1} name="shape" />;
 };
 
 export default FreeHand;
