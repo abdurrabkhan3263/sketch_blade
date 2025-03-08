@@ -154,6 +154,20 @@ export declare enum ShapesElements {
   The following types are for the CanvaElements.tsx file
  */
 
+type commonType = {
+  id: string;
+  type: ShapesElements;
+  stroke: string;
+  strokeWidth: number;
+  opacity: number;
+  isAddable?: boolean;
+  editing?: {
+    userName: string;
+    userEmail: string;
+    userImage: string;
+  };
+};
+
 export declare type Rectangle = {
   id: string;
   height: number;
@@ -197,8 +211,6 @@ export declare type Circle = {
 
 export declare type FreeHand = {
   id: string;
-  x: number;
-  y: number;
   dash: number[];
   stroke: string;
   points: number[];
@@ -227,8 +239,6 @@ export declare type Text = {
 
 export declare type Arrow = {
   id: string;
-  x: number;
-  y: number;
   type: ShapesElements;
   points: number[];
   stroke: string;

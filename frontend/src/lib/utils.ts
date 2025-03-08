@@ -33,6 +33,7 @@ export function timeAgo(date: string) {
 }
 
 export function getProperties(
+  currentSelector: ToolBarElem,
   key: (keyof ToolBarProperties)[],
   toolBarProperties: ToolBarProperties,
 ) {
@@ -44,9 +45,22 @@ export function getProperties(
     switch (key) {
       case "edgeStyle": {
         const property = toolBarProperties.edgeStyle;
+        const key =
+          currentSelector === "point arrow" ? "tension" : "cornerRadius";
+        const radiusValue = {
+          [key]:
+            currentSelector === "point arrow"
+              ? property === "SHARP"
+                ? 0
+                : 0.4
+              : property === "SHARP"
+                ? 0
+                : 32,
+        };
+
         properties = {
           ...properties,
-          cornerRadius: property === "SHARP" ? 0 : 32,
+          ...radiusValue,
         };
         break;
       }

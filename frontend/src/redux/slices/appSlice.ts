@@ -49,7 +49,6 @@ export const appSlice = createSlice({
         isClicked
       ) {
         state.selectedShapesId = null;
-        return;
       }
 
       if (toolBar === "cursor" || toolBar === "hand") {
@@ -82,6 +81,7 @@ export const appSlice = createSlice({
           )[0] as keyof ToolBarProperties;
 
           const updatedProperties = getProperties(
+            state.shapes[shapeIndex].type,
             [propertyKey],
             action.payload,
           );

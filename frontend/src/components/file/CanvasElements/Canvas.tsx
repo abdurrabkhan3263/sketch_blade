@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Stage, Layer, Rect, Arrow as CanvasArrow } from "react-konva";
+import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { CanvasTransformer } from "../ShapesComponets";
@@ -102,9 +102,7 @@ const Canvas: React.FC<StageProps> = ({
       );
 
       if (
-        (currentSelector === "free hand" ||
-          currentSelector === "arrow" ||
-          currentSelector === "point arrow") &&
+        ["free hand", "arrow", "point arrow"].includes(currentSelector) &&
         updatedValue?.isAddable
       ) {
         if (
@@ -184,63 +182,69 @@ const Canvas: React.FC<StageProps> = ({
     const invertedTransform = transform.invert();
     const transformedPos = pos ? invertedTransform.point(pos) : null;
 
-    if (e.target === stage && !isDrawing) {
-      const isNodesTheir = tr.nodes().length > 0;
+    if (!isDrawing) {
+      if (e.target === stage) {
+        const isNodesTheir = tr.nodes().length > 0;
 
-      if (transformedPos) {
-        if (currentSelector === "cursor") {
-          selectionRectangle.width(0);
-          selectionRectangle.height(0);
-        } else if (ToolBarArr.includes(currentSelector)) {
-          if (currentSelector === "free hand" || currentSelector === "arrow") {
-            initializeShape({
-              ...shapeProperties,
-            });
-          } else {
-            initializeShape({
-              ...shapeProperties,
-              x: Number(transformedPos.x),
-              y: Number(transformedPos.y),
-            });
+        if (transformedPos) {
+          if (currentSelector === "cursor") {
+            selectionRectangle.width(0);
+            selectionRectangle.height(0);
+          } else if (ToolBarArr.includes(currentSelector)) {
+            if (
+              ["free hand", "arrow", "point arrow"].includes(currentSelector)
+            ) {
+              initializeShape({
+                ...shapeProperties,
+              });
+            } else {
+              initializeShape({
+                ...shapeProperties,
+                x: Number(transformedPos.x),
+                y: Number(transformedPos.y),
+              });
+            }
           }
+
+          setStartingMousePos({
+            x: transformedPos.x,
+            y: transformedPos.y,
+          });
         }
 
-        setStartingMousePos({
-          x: transformedPos.x,
-          y: transformedPos.y,
-        });
-      }
+        if (isNodesTheir && !metaPressed) {
+          tr.nodes([]);
+          dispatch(handleSelectedIds(null));
+          dispatch(changeToolBarProperties(null));
+        }
 
-      if (isNodesTheir && !metaPressed) {
-        tr.nodes([]);
-        dispatch(handleSelectedIds(null));
-        dispatch(changeToolBarProperties(null));
-      }
+        setIsDrawing(true);
+      } else if (e.target.hasName("shape")) {
+        const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
-      setIsDrawing(true);
-    } else if (e.target.hasName("shape") && currentSelector !== "eraser") {
-      const isSelected = tr.nodes().indexOf(e.target) >= 0;
+        if (!metaPressed && !isSelected) {
+          tr.nodes([e.target]);
+        } else if (metaPressed && isSelected) {
+          const nodes = tr.nodes().slice();
+          nodes.splice(nodes.indexOf(e.target), 1);
+          tr.nodes(nodes);
+        } else if (metaPressed && !isSelected) {
+          const nodes = tr.nodes().concat([e.target]);
+          tr.nodes(nodes);
+        }
 
-      if (!metaPressed && !isSelected) {
-        tr.nodes([e.target]);
-      } else if (metaPressed && isSelected) {
-        const nodes = tr.nodes().slice();
-        nodes.splice(nodes.indexOf(e.target), 1);
-        tr.nodes(nodes);
-      } else if (metaPressed && !isSelected) {
-        const nodes = tr.nodes().concat([e.target]);
-        tr.nodes(nodes);
-      }
+        if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
+          const nodesAttr = tr.nodes().map((shape) => shape.attrs);
+          const ids = nodesAttr.map((attr) => attr.id);
+          dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
+          dispatch(changeToolBarProperties(nodesAttr));
+        }
 
-      if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
-        const nodesAttr = tr.nodes().map((shape) => shape.attrs);
-        const ids = nodesAttr.map((attr) => attr.id);
-        dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
-        dispatch(changeToolBarProperties(nodesAttr));
-      }
-
-      if (currentSelector !== "cursor") {
-        dispatch(changeCurrentToolBar({ toolBar: "cursor", isClicked: false }));
+        if (currentSelector !== "cursor") {
+          dispatch(
+            changeCurrentToolBar({ toolBar: "cursor", isClicked: false }),
+          );
+        }
       }
     }
 
@@ -360,9 +364,6 @@ const Canvas: React.FC<StageProps> = ({
       const points = (currentShape as Arrow)?.points || [];
       const slicedPoints = points?.slice(0, points?.length - 2);
 
-      console.log("POINTS BEFORE SLICED:: ", points);
-      console.log("POINTS AFTER SLICING:: ", slicedPoints);
-
       if (slicedPoints.length > 2) {
         setCurrentShape(
           (prev) =>
@@ -413,16 +414,6 @@ const Canvas: React.FC<StageProps> = ({
         {mouseMovementValue && currentSelector === "eraser" && (
           <Eraser movementValue={mouseMovementValue} stageRef={stageRef} />
         )}
-        {/* <CanvasArrow
-          points={[10, 457, 11, 485]}
-          stroke={"black"}
-          strokeWidth={10}
-          lineJoin="round" // Types of Arrow
-          lineCap="round"
-          tension={0.1} // Tension on the line Arrow
-          dash={[10, 15]}
-          draggable
-        /> */}
       </Layer>
     </Stage>
   );

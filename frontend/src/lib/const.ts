@@ -10,8 +10,6 @@ export const ToolBarArr: ToolBarElem[] = [
   "arrow",
   "point arrow",
   "free hand",
-  "eraser",
-  "cursor",
 ];
 
 const commonProperties = {
@@ -48,7 +46,7 @@ export const toolBarProperties: { [key in ToolBarElem]: any | null } = {
     eraserRadius: 15,
   },
   arrow: commonProperties,
-  "point arrow": commonProperties,
+  "point arrow": { ...commonProperties, edgeStyle: "ROUNDED" },
   upload: null,
 };
 
