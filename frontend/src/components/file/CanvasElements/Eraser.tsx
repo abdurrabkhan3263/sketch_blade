@@ -42,12 +42,28 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
         ),
       );
 
-      if (selected && selected.length > 0) {
-        const selectedId = selected[selected.length - 1].attrs.id;
+      // TODO: WE HAVE TO REFACTOR THIS.
 
-        if (selectedIds.includes(selectedId)) return;
+      if (selected.length <= 0) return;
 
-        dispatch(handleSelectedIds(selectedId));
+      if (
+        !Array.isArray(selectedIds?.id) ||
+        !selectedIds.id.includes(selected[0].id())
+      ) {
+        dispatch(
+          handleSelectedIds({
+            id: selected[0].id(),
+            purpose: "FOR_DELETING",
+          }),
+        );
+        return;
+      } else if (!selectedIds.id.includes(selected[selected.length - 1].id())) {
+        dispatch(
+          handleSelectedIds({
+            id: selected[selected.length - 1].id(),
+            purpose: "FOR_DELETING",
+          }),
+        );
       }
     };
 

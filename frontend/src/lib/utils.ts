@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { FourCoordinates, ToolBarElem, ToolBarProperties } from "./types";
 
 type ShapeUpdatedValue = {
+  points?: number[];
   height?: number;
   width?: number;
   isAddable: boolean;
@@ -32,6 +33,7 @@ export function timeAgo(date: string) {
 }
 
 export function getProperties(
+  currentSelector: ToolBarElem,
   key: (keyof ToolBarProperties)[],
   toolBarProperties: ToolBarProperties,
 ) {
@@ -43,9 +45,22 @@ export function getProperties(
     switch (key) {
       case "edgeStyle": {
         const property = toolBarProperties.edgeStyle;
+        const key =
+          currentSelector === "point arrow" ? "tension" : "cornerRadius";
+        const radiusValue = {
+          [key]:
+            currentSelector === "point arrow"
+              ? property === "SHARP"
+                ? 0
+                : 0.4
+              : property === "SHARP"
+                ? 0
+                : 32,
+        };
+
         properties = {
           ...properties,
-          cornerRadius: property === "SHARP" ? 0 : 32,
+          ...radiusValue,
         };
         break;
       }
@@ -69,7 +84,7 @@ export function getProperties(
         if (property === "SOLID") {
           dash = [0];
         } else if (property === "DASHED") {
-          dash = [8, 10];
+          dash = [10, 15];
         } else {
           dash = [0, 10];
         }
@@ -95,7 +110,7 @@ export function getShapeUpdatedValue(
   if (type === "cursor" || type === "hand") return;
 
   const { x, y2, y, x2 } = coordinates;
-  let points: number[];
+  const points: number[] = [];
 
   switch (type) {
     case "rectangle": {
@@ -131,18 +146,13 @@ export function getShapeUpdatedValue(
         };
       }
     }
-
-    case "free hand": {
-      if (!points) {
-        points = [x2, y2];
-      } else {
-        points.append(x2);
-        points.append(y2);
-      }
-
+    case "free hand":
+    case "point arrow":
+    case "arrow": {
+      points.push(x2, y2);
       return {
         points,
-        isAddable: true,
+        isAddable: false,
       };
     }
   }

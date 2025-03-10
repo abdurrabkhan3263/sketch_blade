@@ -14,6 +14,7 @@ import { Shape, ShapesElements } from "./types";
 import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import Arrow from "../components/file/ShapesComponets/Arrow";
 
 const ToolBarElem = [
   {
@@ -58,10 +59,10 @@ const ListComponent: { [key in ShapesElements]: React.ComponentType<Shape> } = {
   rectangle: Rectangle,
   circle: Circle,
   "free hand": FreeHand,
-  // "point arrow": Circle,
-  // arrow: Circle,
-  // text: Circle,
-  // upload: Circle,
+  "point arrow": Arrow,
+  arrow: Arrow,
+  text: Circle,
+  upload: Circle,
 };
 
 const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
@@ -69,10 +70,12 @@ const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
     (state: RootState) => state.app,
   );
   const Component = ListComponent[props.type];
+
   props["draggable"] = currentToolBar !== "eraser" ? props["draggable"] : false;
   props["opacity"] =
-    selectedShapesId.length > 0
-      ? (selectedShapesId.includes(props["id"]) && 0.5) || props["opacity"]
+    selectedShapesId?.purpose === "FOR_DELETING" &&
+    selectedShapesId?.id.length > 0
+      ? (selectedShapesId?.id.includes(props["id"]) && 0.5) || props["opacity"]
       : props["opacity"];
 
   return Component ? <Component {...props} /> : <></>;

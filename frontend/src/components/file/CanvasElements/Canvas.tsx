@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { CanvasTransformer } from "../ShapesComponets";
-import { Coordinates, FourCoordinates, ToolBarElem } from "../../../lib/types";
+import {
+  Arrow,
+  Coordinates,
+  FourCoordinates,
+  FreeHand,
+  ToolBarElem,
+} from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useShapeProperties from "../../../hooks/useShapeProperties";
@@ -52,16 +58,16 @@ const Canvas: React.FC<StageProps> = ({
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const mouseMovementValue = useMouseValue();
+  const mouseMovementValue = useMouseValue({ stageRef });
 
-  const addShape = () => {
+  const addShape = useCallback(() => {
     if (!currentShape || (currentShape && !currentShape?.isAddable)) {
       return;
     }
 
     dispatch(addShapes(currentShape));
     setCurrentShape(undefined);
-  };
+  }, [currentShape, dispatch, setCurrentShape]);
 
   const initializeShape = (
     properties: Record<string, string | number | any>,
@@ -95,15 +101,47 @@ const Canvas: React.FC<StageProps> = ({
         coordinates as FourCoordinates,
       );
 
-      if (currentSelector === "free hand" && updatedValue?.isAddable) {
+      if (
+        ["free hand", "arrow", "point arrow"].includes(currentSelector) &&
+        updatedValue?.isAddable
+      ) {
+        if (
+          (currentSelector === "arrow" || currentSelector === "point arrow") &&
+          (currentShape as Arrow)?.points?.length > 3
+        ) {
+          const updatedPoints = [...((currentShape as Arrow)?.points || [])];
+
+          updatedPoints.splice(
+            updatedPoints.length - 2,
+            2,
+            ...(updatedValue?.points?.slice(0, 2) || []),
+          );
+
+          setCurrentShape(
+            (prev) =>
+              ({
+                ...prev,
+                points: updatedPoints,
+              }) as Shape,
+          );
+          return;
+        }
+
         setCurrentShape(
           (prev) =>
             ({
               ...prev,
-              points: [...(prev?.points || []), ...(updatedValue.points || [])],
+              points:
+                currentSelector === "free hand"
+                  ? [
+                      ...((prev as Arrow | FreeHand)?.points || []),
+                      ...(updatedValue.points || []),
+                    ]
+                  : [...(updatedValue?.points || [])],
               isAddable: true,
             }) as Shape,
         );
+
         return;
       }
 
@@ -137,78 +175,86 @@ const Canvas: React.FC<StageProps> = ({
     const tr = transformerRef.current;
     const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 
-    if (e.target === stage) {
-      const pos = stage.getPointerPosition();
+    const pos = stage.getPointerPosition();
 
-      const transform = stage.getAbsoluteTransform().copy();
+    const transform = stage.getAbsoluteTransform().copy();
 
-      const invertedTransform = transform.invert();
-      const transformedPos = pos ? invertedTransform.point(pos) : null;
-      const isNodesTheir = tr.nodes().length > 0;
+    const invertedTransform = transform.invert();
+    const transformedPos = pos ? invertedTransform.point(pos) : null;
 
-      if (transformedPos) {
-        if (currentSelector === "cursor") {
-          selectionRectangle.width(0);
-          selectionRectangle.height(0);
-        } else if (ToolBarArr.includes(currentSelector)) {
-          if (currentSelector === "free hand") {
-            initializeShape({
-              ...shapeProperties,
-              // x: Number(transformedPos.x),
-              // y: Number(transformedPos.y),
-            });
-          } else {
-            initializeShape({
-              ...shapeProperties,
-              x: Number(transformedPos.x),
-              y: Number(transformedPos.y),
-            });
+    if (!isDrawing) {
+      if (e.target === stage) {
+        const isNodesTheir = tr.nodes().length > 0;
+
+        if (transformedPos) {
+          if (currentSelector === "cursor") {
+            selectionRectangle.width(0);
+            selectionRectangle.height(0);
+          } else if (ToolBarArr.includes(currentSelector)) {
+            if (
+              ["free hand", "arrow", "point arrow"].includes(currentSelector)
+            ) {
+              initializeShape({
+                ...shapeProperties,
+              });
+            } else {
+              initializeShape({
+                ...shapeProperties,
+                x: Number(transformedPos.x),
+                y: Number(transformedPos.y),
+              });
+            }
           }
+
+          setStartingMousePos({
+            x: transformedPos.x,
+            y: transformedPos.y,
+          });
         }
 
-        setStartingMousePos({
-          x: transformedPos.x,
-          y: transformedPos.y,
-        });
-      }
+        if (isNodesTheir && !metaPressed) {
+          tr.nodes([]);
+          dispatch(handleSelectedIds(null));
+          dispatch(changeToolBarProperties(null));
+        }
 
-      if (isNodesTheir && !metaPressed) {
-        tr.nodes([]);
-        dispatch(handleSelectedIds(null));
-        dispatch(changeToolBarProperties(null));
-      }
+        setIsDrawing(true);
+      } else if (e.target.hasName("shape")) {
+        const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
-      setIsDrawing(true);
-    } else if (e.target.hasName("shape") && currentSelector !== "eraser") {
-      const isSelected = tr.nodes().indexOf(e.target) >= 0;
+        if (!metaPressed && !isSelected) {
+          tr.nodes([e.target]);
+        } else if (metaPressed && isSelected) {
+          const nodes = tr.nodes().slice();
+          nodes.splice(nodes.indexOf(e.target), 1);
+          tr.nodes(nodes);
+        } else if (metaPressed && !isSelected) {
+          const nodes = tr.nodes().concat([e.target]);
+          tr.nodes(nodes);
+        }
 
-      if (!metaPressed && !isSelected) {
-        tr.nodes([e.target]);
-      } else if (metaPressed && isSelected) {
-        const nodes = tr.nodes().slice();
-        nodes.splice(nodes.indexOf(e.target), 1);
-        tr.nodes(nodes);
-      } else if (metaPressed && !isSelected) {
-        const nodes = tr.nodes().concat([e.target]);
-        tr.nodes(nodes);
-      }
+        if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
+          const nodesAttr = tr.nodes().map((shape) => shape.attrs);
+          const ids = nodesAttr.map((attr) => attr.id);
+          dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
+          dispatch(changeToolBarProperties(nodesAttr));
+        }
 
-      if (Array.isArray(tr.nodes()) && tr.nodes().length > 0) {
-        const nodesAttr = tr.nodes().map((shape) => shape.attrs);
-        const ids = nodesAttr.map((attr) => attr.id);
-        dispatch(handleSelectedIds(ids));
-        dispatch(changeToolBarProperties(nodesAttr));
+        if (currentSelector !== "cursor") {
+          dispatch(
+            changeCurrentToolBar({ toolBar: "cursor", isClicked: false }),
+          );
+        }
       }
+    }
 
-      if (currentSelector !== "cursor") {
-        dispatch(changeCurrentToolBar("cursor"));
-      }
+    if (isDrawing && currentSelector === "point arrow" && transformedPos) {
+      (currentShape as Arrow)?.points?.push(...Object.values(transformedPos));
     }
   };
 
   const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
-
     const tr = transformerRef.current;
 
     if (!isDrawing || !tr) {
@@ -219,13 +265,19 @@ const Canvas: React.FC<StageProps> = ({
       selectionRect.current.visible(false);
     }
 
-    if (ToolBarArr.includes(currentSelector) && currentShape) {
+    if (
+      ToolBarArr.includes(currentSelector) &&
+      currentSelector !== "point arrow" &&
+      currentShape
+    ) {
       addShape();
     }
 
-    setCurrentShape(undefined);
-    setStartingMousePos({ x: 0, y: 0 });
-    setIsDrawing(false);
+    if (currentSelector !== "point arrow") {
+      setIsDrawing(false);
+      setCurrentShape(undefined);
+      setStartingMousePos({ x: 0, y: 0 });
+    }
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
@@ -279,14 +331,14 @@ const Canvas: React.FC<StageProps> = ({
 
         if (
           selected.length > 0 &&
-          selected.length !== selectedShapesId.length
+          selected.length !== selectedShapesId?.id.length
         ) {
           /* In here we add and remove the selected nodes */
           const ids = selected.map((shape) => shape.attrs.id);
           const selectedShapes = selected.map((items) => items.attrs);
           tr.nodes(selected);
 
-          dispatch(handleSelectedIds(ids));
+          dispatch(handleSelectedIds({ id: ids, purpose: "FOR_EDITING" }));
           dispatch(changeToolBarProperties(selectedShapes));
         } else if (selected.length === 0) {
           tr.nodes([]);
@@ -302,6 +354,39 @@ const Canvas: React.FC<StageProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (!isDrawing || currentSelector !== "point arrow") return;
+
+    const handleMouseEnter = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+
+      const points = (currentShape as Arrow)?.points || [];
+      const slicedPoints = points?.slice(0, points?.length - 2);
+
+      if (slicedPoints.length > 2) {
+        setCurrentShape(
+          (prev) =>
+            ({
+              ...prev,
+              points: slicedPoints,
+            }) as Shape,
+        );
+
+        addShape();
+      }
+
+      setIsDrawing(false);
+      setCurrentShape(undefined);
+      setStartingMousePos({ x: 0, y: 0 });
+    };
+
+    document.addEventListener("keydown", handleMouseEnter);
+
+    return () => {
+      document.removeEventListener("keydown", handleMouseEnter);
+    };
+  }, [isDrawing, currentSelector, setCurrentShape, addShape, currentShape]);
 
   return (
     <Stage

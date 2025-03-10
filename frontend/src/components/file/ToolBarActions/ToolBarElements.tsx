@@ -38,6 +38,26 @@ const IconContainer = ({ icon, value }: { icon: string; value: string }) => {
 
 // Components for Background, Fill, StrokeStyle, StrokeWidth
 
+const valueChangerHandler = (
+  dispatch: any,
+  dispatchValue: Record<string, string | number>,
+) => {
+  const value = Object.values(dispatchValue)[0];
+
+  if (!value) return;
+
+  const key = Object.keys(dispatchValue)[0];
+  if (typeof value === "number") {
+    const isOpacity = key === "opacity";
+    const min = isOpacity ? 0.15 : 10;
+    const max = isOpacity ? 1 : 100;
+
+    if (value <= min || value > max) return;
+  }
+
+  dispatch(changeToolBarPropertiesValue(dispatchValue));
+};
+
 const Fill = () => {
   const selector = useSelector(
     (state: RootState) => state.app.toolBarProperties,
@@ -46,11 +66,9 @@ const Fill = () => {
 
   const handleValueChange = useCallback(
     (color: string) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          fill: color,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        fill: color,
+      });
     },
     [dispatch],
   );
@@ -60,7 +78,7 @@ const Fill = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.fill}
+        value={selector?.fill}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.backgroundColors.map((color, index) => (
@@ -68,7 +86,6 @@ const Fill = () => {
             key={index}
             value={color}
             aria-label={`Toggle ${color}`}
-            // onClick={handleChangeBackground}
             className={"p-0"}
           >
             <ColorContainer color={color} />
@@ -87,11 +104,9 @@ const Stroke = () => {
 
   const handleValueChange = useCallback(
     (color: string) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          stroke: color,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        stroke: color,
+      });
     },
     [dispatch],
   );
@@ -101,7 +116,7 @@ const Stroke = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.stroke}
+        value={selector?.stroke || ""}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.strokeColors.map((color, index) => (
@@ -127,11 +142,9 @@ const FillStyle = () => {
 
   const handleValueChange = useCallback(
     (style: FillStyleType) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          fillStyle: style,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        fillStyle: style,
+      });
     },
     [dispatch],
   );
@@ -141,7 +154,7 @@ const FillStyle = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.fillStyle}
+        value={selector?.fillStyle || ""}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.fillStyles.map(({ path, color }, index) => (
@@ -166,11 +179,9 @@ const StrokeStyle = () => {
 
   const handleValueChange = useCallback(
     (style: StrokeStyleType) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          strokeStyle: style,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        strokeStyle: style,
+      });
     },
     [dispatch],
   );
@@ -180,7 +191,7 @@ const StrokeStyle = () => {
       <ToggleGroup
         type="single"
         className={"gap-2"}
-        value={selector.strokeStyle}
+        value={selector?.strokeStyle || ""}
         onValueChange={handleValueChange}
       >
         {ToolBarActions.strokeStyles.map(({ style, path }, index) => (
@@ -205,11 +216,9 @@ const StrokeWidth = () => {
 
   const handleValueChange = useCallback(
     (width: StrokeWidthType) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          strokeWidth: width,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        strokeWidth: width,
+      });
     },
     [dispatch],
   );
@@ -244,11 +253,9 @@ const EdgeStyle = () => {
 
   const handleValueChange = useCallback(
     (style: EdgeStyleType) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          edgeStyle: style,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        edgeStyle: style,
+      });
     },
     [dispatch],
   );
@@ -285,13 +292,9 @@ const Opacity: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const opacityValue = Number.parseFloat(e.target.value);
 
-      if (opacityValue <= 0.15 || opacityValue > 1) return;
-
-      dispatch(
-        changeToolBarPropertiesValue({
-          opacity: opacityValue,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        opacity: opacityValue,
+      });
     },
     [dispatch],
   );
@@ -319,15 +322,9 @@ const EraserRadius: React.FC = () => {
 
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const num = Number(e.target.value);
-
-      if (num <= 10 || num > 50) return;
-
-      dispatch(
-        changeToolBarPropertiesValue({
-          eraserRadius: parseInt(e.target.value, 10),
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        eraserRadius: parseInt(e.target.value, 10),
+      });
     },
     [dispatch],
   );
@@ -354,11 +351,9 @@ const FontSize: React.FC = () => {
 
   const handleValueChange = useCallback(
     (size: FontSizeType) => {
-      dispatch(
-        changeToolBarPropertiesValue({
-          fontSize: size,
-        }),
-      );
+      valueChangerHandler(dispatch, {
+        fontSize: size,
+      });
     },
     [dispatch],
   );

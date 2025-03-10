@@ -8,58 +8,80 @@ import {
   updateShape,
 } from "../../lib/action/shape.action.ts";
 
+type SelectedShapesId = {
+  purpose: "FOR_EDITING" | "FOR_DELETING";
+  id: string[];
+};
+
 type StateType = {
   currentToolBar: ToolBarElem;
   toolBarProperties: ToolBarProperties | null;
   shapes: Shape[];
-  selectedShapesId: string[];
+  selectedShapesId: SelectedShapesId | null;
 };
 
 const initialState: StateType = {
   currentToolBar: "cursor",
   toolBarProperties: null,
   shapes: [],
-  selectedShapesId: [],
+  selectedShapesId: null,
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    changeCurrentToolBar: (state, action) => {
-      const payload: ToolBarElem = action.payload;
-      state.currentToolBar = action.payload;
+    changeCurrentToolBar: (
+      state,
+      action: {
+        payload: {
+          isClicked: boolean;
+          toolBar: StateType["currentToolBar"];
+        };
+      },
+    ) => {
+      const { isClicked, toolBar } = action.payload;
+      state.currentToolBar = action.payload.toolBar;
 
-      if (state.selectedShapesId.length > 0) {
-        state.selectedShapesId = [];
-        return;
+      if (
+        state.selectedShapesId &&
+        state.selectedShapesId.id.length > 0 &&
+        isClicked
+      ) {
+        state.selectedShapesId = null;
       }
 
-      if (payload === "cursor" || payload === "hand") {
-        state.toolBarProperties = null;
+      if (toolBar === "cursor" || toolBar === "hand") {
+        if (isClicked) {
+          state.toolBarProperties = null;
+        }
       } else {
-        state.toolBarProperties = toolBarProperties[payload];
+        state.toolBarProperties = toolBarProperties[toolBar];
       }
     },
     changeToolBarPropertiesValue: (state, action) => {
+      const payload = action.payload;
+
+      if (!payload) return;
+
       state.toolBarProperties = {
         ...state.toolBarProperties,
-        ...action.payload,
+        ...payload,
       };
 
-      if (!state.shapes || !state.selectedShapesId.length || !action.payload)
-        return;
+      if (!state.shapes || !state.selectedShapesId?.id.length) return;
 
-      state.selectedShapesId.forEach((id) => {
+      state.selectedShapesId?.id.forEach((id) => {
         const shapeIndex =
           state.shapes.findIndex((shape) => shape.id === id) ?? -1;
 
         if (shapeIndex !== -1) {
-          const propertyKey: ToolBarPropertyKeys = Object.keys(
+          const propertyKey: keyof ToolBarProperties = Object.keys(
             action.payload,
-          )[0] as ToolBarPropertyKeys;
+          )[0] as keyof ToolBarProperties;
 
           const updatedProperties = getProperties(
+            state.shapes[shapeIndex].type,
             [propertyKey],
             action.payload,
           );
@@ -68,10 +90,13 @@ export const appSlice = createSlice({
             ...state.shapes[shapeIndex],
             customProperties: {
               ...state.shapes[shapeIndex].customProperties,
-              ...action.payload,
+              ...payload,
             },
             ...updatedProperties,
           };
+
+          // UPDATE INTO THE DATABASE OR LOCALSTORAGE BASED UPON BUSINESS LOGIC.
+          updateShape(id, updatedProperties);
         }
       });
     },
@@ -123,7 +148,10 @@ export const appSlice = createSlice({
       }
     },
     updateShapes: (state, action) => {
-      const { coordinates, shapeId } = action.payload;
+      const {
+        updatedValue,
+        shapeId,
+      }: { updatedValue: Partial<Shape>; shapeId: string } = action.payload;
 
       const shapeIndex = state.shapes?.findIndex(
         (s) => s.id === shapeId,
@@ -131,13 +159,13 @@ export const appSlice = createSlice({
 
       state.shapes?.splice(shapeIndex, 1, {
         ...state.shapes[shapeIndex],
-        ...coordinates,
+        ...updatedValue,
       });
 
-      updateShape(shapeId, coordinates);
+      updateShape(shapeId, updatedValue);
     },
     deleteShapes: (state) => {
-      const selectedShapes = state.selectedShapesId;
+      const selectedShapes = state.selectedShapesId?.id;
 
       if (!Array.isArray(selectedShapes) || selectedShapes.length <= 0) return;
 
@@ -145,25 +173,35 @@ export const appSlice = createSlice({
         state?.shapes &&
         state.shapes.filter((shape) => !selectedShapes.includes(shape.id));
 
-      deleteShape(state.selectedShapesId);
+      deleteShape(state.selectedShapesId?.id as string[]);
 
       state.shapes = filteredShapes;
-      state.selectedShapesId = [];
+      state.selectedShapesId = null;
     },
-    handleSelectedIds: (state, action) => {
-      const id = action.payload;
-      const previousIds = state.selectedShapesId;
+    handleSelectedIds: (
+      state,
+      action: { payload: SelectedShapesId | null },
+    ) => {
+      const { id = "", purpose = "" } = action.payload || {};
+      const previousIds = state.selectedShapesId?.id ?? [];
 
-      if (Array.isArray(id) && Array.length > 0) {
-        state.selectedShapesId = id;
+      if (!id || !purpose) {
+        state.selectedShapesId = null;
         return;
       }
 
-      state.selectedShapesId = !id
-        ? []
-        : previousIds.length <= 0
-          ? [id]
-          : [...previousIds, id];
+      if (Array.isArray(id) && Array.length > 0) {
+        state.selectedShapesId = {
+          purpose,
+          id,
+        };
+        return;
+      }
+
+      state.selectedShapesId = {
+        purpose,
+        id: [...previousIds, id] as string[],
+      };
     },
   },
 });
