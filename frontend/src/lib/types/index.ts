@@ -153,6 +153,12 @@ export declare enum ShapesElements {
 /*
   The following types are for the CanvaElements.tsx file
  */
+export declare type ShapeUpdatedValue = {
+  points?: number[];
+  height?: number;
+  width?: number;
+  isAddable: boolean;
+};
 
 type commonType = {
   id: string;

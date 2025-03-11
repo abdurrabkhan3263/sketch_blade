@@ -8,12 +8,18 @@ import {
   Coordinates,
   FourCoordinates,
   FreeHand,
+  ShapeUpdatedValue,
   ToolBarElem,
 } from "../../../lib/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useShapeProperties from "../../../hooks/useShapeProperties";
-import { cn, getCustomCursor, getShapeUpdatedValue } from "../../../lib/utils";
+import {
+  cn,
+  getCustomCursor,
+  getShapeUpdatedValue,
+  getUpdatedPointsValue,
+} from "../../../lib/utils";
 import { ToolBarArr } from "../../../lib/const";
 import { Shape } from "../../../lib/types";
 import { v4 as uuid } from "uuid";
@@ -101,60 +107,13 @@ const Canvas: React.FC<StageProps> = ({
         coordinates as FourCoordinates,
       );
 
-      if (
-        ["free hand", "arrow", "point arrow"].includes(currentSelector) &&
-        updatedValue?.isAddable
-      ) {
-        if (
-          (currentSelector === "arrow" || currentSelector === "point arrow") &&
-          (currentShape as Arrow)?.points?.length > 3
-        ) {
-          const updatedPoints = [...((currentShape as Arrow)?.points || [])];
+      const getPointsValues = getUpdatedPointsValue(
+        updatedValue as ShapeUpdatedValue,
+        currentShape as Shape,
+        currentSelector,
+      );
 
-          updatedPoints.splice(
-            updatedPoints.length - 2,
-            2,
-            ...(updatedValue?.points?.slice(0, 2) || []),
-          );
-
-          setCurrentShape(
-            (prev) =>
-              ({
-                ...prev,
-                points: updatedPoints,
-              }) as Shape,
-          );
-          return;
-        }
-
-        setCurrentShape(
-          (prev) =>
-            ({
-              ...prev,
-              points:
-                currentSelector === "free hand"
-                  ? [
-                      ...((prev as Arrow | FreeHand)?.points || []),
-                      ...(updatedValue.points || []),
-                    ]
-                  : [...(updatedValue?.points || [])],
-              isAddable: true,
-            }) as Shape,
-        );
-
-        return;
-      }
-
-      if (updatedValue && updatedValue.isAddable) {
-        setCurrentShape(
-          (prev) =>
-            ({
-              ...prev,
-              ...updatedValue,
-            }) as Shape,
-        );
-        // addShapeIntoTheDb(currentShape as Shape);
-      }
+      setCurrentShape(getPointsValues);
     } else {
       dispatch(updateShapes({ type, coordinates, shapeId }));
     }

@@ -1,13 +1,13 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FourCoordinates, ToolBarElem, ToolBarProperties } from "./types";
-
-type ShapeUpdatedValue = {
-  points?: number[];
-  height?: number;
-  width?: number;
-  isAddable: boolean;
-};
+import {
+  Arrow,
+  FourCoordinates,
+  Shape,
+  ToolBarElem,
+  ToolBarProperties,
+  ShapeUpdatedValue,
+} from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -178,5 +178,78 @@ export function getCustomCursor(
     return "cursor-none";
   } else {
     return "cursor-default";
+  }
+}
+
+function checkIsAddable(points: number[]): boolean {
+  if (points?.length < 2 || !points) return false;
+  const len = points?.length;
+
+  return (
+    points[len - 2] > points[len - 4] + 25 ||
+    points[len - 1] > points[len - 3] + 25 ||
+    points.length > 5
+  );
+}
+
+export function getUpdatedPointsValue(
+  updatedValues: ShapeUpdatedValue,
+  shapeCurrentValue: Shape,
+  type: ToolBarElem,
+): Shape {
+  if (["arrow", "free hand", "point arrow"].includes(type)) {
+    const points = [];
+
+    if (type === "free hand") {
+      points.push(
+        ...((shapeCurrentValue as Arrow)?.points || []),
+        ...(updatedValues?.points || []),
+      );
+    } else if (type === "arrow") {
+      const previousPoints = (shapeCurrentValue as Arrow)?.points;
+      let updatedPoints;
+
+      if (previousPoints?.length > 1) {
+        updatedPoints = [
+          previousPoints[0],
+          previousPoints[1],
+          ...(updatedValues?.points || []),
+        ];
+      } else {
+        updatedPoints = [...(updatedValues?.points || [])];
+      }
+
+      points.push(...updatedPoints);
+    } else {
+      let updatedPoints;
+
+      if ((shapeCurrentValue as Arrow)?.points?.length > 1) {
+        const pointsLength = (shapeCurrentValue as Arrow)?.points?.length;
+        const previousPoints = (shapeCurrentValue as Arrow)?.points?.slice(
+          0,
+          pointsLength > 2 ? pointsLength - 2 : pointsLength,
+        );
+
+        updatedPoints = [
+          ...(previousPoints || []),
+          ...(updatedValues?.points || []),
+        ];
+      } else {
+        updatedPoints = [...(updatedValues?.points || [])];
+      }
+
+      points.push(...updatedPoints);
+    }
+
+    return {
+      ...shapeCurrentValue,
+      points: (points || []) as number[],
+      isAddable: checkIsAddable((shapeCurrentValue as Arrow)?.points),
+    };
+  } else {
+    return {
+      ...shapeCurrentValue,
+      ...updatedValues,
+    } as Shape;
   }
 }

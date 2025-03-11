@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Group } from "react-konva";
 import Konva from "konva";
 import { useDispatch, useSelector } from "react-redux";
