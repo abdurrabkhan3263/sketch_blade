@@ -168,7 +168,11 @@ export function getCustomCursor(
     return "cursor-move";
   }
 
-  if (["rectangle", "circle", "free hand"].includes(currentToolBar)) {
+  if (
+    ["rectangle", "circle", "free hand", "arrow", "point arrow"].includes(
+      currentToolBar,
+    )
+  ) {
     return "cursor-crosshair";
   } else if (currentToolBar === "text") {
     return "cursor-text";

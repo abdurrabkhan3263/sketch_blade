@@ -7,7 +7,6 @@ import {
   Arrow,
   Coordinates,
   FourCoordinates,
-  FreeHand,
   ShapeUpdatedValue,
   ToolBarElem,
 } from "../../../lib/types";
@@ -317,35 +316,41 @@ const Canvas: React.FC<StageProps> = ({
   useEffect(() => {
     if (!isDrawing || currentSelector !== "point arrow") return;
 
-    const handleMouseEnter = (e: KeyboardEvent) => {
-      if (e.key !== "Enter") return;
+    const handleKeyboardEvent = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === "Escape") {
+        if (e.key === "Enter") {
+          const points = (currentShape as Arrow)?.points || [];
+          const slicedPoints = points?.slice(0, points?.length - 2);
 
-      const points = (currentShape as Arrow)?.points || [];
-      const slicedPoints = points?.slice(0, points?.length - 2);
-
-      if (slicedPoints.length > 2) {
-        setCurrentShape(
-          (prev) =>
-            ({
-              ...prev,
+          if (slicedPoints.length > 2) {
+            const updatedShape = {
+              ...currentShape,
               points: slicedPoints,
-            }) as Shape,
-        );
+            };
 
-        addShape();
+            dispatch(addShapes(updatedShape));
+          }
+        }
+
+        setIsDrawing(false);
+        setCurrentShape(undefined);
+        setStartingMousePos({ x: 0, y: 0 });
       }
-
-      setIsDrawing(false);
-      setCurrentShape(undefined);
-      setStartingMousePos({ x: 0, y: 0 });
     };
 
-    document.addEventListener("keydown", handleMouseEnter);
+    document.addEventListener("keydown", handleKeyboardEvent);
 
     return () => {
-      document.removeEventListener("keydown", handleMouseEnter);
+      document.removeEventListener("keydown", handleKeyboardEvent);
     };
-  }, [isDrawing, currentSelector, setCurrentShape, addShape, currentShape]);
+  }, [
+    isDrawing,
+    currentSelector,
+    setCurrentShape,
+    addShape,
+    currentShape,
+    dispatch,
+  ]);
 
   return (
     <Stage
