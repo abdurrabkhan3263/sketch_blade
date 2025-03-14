@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { Column, ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox.tsx";
 import { Button } from "../../ui/button.tsx";
-import { timeAgo } from "../../../lib/utils.ts";
+import { AppUtils } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Folders } from "../../../lib/types";
-import {ArrowUpDown} from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
 import { DropdownMenuItem } from "../../ui/dropdown-menu.tsx";
 import { FolderEditDialog } from "../../dialogs/FolderEditDialog.tsx";
 import DeleteDialog from "../../dialogs/DeleteDialog.tsx";
 import useMutate from "../../../hooks/useMutate.ts";
-import {FaEdit} from "react-icons/fa";
-import axios, {AxiosResponse} from "axios";
+import { FaEdit } from "react-icons/fa";
+import axios, { AxiosResponse } from "axios";
 
 type ColumnType = Column<Folders>;
 
@@ -58,21 +58,21 @@ export const folderColumns: ColumnDef<Folders>[] = [
     id: "name",
     accessorKey: "folder_name",
     header: createSortableHeader("NAME"),
-    cell: ({ row }) => (
-      <span>
-        {row.original.folder_name}
-      </span>
-    ),
+    cell: ({ row }) => <span>{row.original.folder_name}</span>,
   },
   {
     accessorKey: "createdAt",
     header: createSortableHeader("CREATED"),
-    cell: ({ row }) => <div>{timeAgo(row.original.createdAt)}</div>,
+    cell: ({ row }) => (
+      <div>{AppUtils.getFormattedTime(row.original.createdAt)}</div>
+    ),
   },
   {
     accessorKey: "updatedAt",
     header: createSortableHeader("EDITED"),
-    cell: ({ row }) => <div>{timeAgo(row.original.updatedAt)}</div>,
+    cell: ({ row }) => (
+      <div>{AppUtils.getFormattedTime(row.original.updatedAt)}</div>
+    ),
   },
   {
     accessorKey: "creator",

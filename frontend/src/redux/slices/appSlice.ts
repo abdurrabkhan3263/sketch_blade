@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ToolBarProperties, ToolBarElem, Shape } from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
-import { getProperties } from "../../lib/utils.ts";
+import { CanvasUtils } from "../../lib/utils.ts";
 import {
   createNewShape,
   deleteShape,
@@ -80,7 +80,7 @@ export const appSlice = createSlice({
             action.payload,
           )[0] as keyof ToolBarProperties;
 
-          const updatedProperties = getProperties(
+          const updatedProperties = CanvasUtils.getProperties(
             state.shapes[shapeIndex].type,
             [propertyKey],
             action.payload,

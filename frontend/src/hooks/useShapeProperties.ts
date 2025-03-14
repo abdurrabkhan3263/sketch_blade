@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store.ts";
-import { getProperties } from "../lib/utils.ts";
+import { CanvasUtils } from "../lib/utils.ts";
 import { ToolBarProperties, UseShapeProperties } from "../lib/types/index.ts";
 import { ToolBarArr } from "../lib/const.ts";
 
@@ -16,7 +16,7 @@ const useShapeProperties = (): UseShapeProperties | null => {
     if (!properties) return;
 
     if (ToolBarArr.includes(currentToolBar)) {
-      const allProperties = getProperties(
+      const allProperties = CanvasUtils.getProperties(
         currentToolBar,
         Object.keys(properties) as (keyof ToolBarProperties)[],
         properties,

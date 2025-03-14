@@ -13,12 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useShapeProperties from "../../../hooks/useShapeProperties";
-import {
-  cn,
-  getCustomCursor,
-  getShapeUpdatedValue,
-  getUpdatedPointsValue,
-} from "../../../lib/utils";
+import { cn, CanvasUtils } from "../../../lib/utils";
 import { ToolBarArr } from "../../../lib/const";
 import { Shape } from "../../../lib/types";
 import { v4 as uuid } from "uuid";
@@ -30,7 +25,7 @@ import {
   updateShapes,
 } from "../../../redux/slices/appSlice";
 import Eraser from "./Eraser";
-import useMouseValue from "../../../hooks/useMouseValue";
+import { IRect } from "konva/lib/types";
 
 interface StageProps {
   children: React.ReactNode;
@@ -63,7 +58,6 @@ const Canvas: React.FC<StageProps> = ({
   const currentSelector = useSelector(
     (state: RootState) => state.app.currentToolBar,
   );
-  const mouseMovementValue = useMouseValue({ stageRef });
 
   const addShape = useCallback(() => {
     if (!currentShape || (currentShape && !currentShape?.isAddable)) {
@@ -101,12 +95,12 @@ const Canvas: React.FC<StageProps> = ({
     coordinates = { ...startingMousePos, ...coordinates };
 
     if (!shapeId) {
-      const updatedValue = getShapeUpdatedValue(
+      const updatedValue = CanvasUtils.getShapeUpdatedValue(
         type,
         coordinates as FourCoordinates,
       );
 
-      const getPointsValues = getUpdatedPointsValue(
+      const getPointsValues = CanvasUtils.getUpdatedPointsValue(
         updatedValue as ShapeUpdatedValue,
         currentShape as Shape,
         currentSelector,
@@ -260,15 +254,13 @@ const Canvas: React.FC<StageProps> = ({
     }
 
     if (!isDrawing) {
+      if (currentSelector === "arrow" || currentSelector === "point arrow") {
+        const getShapes = CanvasUtils.getInteractedShape(stage);
+      }
       return;
     }
 
-    const pos = stage.getPointerPosition();
-
-    const transform = stage.getAbsoluteTransform().copy();
-
-    const invertedTransform = transform.invert();
-    const transformedPos = pos ? invertedTransform.point(pos) : null;
+    const transformedPos = CanvasUtils.getTransformedPos(stage);
 
     if (transformedPos) {
       if (currentSelector === "cursor") {
@@ -361,7 +353,7 @@ const Canvas: React.FC<StageProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       draggable={currentSelector === "hand"}
-      className={cn(getCustomCursor(currentSelector, isHovered))}
+      className={cn(CanvasUtils.getCustomCursor(currentSelector, isHovered))}
     >
       <Layer>
         {children}
@@ -375,9 +367,7 @@ const Canvas: React.FC<StageProps> = ({
         />
 
         <CanvasTransformer ref={transformerRef} updateShape={updateShape} />
-        {mouseMovementValue && currentSelector === "eraser" && (
-          <Eraser movementValue={mouseMovementValue} stageRef={stageRef} />
-        )}
+        {currentSelector === "eraser" && <Eraser stageRef={stageRef} />}
       </Layer>
     </Stage>
   );

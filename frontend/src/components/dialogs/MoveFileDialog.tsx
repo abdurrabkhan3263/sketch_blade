@@ -10,7 +10,7 @@ import {
 } from "../ui/dialog.tsx";
 import { Input } from "../ui/input.tsx";
 import { Button } from "../ui/button.tsx";
-import { cn, timeAgo } from "../../lib/utils.ts";
+import { cn, AppUtils } from "../../lib/utils.ts";
 import { Label } from "../ui/label.tsx";
 import { Separator } from "../ui/separator.tsx";
 import { useResponse } from "../../hooks/useResponse.tsx";
@@ -163,7 +163,7 @@ const MoveFileDialog: React.FC<MoveFileDialogProps> = ({
                             </div>
                             <span>
                               <p className={"text-xs text-gray-400"}>
-                                {timeAgo(createdAt)}
+                                {AppUtils.getFormattedTime(createdAt)}
                               </p>
                             </span>
                           </div>

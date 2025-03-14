@@ -174,6 +174,12 @@ type commonType = {
   };
 };
 
+export declare type ShapePointsProps = {
+  id: string;
+  type: "Arrow" | "Point Arrow";
+  position: "START" | "END";
+};
+
 export declare type Rectangle = {
   id: string;
   height: number;
@@ -193,6 +199,7 @@ export declare type Rectangle = {
   opacity: number;
   lineCap: EdgeStyle;
   isAddable?: boolean;
+  pointInfo: ShapePointsProps | null;
 };
 
 export declare type Circle = {
@@ -213,6 +220,7 @@ export declare type Circle = {
   lineCap: EdgeStyle;
   dash: number[];
   isAddable?: boolean;
+  pointInfo: ShapePointsProps | null;
 };
 
 export declare type FreeHand = {
@@ -241,6 +249,7 @@ export declare type Text = {
   isAddable?: boolean;
   draggable: boolean;
   customProperties: Partial<ToolBarProperties>;
+  pointInfo: ShapePointsProps | null;
 };
 
 export declare type Arrow = {

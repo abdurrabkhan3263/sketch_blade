@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import Konva from "konva";
+import { CanvasUtils } from "../lib/utils";
 
 type MouseValue = {
   x: number;
@@ -30,12 +31,7 @@ const useMouseValue = ({
 
       const stage = stageRef.current;
 
-      const pos = stage?.getPointerPosition();
-
-      const transform = stage?.getAbsoluteTransform().copy();
-
-      const invertedTransform = transform?.invert();
-      const transformedPos = pos ? invertedTransform?.point(pos) : null;
+      const transformedPos = CanvasUtils.getTransformedPos(stage);
 
       setMouseValue(transformedPos);
     };

@@ -7,16 +7,13 @@ import {
   deleteShapes,
   handleSelectedIds,
 } from "../../../redux/slices/appSlice";
+import useMouseValue from "../../../hooks/useMouseValue";
 
 type MouseValue = {
-  movementValue: {
-    x: number;
-    y: number;
-  };
   stageRef: React.RefObject<Konva.Stage>;
 };
 
-const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
+const Eraser: React.FC<MouseValue> = ({ stageRef }) => {
   const [isPressed, setIsPressed] = useState(false);
   const eraserRef = useRef<Konva.Rect>(null);
   const selectedIds = useSelector(
@@ -26,6 +23,7 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
   const eraserProperties = useSelector(
     (state: RootState) => state.app.toolBarProperties?.eraserRadius,
   );
+  const mouseCoordinates = useMouseValue({ stageRef });
 
   useEffect(() => {
     const handleEraser = () => {
@@ -101,7 +99,7 @@ const Eraser: React.FC<MouseValue> = ({ movementValue, stageRef }) => {
       strokeWidth={1}
       cornerRadius={999}
       name="eraser"
-      {...movementValue}
+      {...mouseCoordinates}
     />
   );
 };

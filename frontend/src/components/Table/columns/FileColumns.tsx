@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { ColumnDef, Column } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox.tsx";
-import { ArrowUpDown, Edit2, Move } from "lucide-react";
+import { ArrowUpDown, Move } from "lucide-react";
 import { Button } from "../../ui/button.tsx";
 import {
   ActiveCollaborators as ActiveCollaboratorsType,
   Files,
 } from "../../../lib/types";
-import { timeAgo } from "../../../lib/utils.ts";
+import { AppUtils } from "../../../lib/utils.ts";
 import ProfileImg from "../../ProfileImg.tsx";
 import { Link } from "react-router";
 import ActionDropMenu from "../../dialogs/ActionDropMenu.tsx";
@@ -37,7 +37,9 @@ const createSortableHeader = (label: string) => {
 };
 
 const TimeDisplay = ({ value }: { value: string | null }) => (
-  <div className="capitalize">{value ? timeAgo(value) : "-"}</div>
+  <div className="capitalize">
+    {value ? AppUtils.getFormattedTime(value) : "-"}
+  </div>
 );
 
 const ActiveCollaborators = ({
@@ -106,9 +108,7 @@ export const fileColumns: ColumnDef<Files>[] = [
     cell: ({ row }) => (
       <>
         {row.original.folder ? (
-          <span>
-              {row.original.folder?.folder_name}
-          </span>
+          <span>{row.original.folder?.folder_name}</span>
         ) : (
           <>-</>
         )}
