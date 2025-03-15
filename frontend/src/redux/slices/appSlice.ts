@@ -9,7 +9,7 @@ import {
 } from "../../lib/action/shape.action.ts";
 
 type SelectedShapesId = {
-  purpose: "FOR_EDITING" | "FOR_DELETING";
+  purpose: "FOR_EDITING" | "FOR_DELETING" | "FOR_POINT";
   id: string[];
 };
 
@@ -187,6 +187,15 @@ export const appSlice = createSlice({
 
       if (!id || !purpose) {
         state.selectedShapesId = null;
+        return;
+      }
+
+      if (purpose === "FOR_POINT") {
+        state.selectedShapesId = {
+          purpose,
+          id,
+        };
+
         return;
       }
 

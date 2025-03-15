@@ -20,6 +20,71 @@ type Coordinates = {
   y: number;
 };
 
+type ShapeCoordinates = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+class MethodUtils {
+  static shapeDetector(
+    mousePosition: Coordinates,
+    shapePosition: ShapeCoordinates,
+  ) {
+    const { x: mouseX, y: mouseY } = mousePosition;
+    const { x: shapeX, y: shapeY, height, width } = shapePosition;
+    const totalShapeWidth = shapeX + width;
+    const totalShapeHeight = shapeY + height;
+
+    // Edge detection range
+    const edgeRange = 10;
+
+    // Left edge
+    const isNearLeftEdge =
+      mouseX >= shapeX - edgeRange &&
+      mouseX <= shapeX + edgeRange &&
+      mouseY >= shapeY &&
+      mouseY <= totalShapeHeight;
+
+    // Right edge
+    const isNearRightEdge =
+      mouseX >= totalShapeWidth - edgeRange &&
+      mouseX <= totalShapeWidth + edgeRange &&
+      mouseY >= shapeY &&
+      mouseY <= totalShapeHeight;
+
+    // Top edge
+    const isNearTopEdge =
+      mouseY >= shapeY - edgeRange &&
+      mouseY <= shapeY + edgeRange &&
+      mouseX >= shapeX &&
+      mouseX <= totalShapeWidth;
+
+    // Bottom edge
+    const isNearBottomEdge =
+      mouseY >= totalShapeHeight - edgeRange &&
+      mouseY <= totalShapeHeight + edgeRange &&
+      mouseX >= shapeX &&
+      mouseX <= totalShapeWidth;
+
+    return (
+      isNearLeftEdge || isNearRightEdge || isNearTopEdge || isNearBottomEdge
+    );
+  }
+
+  static checkIsAddable(points: number[]): boolean {
+    if (points?.length < 2 || !points) return false;
+    const len = points?.length;
+
+    return (
+      points[len - 2] > points[len - 4] + 25 ||
+      points[len - 1] > points[len - 3] + 25 ||
+      points.length > 5
+    );
+  }
+}
+
 export class AppUtils {
   // static class that have bunch of Utils related to the APP.
 
@@ -45,15 +110,16 @@ export class AppUtils {
 
 export class CanvasUtils {
   // static class that have bunch of Utils related to the CANVAS.
-  static checkIsAddable(points: number[]): boolean {
-    if (points?.length < 2 || !points) return false;
-    const len = points?.length;
 
-    return (
-      points[len - 2] > points[len - 4] + 25 ||
-      points[len - 1] > points[len - 3] + 25 ||
-      points.length > 5
-    );
+  static getTransformedPos(stage: Konva.Stage): Coordinates | null {
+    const pos = stage.getPointerPosition();
+
+    const transform = stage.getAbsoluteTransform().copy();
+
+    const invertedTransform = transform.invert();
+    const transformedPos = pos ? invertedTransform.point(pos) : null;
+
+    return transformedPos;
   }
 
   static getUpdatedPointsValue(
@@ -108,7 +174,9 @@ export class CanvasUtils {
       return {
         ...shapeCurrentValue,
         points: (points || []) as number[],
-        isAddable: this.checkIsAddable((shapeCurrentValue as Arrow)?.points),
+        isAddable: MethodUtils.checkIsAddable(
+          (shapeCurrentValue as Arrow)?.points,
+        ),
       };
     } else {
       return {
@@ -268,27 +336,22 @@ export class CanvasUtils {
     return properties;
   }
 
-  static getTransformedPos(stage: Konva.Stage): Coordinates | null {
-    const pos = stage.getPointerPosition();
-
-    const transform = stage.getAbsoluteTransform().copy();
-
-    const invertedTransform = transform.invert();
-    const transformedPos = pos ? invertedTransform.point(pos) : null;
-
-    return transformedPos;
-  }
-
   static getInteractedShape(stage: Konva.Stage) {
     const currentPosition = this.getTransformedPos(stage);
     const shapes = stage.find(".shape");
 
+    if (!shapes || !currentPosition) return null;
+
     const selectedShapes = shapes.filter((shape) => {
       const shapePosition = shape.getClientRect();
-      const totalXCoord = shapePosition.x + shapePosition.width;
-      const totalYCoord = shapePosition.y + shapePosition.height;
+      const isPointAddable = MethodUtils.shapeDetector(
+        currentPosition,
+        shapePosition,
+      );
+
+      return isPointAddable;
     });
 
-    return selectedShapes;
+    return selectedShapes[0] || null;
   }
 }

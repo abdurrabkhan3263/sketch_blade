@@ -256,6 +256,17 @@ const Canvas: React.FC<StageProps> = ({
     if (!isDrawing) {
       if (currentSelector === "arrow" || currentSelector === "point arrow") {
         const getShapes = CanvasUtils.getInteractedShape(stage);
+
+        if (getShapes) {
+          dispatch(
+            handleSelectedIds({
+              id: getShapes?.attrs?.id,
+              purpose: "FOR_POINT",
+            }),
+          );
+        } else {
+          dispatch(handleSelectedIds(null));
+        }
       }
       return;
     }

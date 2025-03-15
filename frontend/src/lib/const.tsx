@@ -73,10 +73,12 @@ const GetDynamicShape = ({ ...props }: Shape): ReactNode => {
 
   props["draggable"] = currentToolBar !== "eraser" ? props["draggable"] : false;
   props["opacity"] =
-    selectedShapesId?.purpose === "FOR_DELETING" &&
-    selectedShapesId?.id.length > 0
+    selectedShapesId?.purpose === "FOR_DELETING" ||
+    (selectedShapesId?.purpose === "FOR_POINT" &&
+      selectedShapesId?.id.length > 0)
       ? (selectedShapesId?.id.includes(props["id"]) && 0.5) || props["opacity"]
       : props["opacity"];
+  props["shadowEnabled"] = true;
 
   return Component ? <Component {...props} /> : <></>;
 };
