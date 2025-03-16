@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ToolBarProperties, ToolBarElem, Shape } from "../../lib/types";
+import {
+  ToolBarProperties,
+  ToolBarElem,
+  Shape,
+  SelectedShapesId,
+} from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
 import { CanvasUtils } from "../../lib/utils.ts";
 import {
@@ -7,11 +12,6 @@ import {
   deleteShape,
   updateShape,
 } from "../../lib/action/shape.action.ts";
-
-type SelectedShapesId = {
-  purpose: "FOR_EDITING" | "FOR_DELETING" | "FOR_POINT";
-  id: string[];
-};
 
 type StateType = {
   currentToolBar: ToolBarElem;
@@ -190,7 +190,7 @@ export const appSlice = createSlice({
         return;
       }
 
-      if (purpose === "FOR_POINT") {
+      if (purpose === "FOR_ADDING_ARROW") {
         state.selectedShapesId = {
           purpose,
           id,

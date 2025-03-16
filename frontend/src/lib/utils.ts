@@ -7,6 +7,9 @@ import {
   ToolBarElem,
   ToolBarProperties,
   ShapeUpdatedValue,
+  SelectedShapesId,
+  Rectangle,
+  Circle,
 } from "./types";
 import Konva from "konva";
 
@@ -31,40 +34,35 @@ class MethodUtils {
   static shapeDetector(
     mousePosition: Coordinates,
     shapePosition: ShapeCoordinates,
-  ) {
+  ): boolean {
     const { x: mouseX, y: mouseY } = mousePosition;
     const { x: shapeX, y: shapeY, height, width } = shapePosition;
     const totalShapeWidth = shapeX + width;
     const totalShapeHeight = shapeY + height;
 
-    // Edge detection range
-    const edgeRange = 10;
+    const edgeRange = 10; // Reduced from 25 for more precision
 
-    // Left edge
+    // Left edge - Only detect when mouse is near the actual edge, not inside the shape
     const isNearLeftEdge =
-      mouseX >= shapeX - edgeRange &&
-      mouseX <= shapeX + edgeRange &&
+      Math.abs(mouseX - shapeX) <= edgeRange &&
       mouseY >= shapeY &&
       mouseY <= totalShapeHeight;
 
     // Right edge
     const isNearRightEdge =
-      mouseX >= totalShapeWidth - edgeRange &&
-      mouseX <= totalShapeWidth + edgeRange &&
+      Math.abs(mouseX - totalShapeWidth) <= edgeRange &&
       mouseY >= shapeY &&
       mouseY <= totalShapeHeight;
 
     // Top edge
     const isNearTopEdge =
-      mouseY >= shapeY - edgeRange &&
-      mouseY <= shapeY + edgeRange &&
+      Math.abs(mouseY - shapeY) <= edgeRange &&
       mouseX >= shapeX &&
       mouseX <= totalShapeWidth;
 
     // Bottom edge
     const isNearBottomEdge =
-      mouseY >= totalShapeHeight - edgeRange &&
-      mouseY <= totalShapeHeight + edgeRange &&
+      Math.abs(mouseY - totalShapeHeight) <= edgeRange &&
       mouseX >= shapeX &&
       mouseX <= totalShapeWidth;
 
@@ -87,7 +85,6 @@ class MethodUtils {
 
 export class AppUtils {
   // static class that have bunch of Utils related to the APP.
-
   static getFormattedTime(date: string) {
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
@@ -110,7 +107,6 @@ export class AppUtils {
 
 export class CanvasUtils {
   // static class that have bunch of Utils related to the CANVAS.
-
   static getTransformedPos(stage: Konva.Stage): Coordinates | null {
     const pos = stage.getPointerPosition();
 
@@ -353,5 +349,41 @@ export class CanvasUtils {
     });
 
     return selectedShapes[0] || null;
+  }
+
+  static updatedProps(
+    props: Shape,
+    currentToolBar: ToolBarElem,
+    selectedShapesId: SelectedShapesId | null,
+  ): Shape {
+    props["draggable"] =
+      currentToolBar !== "eraser" ? props["draggable"] : false;
+
+    if (
+      selectedShapesId &&
+      selectedShapesId?.id?.length > 0 &&
+      selectedShapesId?.id?.includes(props["id"])
+    ) {
+      if (selectedShapesId?.purpose === "FOR_DELETING") {
+        props["opacity"] = 0.5;
+      }
+
+      if (selectedShapesId?.purpose === "FOR_ADDING_ARROW") {
+        (props as Rectangle | Circle)["shadowEnabled"] = true;
+        (props as Rectangle | Circle)["shadowBlur"] = 50;
+      }
+    }
+
+    return props;
+  }
+
+  static updatedPropToAddArrow(
+    shapes: Shape[],
+    selectedIds: SelectedShapesId | null,
+    arrow: Arrow,
+  ) {
+    if (!selectedIds) return;
+
+    console.log(selectedIds);
   }
 }

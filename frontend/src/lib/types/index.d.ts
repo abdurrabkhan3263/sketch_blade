@@ -153,14 +153,7 @@ export declare enum ShapesElements {
 /*
   The following types are for the CanvaElements.tsx file
  */
-export declare type ShapeUpdatedValue = {
-  points?: number[];
-  height?: number;
-  width?: number;
-  isAddable: boolean;
-};
-
-type commonType = {
+type CommonType = {
   id: string;
   type: ShapesElements;
   stroke: string;
@@ -174,13 +167,31 @@ type commonType = {
   };
 };
 
+type ShapeShadow = {
+  shadowEnabled: boolean;
+  shadowBlur: number;
+  shadowColor: string;
+};
+
+export declare type SelectedShapesId = {
+  purpose: "FOR_EDITING" | "FOR_DELETING" | "FOR_ADDING_ARROW";
+  id: string[];
+};
+
+export declare type ShapeUpdatedValue = {
+  points?: number[];
+  height?: number;
+  width?: number;
+  isAddable: boolean;
+};
+
 export declare type ShapePointsProps = {
   id: string;
   type: "Arrow" | "Point Arrow";
   position: "START" | "END";
 };
 
-export declare type Rectangle = {
+export declare type Rectangle = ShapeShadow & {
   id: string;
   height: number;
   width: number;
@@ -202,7 +213,7 @@ export declare type Rectangle = {
   pointInfo: ShapePointsProps | null;
 };
 
-export declare type Circle = {
+export declare type Circle = ShapeShadow & {
   id: string;
   x: number;
   y: number;

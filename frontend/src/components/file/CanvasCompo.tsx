@@ -73,6 +73,8 @@ function CanvasCompo({ stageRef, transformerRef }: CanvasProps) {
         stageRef={stageRef}
         currentShape={currentShape}
         setCurrentShape={setCurrentShape}
+        shapes={shapes}
+        selectedIds={selectedShapesId}
       >
         <Group>
           {Array.isArray(shapes) &&

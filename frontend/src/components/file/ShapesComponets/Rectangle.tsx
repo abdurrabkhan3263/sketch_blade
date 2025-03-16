@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Rect, Text } from "react-konva";
+import { Rect } from "react-konva";
 import { Shape } from "../../../lib/types";
 
 const Rectangle: React.FC<Shape> = ({ ...props }) => {

@@ -7,6 +7,7 @@ import {
   Arrow,
   Coordinates,
   FourCoordinates,
+  SelectedShapesId,
   ShapeUpdatedValue,
   ToolBarElem,
 } from "../../../lib/types";
@@ -25,7 +26,6 @@ import {
   updateShapes,
 } from "../../../redux/slices/appSlice";
 import Eraser from "./Eraser";
-import { IRect } from "konva/lib/types";
 
 interface StageProps {
   children: React.ReactNode;
@@ -34,6 +34,8 @@ interface StageProps {
   selectionRect: React.RefObject<Konva.Rect>;
   currentShape: Shape | undefined;
   setCurrentShape: React.Dispatch<React.SetStateAction<Shape | undefined>>;
+  shapes: Shape[];
+  selectedIds: SelectedShapesId | null;
 }
 
 const Canvas: React.FC<StageProps> = ({
@@ -43,6 +45,8 @@ const Canvas: React.FC<StageProps> = ({
   selectionRect,
   currentShape,
   setCurrentShape,
+  shapes,
+  selectedIds,
 }) => {
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -200,6 +204,14 @@ const Canvas: React.FC<StageProps> = ({
       }
     }
 
+    if (currentSelector === "point arrow" || currentSelector === "arrow") {
+      CanvasUtils.updatedPropToAddArrow(
+        shapes,
+        selectedIds,
+        currentShape as Arrow,
+      );
+    }
+
     if (isDrawing && currentSelector === "point arrow" && transformedPos) {
       (currentShape as Arrow)?.points?.push(...Object.values(transformedPos));
     }
@@ -253,21 +265,22 @@ const Canvas: React.FC<StageProps> = ({
       setIsHovered(false);
     }
 
-    if (!isDrawing) {
-      if (currentSelector === "arrow" || currentSelector === "point arrow") {
-        const getShapes = CanvasUtils.getInteractedShape(stage);
+    if (currentSelector === "arrow" || currentSelector === "point arrow") {
+      const getShapes = CanvasUtils.getInteractedShape(stage);
 
-        if (getShapes) {
-          dispatch(
-            handleSelectedIds({
-              id: getShapes?.attrs?.id,
-              purpose: "FOR_POINT",
-            }),
-          );
-        } else {
-          dispatch(handleSelectedIds(null));
-        }
+      if (getShapes) {
+        dispatch(
+          handleSelectedIds({
+            id: getShapes?.attrs?.id,
+            purpose: "FOR_ADDING_ARROW",
+          }),
+        );
+      } else {
+        dispatch(handleSelectedIds(null));
       }
+    }
+
+    if (!isDrawing) {
       return;
     }
 
