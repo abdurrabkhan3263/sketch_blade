@@ -10,6 +10,10 @@ import {
   SelectedShapesId,
   Rectangle,
   Circle,
+  Text,
+  Position,
+  ShapePointsProps,
+  ArrowType,
 } from "./types";
 import Konva from "konva";
 
@@ -18,17 +22,24 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // TYPES RELATED TO CLASS
-type Coordinates = {
+interface Coordinates {
   x: number;
   y: number;
-};
+}
 
-type ShapeCoordinates = {
+interface ShapeCoordinates {
   x: number;
   y: number;
   width: number;
   height: number;
-};
+}
+
+interface PropsToAddArrow {
+  attachedShape?: {
+    [key in Position]?: string;
+  };
+  arrowInfo?: ShapePointsProps[];
+}
 
 class MethodUtils {
   static shapeDetector(
@@ -345,7 +356,12 @@ export class CanvasUtils {
         shapePosition,
       );
 
-      return isPointAddable;
+      return (
+        isPointAddable &&
+        (shape.className === "Rect" ||
+          shape.className === "Ellipse" ||
+          shape.className === "text")
+      );
     });
 
     return selectedShapes[0] || null;
@@ -381,9 +397,58 @@ export class CanvasUtils {
     shapes: Shape[],
     selectedIds: SelectedShapesId | null,
     arrow: Arrow,
-  ) {
+  ): PropsToAddArrow | undefined {
     if (!selectedIds) return;
 
-    console.log(selectedIds);
+    const currentShape = shapes.find(
+      (shape) => shape.id === (selectedIds?.id as unknown as string),
+    );
+
+    if (!currentShape) return;
+
+    let updatedValue = {};
+
+    if ((currentShape as Rectangle | Circle | Text)?.arrowInfo) {
+      updatedValue = {
+        arrowInfo: [
+          ...((currentShape as Rectangle | Circle | Text)
+            ?.arrowInfo as ShapePointsProps[]),
+          {
+            id: arrow?.id,
+            arrowPosition: selectedIds?.arrowPosition as Position,
+            type: arrow?.type as unknown as ArrowType,
+          },
+        ],
+      };
+    } else {
+      updatedValue = {
+        arrowInfo: [
+          {
+            id: arrow?.id,
+            arrowPosition: selectedIds?.arrowPosition as Position,
+            type: arrow?.type as unknown as ArrowType,
+          },
+        ],
+      };
+    }
+
+    if (arrow?.attachedShape) {
+      updatedValue = {
+        ...updatedValue,
+        attachedShape: {
+          ...arrow?.attachedShape,
+          [selectedIds?.arrowPosition as Position]: currentShape?.id,
+        },
+      };
+    } else {
+      updatedValue = {
+        ...updatedValue,
+        attachedShape: {
+          [selectedIds?.arrowPosition as Position]: currentShape?.id,
+        },
+      };
+    }
+
+    return updatedValue;
   }
 }

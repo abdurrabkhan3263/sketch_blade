@@ -63,21 +63,25 @@ const Canvas: React.FC<StageProps> = ({
     (state: RootState) => state.app.currentToolBar,
   );
 
-  const addShape = useCallback(() => {
-    if (!currentShape || (currentShape && !currentShape?.isAddable)) {
-      return;
-    }
+  const addShape = useCallback(
+    (customizedCurrentShape?: Shape) => {
+      if (!currentShape || (currentShape && !currentShape?.isAddable)) {
+        return;
+      }
 
-    dispatch(addShapes(currentShape));
-    setCurrentShape(undefined);
-  }, [currentShape, dispatch, setCurrentShape]);
+      dispatch(addShapes(customizedCurrentShape ?? currentShape));
+
+      setIsDrawing(false);
+      setCurrentShape(undefined);
+      setStartingMousePos({ x: 0, y: 0 });
+    },
+    [currentShape, dispatch, setCurrentShape],
+  );
 
   const initializeShape = (
     properties: Record<string, string | number | any>,
   ) => {
-    const id = uuid();
     setCurrentShape({
-      id,
       ...properties,
       isAddable: false,
     } as Shape);
@@ -131,12 +135,8 @@ const Canvas: React.FC<StageProps> = ({
     const tr = transformerRef.current;
     const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 
-    const pos = stage.getPointerPosition();
-
-    const transform = stage.getAbsoluteTransform().copy();
-
-    const invertedTransform = transform.invert();
-    const transformedPos = pos ? invertedTransform.point(pos) : null;
+    const transformedPos = CanvasUtils.getTransformedPos(stage);
+    const id = uuid();
 
     if (!isDrawing) {
       if (e.target === stage) {
@@ -151,13 +151,15 @@ const Canvas: React.FC<StageProps> = ({
               ["free hand", "arrow", "point arrow"].includes(currentSelector)
             ) {
               initializeShape({
+                id,
                 ...shapeProperties,
               });
             } else {
               initializeShape({
-                ...shapeProperties,
+                id,
                 x: Number(transformedPos.x),
                 y: Number(transformedPos.y),
+                ...shapeProperties,
               });
             }
           }
@@ -205,11 +207,33 @@ const Canvas: React.FC<StageProps> = ({
     }
 
     if (currentSelector === "point arrow" || currentSelector === "arrow") {
-      CanvasUtils.updatedPropToAddArrow(
+      const arrowAndShapeValue = CanvasUtils.updatedPropToAddArrow(
         shapes,
         selectedIds,
-        currentShape as Arrow,
+        {
+          ...shapeProperties,
+          id,
+        } as unknown as Arrow,
       );
+
+      if (arrowAndShapeValue) {
+        setCurrentShape(
+          (prev) =>
+            ({
+              ...prev,
+              attachedShape: arrowAndShapeValue?.attachedShape,
+            }) as Shape,
+        );
+
+        dispatch(
+          updateShapes({
+            updatedValue: {
+              arrowInfo: arrowAndShapeValue?.arrowInfo,
+            },
+            shapeId: selectedIds?.id,
+          }),
+        );
+      }
     }
 
     if (isDrawing && currentSelector === "point arrow" && transformedPos) {
@@ -229,18 +253,43 @@ const Canvas: React.FC<StageProps> = ({
       selectionRect.current.visible(false);
     }
 
+    if (currentSelector === "arrow") {
+      const arrowAndShapeValue = CanvasUtils.updatedPropToAddArrow(
+        shapes,
+        selectedIds,
+        currentShape as Arrow,
+      );
+
+      let updatedCurrentShape = currentShape as Arrow;
+
+      if (arrowAndShapeValue) {
+        updatedCurrentShape = {
+          ...updatedCurrentShape,
+          attachedShape: arrowAndShapeValue?.attachedShape,
+        };
+
+        addShape(updatedCurrentShape);
+
+        dispatch(
+          updateShapes({
+            updatedValue: {
+              arrowInfo: arrowAndShapeValue?.arrowInfo,
+            },
+            shapeId: selectedIds?.id,
+          }),
+        );
+      } else {
+        addShape(updatedCurrentShape);
+      }
+    }
+
     if (
       ToolBarArr.includes(currentSelector) &&
       currentSelector !== "point arrow" &&
+      currentSelector !== "arrow" &&
       currentShape
     ) {
       addShape();
-    }
-
-    if (currentSelector !== "point arrow") {
-      setIsDrawing(false);
-      setCurrentShape(undefined);
-      setStartingMousePos({ x: 0, y: 0 });
     }
   };
 
@@ -273,6 +322,7 @@ const Canvas: React.FC<StageProps> = ({
           handleSelectedIds({
             id: getShapes?.attrs?.id,
             purpose: "FOR_ADDING_ARROW",
+            arrowPosition: currentShape ? "END" : "START",
           }),
         );
       } else {
@@ -344,13 +394,9 @@ const Canvas: React.FC<StageProps> = ({
               points: slicedPoints,
             };
 
-            dispatch(addShapes(updatedShape));
+            addShape(updatedShape as Shape);
           }
         }
-
-        setIsDrawing(false);
-        setCurrentShape(undefined);
-        setStartingMousePos({ x: 0, y: 0 });
       }
     };
 

@@ -153,6 +153,10 @@ export declare enum ShapesElements {
 /*
   The following types are for the CanvaElements.tsx file
  */
+type Position = "START" | "END";
+
+type ArrowType = "Arrow" | "PointArrow";
+
 type CommonType = {
   id: string;
   type: ShapesElements;
@@ -174,8 +178,9 @@ type ShapeShadow = {
 };
 
 export declare type SelectedShapesId = {
-  purpose: "FOR_EDITING" | "FOR_DELETING" | "FOR_ADDING_ARROW";
   id: string[];
+  purpose: "FOR_EDITING" | "FOR_DELETING" | "FOR_ADDING_ARROW";
+  arrowPosition?: Position;
 };
 
 export declare type ShapeUpdatedValue = {
@@ -187,8 +192,8 @@ export declare type ShapeUpdatedValue = {
 
 export declare type ShapePointsProps = {
   id: string;
-  type: "Arrow" | "Point Arrow";
-  position: "START" | "END";
+  type: ArrowType;
+  arrowPosition: Position;
 };
 
 export declare type Rectangle = ShapeShadow & {
@@ -210,7 +215,7 @@ export declare type Rectangle = ShapeShadow & {
   opacity: number;
   lineCap: EdgeStyle;
   isAddable?: boolean;
-  pointInfo: ShapePointsProps | null;
+  arrowInfo?: ShapePointsProps[];
 };
 
 export declare type Circle = ShapeShadow & {
@@ -231,7 +236,7 @@ export declare type Circle = ShapeShadow & {
   lineCap: EdgeStyle;
   dash: number[];
   isAddable?: boolean;
-  pointInfo: ShapePointsProps | null;
+  arrowInfo?: ShapePointsProps[];
 };
 
 export declare type FreeHand = {
@@ -260,7 +265,7 @@ export declare type Text = {
   isAddable?: boolean;
   draggable: boolean;
   customProperties: Partial<ToolBarProperties>;
-  pointInfo: ShapePointsProps | null;
+  arrowInfo?: ShapePointsProps[];
 };
 
 export declare type Arrow = {
@@ -275,6 +280,9 @@ export declare type Arrow = {
   isAddable?: boolean;
   draggable: boolean;
   customProperties: Partial<ToolBarProperties>;
+  attachedShape?: {
+    [key in Position]?: string;
+  };
 };
 
 export declare type Shape = Rectangle | Circle | FreeHand | Text | Arrow;

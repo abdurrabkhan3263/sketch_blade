@@ -4,6 +4,7 @@ import {
   ToolBarElem,
   Shape,
   SelectedShapesId,
+  Position,
 } from "../../lib/types";
 import { toolBarProperties } from "../../lib/const.ts";
 import { CanvasUtils } from "../../lib/utils.ts";
@@ -182,7 +183,11 @@ export const appSlice = createSlice({
       state,
       action: { payload: SelectedShapesId | null },
     ) => {
-      const { id = "", purpose = "" } = action.payload || {};
+      const {
+        id = "",
+        purpose = "",
+        arrowPosition = "",
+      } = action.payload || {};
       const previousIds = state.selectedShapesId?.id ?? [];
 
       if (!id || !purpose) {
@@ -194,6 +199,7 @@ export const appSlice = createSlice({
         state.selectedShapesId = {
           purpose,
           id,
+          arrowPosition: arrowPosition as Position,
         };
 
         return;
